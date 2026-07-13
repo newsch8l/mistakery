@@ -1,0 +1,52 @@
+{
+  "meta": { "startCard": "START" },
+  "sources": { "@bot": { "name": "@bot" } },
+  "resources": {
+    "cash": { "min": 0, "max": 100, "initial": 50 },
+    "team": { "min": 0, "max": 100, "initial": 50 },
+    "customers": { "min": 0, "max": 100, "initial": 50 },
+    "founder": { "min": 0, "max": 100, "initial": 50 }
+  },
+  "cards": [
+    {
+      "id": "START",
+      "kind": "story",
+      "source": "@missing",
+      "text": "A problem",
+      "choices": {
+        "left": { "label": "Do it", "effects": {}, "next": "SAME" },
+        "right": { "label": "Also do it", "effects": {}, "next": "SAME" }
+      }
+    },
+    {
+      "id": "START",
+      "kind": "pressure",
+      "source": "@bot",
+      "text": "Another problem",
+      "choices": {
+        "left": { "label": "Left", "effects": {}, "next": "MISSING" },
+        "right": { "label": "Right", "effects": {}, "next": "MISSING" }
+      }
+    },
+    {
+      "id": "SAME",
+      "kind": "pressure",
+      "source": "@bot",
+      "text": "Pressure again",
+      "choices": {
+        "left": { "label": "Left", "effects": {}, "next": "NEXT", "setFlags": ["orphan_flag"] },
+        "right": { "label": "Right", "effects": {}, "next": "NEXT" }
+      }
+    },
+    {
+      "id": "NEXT",
+      "kind": "pressure",
+      "source": "@bot",
+      "text": "One more pressure",
+      "choices": {
+        "left": { "label": "Left", "effects": {} },
+        "right": { "label": "Right", "effects": {} }
+      }
+    }
+  ]
+}

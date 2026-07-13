@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reigns Narrative Design"
+  short_description: "Audit Reigns-like narrative card games"
+  default_prompt: "Use $reigns-like-narrative-design to audit this Mistakery deck before rewriting cards."
