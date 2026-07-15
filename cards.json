@@ -13,7 +13,6 @@
         { "id": "opening_health_resolution", "before": "OPEN_05", "after": "OPEN_06", "roles": ["callback", "reaction"] }
       ],
       "protectedPairs": [
-        ["AGENT_02_DEV", "AGENT_03_HYPE"],
         ["AGENT_04_LEAD", "AGENT_05_ORDER"],
         ["AGENT_05_ORDER", "AGENT_06_LEGAL"],
         ["PADEL_01", "PADEL_02"],

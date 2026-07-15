@@ -27,7 +27,7 @@ function median(values) {
 function simulate(runs = 10000) {
   const report = {
     runs, directAgents: 0, zeroPackageA: 0, callbackLoss: 0, protectedPairViolations: 0,
-    postAcceptedPadelInsertions: 0, healthMutexViolations: 0, terminalCallbackViolations: 0,
+    postAcceptedPadelInsertions: 0, healthMutexViolations: 0,
     packageA: [], b3: [], nonLegacy: [], total: [],
     shown: Object.fromEntries([...PACKAGE_A_IDS].map((id) => [id, 0])),
     endings: {},
@@ -82,7 +82,6 @@ function simulate(runs = 10000) {
     }
     const healthSeeds = Number(ids.includes('MOM_INVESTOR_SEED')) + Number(ids.includes('COMA_SEED'));
     if (healthSeeds > 1 || (ids.includes('MOM_FLYERS') && healthSeeds > 0)) report.healthMutexViolations += 1;
-    if (state.history.some((entry, index) => index > state.history.findIndex((item) => item.cardId === entry.cardId) && false)) report.terminalCallbackViolations += 1;
     report.endings[state.endingId] = (report.endings[state.endingId] || 0) + 1;
   }
   return report;
@@ -98,7 +97,6 @@ test('10,000 production seeded runs keep Package A callbacks, locks and variable
   assert.equal(report.protectedPairViolations, 0);
   assert.equal(report.postAcceptedPadelInsertions, 0);
   assert.equal(report.healthMutexViolations, 0);
-  assert.equal(report.terminalCallbackViolations, 0);
   Object.entries(report.shown).forEach(([id, count]) => assert.ok(count > 0, `${id} never appeared`));
   if (process.env.PACKAGE_A_PRODUCTION_REPORT === '1') {
     process.stdout.write(`${JSON.stringify({

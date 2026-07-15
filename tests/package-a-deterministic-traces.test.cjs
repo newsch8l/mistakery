@@ -94,15 +94,13 @@ test('deterministic traces cover both Mom Flyers outcomes', () => {
   });
 });
 
-test('a terminal outcome clears a pending Package A callback and cannot show it afterward', () => {
-  let state = stateAt('AGENT_07_INVOICE', { activeArc: 'agents' });
-  state.reservations = [{
-    callbackId: 'PAYROLL_RESTRICTED_AI_CALLBACK', callbackSlot: 'agents_pre_serious_lead',
-    remainingSpineSteps: 0, moduleId: 'payroll',
-  }];
-  state = choose(state, 'left');
+test('a terminal outcome clears a pending delayed callback and cannot show it afterward', () => {
+  let state = stateAt('AGENT_07_INVOICE', { activeArc: 'agents', flags: ['payroll_seeded'] });
+  // New model: a pending typed callback lives in state.delayed, not reservations.
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 0 }];
+  state = choose(state, 'left'); // Send invoice -> terminal validation_agents
   assert.equal(state.gameOver, true);
-  assert.deepEqual(state.reservations, []);
+  assert.deepEqual(state.delayed, [], 'the terminal outcome clears the pending delayed callback');
   const historyLength = state.history.length;
   state = choose(state, 'right');
   assert.equal(state.history.length, historyLength);

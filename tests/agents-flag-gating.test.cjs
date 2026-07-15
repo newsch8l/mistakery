@@ -198,6 +198,36 @@ test('migrated b3 schedules its callback only from the follow-up branch', () => 
   assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
 });
 
+// Codex round-4 finding 3: deterministic delayed-callback lifecycle guarantees.
+test('an ambient decision does not decrement a pending delay counter', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'PRESS_RIVAL'; // a pressure (ambient) card
+  state.activeArc = 'agents';
+  state.flags = ['payroll_seeded'];
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
+  state.queuedCardId = 'AGENT_02_DEV';
+  state.queuedCardIds = ['AGENT_02_DEV'];
+  state.queuedPool = true;
+  const after = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 }).state;
+  const pending = after.delayed.find((entry) => entry.card === 'PAYROLL_RESTRICTED_AI_CALLBACK');
+  assert.equal(pending.remainingStoryDecisions, 3, 'only story decisions decrement the counter, not ambient cards');
+});
+
+test('a pending delayed callback survives an unrelated successful crisis', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'AGENT_02_DEV';
+  state.activeArc = 'agents';
+  state.flags = ['empathy_demanded', 'payroll_seeded'];
+  state.shown = ['AGENT_01'];
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
+  state.resources = { cash: 1, team: 80, customers: 50, founder: 60 }; // AGENT_02 left drains cash -> crisis
+  const afterChoice = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 }).state;
+  assert.equal(afterChoice.activeCrisisId, 'cash_low', 'setup: the beat triggers an unrelated crisis');
+  assert.ok(afterChoice.delayed.some((entry) => entry.card === 'PAYROLL_RESTRICTED_AI_CALLBACK'), 'crisis keeps the pending callback');
+  const rescued = engine.resolveCrisis(deck, afterChoice, 'rescue', { rng: () => 0.01 }).state;
+  assert.ok(rescued.delayed.some((entry) => entry.card === 'PAYROLL_RESTRICTED_AI_CALLBACK'), 'a successful rescue preserves it');
+});
+
 // Step 2c: PRESS_CAPITALISM promoted to a spine beat AGENT_03B_WILD, sitting
 // between hype and the lead. It reads `hyped`, sets `hype_consequence_seen`
 // (+ a positioning flag), and AGENT_04 now unlocks on that consequence.

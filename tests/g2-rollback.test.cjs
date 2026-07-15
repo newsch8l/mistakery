@@ -52,14 +52,6 @@ function b3EntryState(id = 'OPEN_06') {
   return state;
 }
 
-function startAuthorizedB3(queuedCardId = 'AGENT_01') {
-  const state = stateAt('B3_SALES_PRESSURE_SEED');
-  state.flags = ['sales_outreach_started'];
-  state.queuedCardId = queuedCardId;
-  state.queuedCardIds = [queuedCardId];
-  state.queuedBoundary = { id: 'agents_entry_seed', before: 'OPEN_06', after: queuedCardId };
-  return choose(state, 'left');
-}
 
 test('production deck contains no rejected G2 cards, flags or conditional data', () => {
   const ids = new Set(deck.cards.map((item) => item.id));
