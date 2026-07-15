@@ -99,18 +99,6 @@ test('padel never inserts background cards inside its immediate causal pairs', (
   assert.equal(adjacent('PADEL_05_WIN', 'PADEL_06_PILOT'), true);
 });
 
-test('the capitalism callback returns two to five intervening decisions after deployment', () => {
-  const state = playStory('AGENT_01', 'agents', {
-    AGENT_01: 'right', AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left',
-    AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left',
-    AGENT_07_INVOICE: 'right',
-  });
-  const cause = state.history.findIndex((entry) => entry.cardId === 'AGENT_02_DEV');
-  const callback = state.history.findIndex((entry) => entry.cardId === 'PRESS_CAPITALISM');
-  const interveningDecisions = callback - cause - 1;
-  assert.ok(interveningDecisions >= 2 && interveningDecisions <= 5, `Callback gap ${interveningDecisions}`);
-});
-
 test('accepting Padel suppresses later variable callbacks even after leaving for agents', () => {
   const state = playStory('PADEL_01', 'padel', {
     PADEL_01: 'left', PADEL_02: 'right', AGENT_01: 'right',

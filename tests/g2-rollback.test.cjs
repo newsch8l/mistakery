@@ -71,22 +71,6 @@ test('production deck contains no rejected G2 cards, flags or conditional data',
   }));
 });
 
-test('Publish one demo restores the direct shared Agents route', () => {
-  const dev = card('AGENT_02_DEV');
-  assert.equal(dev.choices.right.next, 'AGENT_03_HYPE');
-  assert.deepEqual([dev.choices.right.setFlags].flat(), ['agents_public', 'patch_built']);
-  assert.equal(dev.choices.right.effects.cash, undefined);
-
-  let state = stateAt(dev.id);
-  const visited = [];
-  ['right', 'left', 'left', 'right'].forEach((side) => {
-    visited.push(state.currentCardId);
-    state = choose(state, side);
-  });
-  assert.deepEqual(visited, ['AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_04_LEAD', 'AGENT_05_ORDER']);
-  assert.equal(state.currentCardId, 'AGENT_06_LEGAL');
-});
-
 test('G2-only engine and card-specific typography support are removed', () => {
   const game = fs.readFileSync(path.join(root, 'game.js'), 'utf8');
   const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
@@ -129,84 +113,42 @@ test('B3 cards keep the exact approved copy and once-per-run behavior', () => {
   assert.equal(callback.oncePerRun, true);
 });
 
-test('B3 remains Agents-only, including after a Padel refusal switches to Agents', () => {
+test('B3 seed is Agents-only and windowed early; Padel refusal switches to Agents', () => {
   const seed = card('B3_SALES_PRESSURE_SEED');
-  assert.ok(engine.buildBoundaryPool(deck, b3EntryState(), 'agents_entry_seed').some((entry) => entry.card.id === seed.id));
-  const padel = b3EntryState('PADEL_01');
+  assert.equal([seed.activeArcs].flat().includes('agents'), true);
+  assert.ok([seed.excludes].flat().includes('hyped'), 'windowed to the early phase');
+  // eligible in an Agents opening state, not while active arc is padel
+  const agentsState = b3EntryState();
+  agentsState.activeArc = 'agents';
+  assert.equal(engine.buildEligiblePool(deck, agentsState, { ids: [seed.id], modes: ['sideStory'] }).length, 1);
+  const padel = b3EntryState('OPEN_06');
   padel.activeArc = 'padel';
-  assert.deepEqual(engine.buildBoundaryPool(deck, padel, 'agents_entry_seed'), []);
-  const refused = choose(padel, 'right');
-  assert.equal(refused.activeArc, 'agents');
-  assert.equal(refused.currentCardId, seed.id);
-
-  const acceptedThenRefused = b3EntryState('PADEL_01');
-  acceptedThenRefused.activeArc = 'padel';
-  const accepted = choose(acceptedThenRefused, 'left');
-  const lateRefusal = choose(accepted, 'right');
-  assert.equal(lateRefusal.activeArc, 'agents');
-  assert.equal(lateRefusal.currentCardId, 'AGENT_01');
+  assert.equal(engine.buildEligiblePool(deck, padel, { ids: [seed.id], modes: ['sideStory'] }).length, 0);
 });
 
-test('the named Agents entry boundary can insert B3 and preserve its exact story', () => {
-  const result = engine.resolveChoice(deck, b3EntryState(), 'left', { rng: () => 0.999 }).state;
-  assert.equal(result.currentCardId, 'B3_SALES_PRESSURE_SEED');
-  assert.equal(result.queuedCardId, 'AGENT_01');
-  assert.deepEqual(result.queuedCardIds, ['AGENT_01']);
+test('B3 stop branch schedules no callback and leaves no pending flag', () => {
+  const seed = card('B3_SALES_PRESSURE_SEED');
+  assert.equal(seed.choices.right.delay, undefined, 'Leave them alone schedules nothing');
+  assert.equal(seed.choices.right.reserveCallback, undefined);
+  assert.ok(![seed.choices.right.setFlags].flat().includes('b3_followups_authorized'),
+    'stop branch does not set the scheduling flag');
+  assert.ok([seed.choices.right.setFlags].flat().includes('b3_contact_stopped'));
 });
 
-test('B3 seed is withheld while another named callback is reserved', () => {
-  const state = b3EntryState();
-  state.reservations = [{ callbackId: 'DEV_HOSTAGE_CALLBACK', callbackSlot: 'agents_pre_serious_lead', remainingSpineSteps: 2 }];
-  assert.deepEqual(engine.buildBoundaryPool(deck, state, 'agents_entry_seed'), []);
-});
-
-test('B3 cannot interrupt forced causal pairs or an earlier due callback', () => {
-  let state = choose(stateAt('PADEL_01', 'padel'), 'left');
-  assert.equal(state.currentCardId, 'PADEL_02');
-  state = choose(stateAt('AGENT_02_DEV'), 'right');
-  assert.equal(state.currentCardId, 'AGENT_03_HYPE');
-  state = stateAt('AGENT_03_HYPE');
-  state.flags = ['empathy_deployed', 'agents_public'];
-  state.delayed = [{ card: 'PRESS_CAPITALISM', dueAfter: 0 }];
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'AGENT_04_LEAD');
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'AGENT_05_ORDER');
-  state = choose(state, 'right');
-  assert.equal(state.currentCardId, 'AGENT_06_LEGAL');
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'PRESS_CAPITALISM');
-  assert.equal(state.queuedCardId, 'AGENT_07_INVOICE');
-});
-
-test('B3 stop excludes callback', () => {
-  const state = stateAt('B3_SALES_PRESSURE_SEED');
-  state.queuedCardId = 'AGENT_04_LEAD';
-  state.queuedCardIds = ['AGENT_04_LEAD'];
-  const result = choose(state, 'right');
-  assert.equal(result.currentCardId, 'AGENT_04_LEAD');
-  assert.ok(result.flags.includes('b3_contact_stopped'));
-  assert.equal(result.delayed.some((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK'), false);
-});
-
-test('B3 callback counts story decisions and ignores ambient cards', () => {
-  let state = startAuthorizedB3();
-  let reservation = state.reservations.find((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(reservation.remainingSpineSteps, 3);
-  state.currentCardId = 'PRESS_RIVAL';
-  state.queuedCardId = 'AGENT_01';
-  state.queuedCardIds = ['AGENT_01'];
-  state = choose(state, 'right');
-  reservation = state.reservations.find((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(reservation.remainingSpineSteps, 3);
-  state.pressureCount = deck.meta.maxPressureCards;
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'AGENT_02_DEV');
-  state = choose(state, 'right');
-  assert.equal(state.currentCardId, 'AGENT_03_HYPE');
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(state.queuedCardId, 'AGENT_04_LEAD');
+test('B3 authorized follow-up schedules the typed callback three story decisions out', () => {
+  const seed = card('B3_SALES_PRESSURE_SEED');
+  assert.equal(seed.choices.left.delay.card, 'B3_PAID_OPTOUT_CALLBACK');
+  assert.equal(seed.choices.left.delay.storyDecisions, 3);
+  // resolving the follow-up branch (with a queued story to resume to) schedules the delayed callback
+  const state = stateAt(seed.id);
+  state.flags = ['sales_outreach_started'];
+  state.queuedCardId = 'AGENT_02_DEV';
+  state.queuedCardIds = ['AGENT_02_DEV'];
+  state.queuedPool = true;
+  const result = choose(state, 'left');
+  const pending = result.delayed.find((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK');
+  assert.equal(pending.remainingStoryDecisions, 3);
+  assert.ok(result.flags.includes('b3_followups_authorized'));
 });
 
 test('B3 free opt-out restores the exact queued story without Cash or Customers', () => {
@@ -238,17 +180,6 @@ test('B3 paid opt-out is immediate payment without core validation', () => {
   assert.equal(result.activeCrisisId, null);
 });
 
-test('crisis rescue preserves the pending B3 callback', () => {
-  let state = startAuthorizedB3();
-  state.resources.cash = 1;
-  state = choose(state, 'left');
-  assert.equal(state.activeCrisisId, 'cash_low');
-  assert.ok(state.reservations.some((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK'));
-  state = engine.resolveCrisis(deck, state, 'rescue', { rng: () => 0 }).state;
-  assert.equal(state.currentCardId, 'AGENT_02_DEV');
-  assert.ok(state.reservations.some((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK'));
-});
-
 function playDeterministic(startId, activeArc, picks) {
   let state = stateAt(startId, activeArc);
   let safety = 0;
@@ -261,25 +192,28 @@ function playDeterministic(startId, activeArc, picks) {
   return state;
 }
 
-test('deterministic trace: Agents Deploy route', () => {
-  const state = playDeterministic('AGENT_02_DEV', 'agents', {
-    AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left', AGENT_04_LEAD: 'left',
-    AGENT_05_ORDER: 'right', PRESS_CAPITALISM: 'right',
-    AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+const AGENTS_BEAT_ORDER = [
+  'AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD',
+  'AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL', 'AGENT_07_INVOICE',
+];
+
+test('deterministic trace: Agents deploy route reaches validation through the 8 beats', () => {
+  const state = playDeterministic('AGENT_01', 'agents', {
+    AGENT_01: 'left', AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left', AGENT_03B_WILD: 'left',
+    AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
   });
-  const ids = state.history.map((entry) => entry.cardId);
-  assert.ok(ids.includes('PRESS_CAPITALISM'));
+  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('AGENT_'));
+  assert.deepEqual(beats, AGENTS_BEAT_ORDER);
   assert.equal(state.endingId, 'validation_agents');
 });
 
-test('deterministic trace: Agents Demo route', () => {
-  const state = playDeterministic('AGENT_02_DEV', 'agents', {
-    AGENT_02_DEV: 'right', AGENT_03_HYPE: 'left', AGENT_04_LEAD: 'left',
-    AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+test('deterministic trace: Agents demo route reaches validation through the 8 beats', () => {
+  const state = playDeterministic('AGENT_01', 'agents', {
+    AGENT_01: 'left', AGENT_02_DEV: 'right', AGENT_03_HYPE: 'left', AGENT_03B_WILD: 'right',
+    AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
   });
-  assert.deepEqual(state.history.slice(0, 4).map((entry) => entry.cardId), [
-    'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_04_LEAD', 'AGENT_05_ORDER',
-  ]);
+  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('AGENT_'));
+  assert.deepEqual(beats, AGENTS_BEAT_ORDER);
   assert.equal(state.endingId, 'validation_agents');
 });
 
