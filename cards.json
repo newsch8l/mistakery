@@ -171,7 +171,7 @@
       }
     },
     {
-      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hyped"], "oncePerRun": true,
+      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hyped"], "oncePerRun": true, "excludesPendingCallbacks": true,
       "text": "Chief, holy shit: our first buyer.\n@head_of_agile wants 500 agents by Friday.\nI offered dev’s passport as collateral.",
       "actor_action": "Sales announces the first credible buyer before the customer appears.",
       "player_decision": "Book a proper call or quote the full order immediately.",

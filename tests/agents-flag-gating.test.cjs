@@ -57,6 +57,36 @@ test('arc-beat pool only contains cards of the active arc', () => {
   assert.equal(nonAgents.length, 0, 'pool must be scoped to the active arc');
 });
 
+// Glue-entry gating (Codex F1 scheme): the customer-conversation glue must not
+// begin while any callback is still pending — so callbacks always resolve during
+// the free-beat phase and the 4->7 chain stays uninterrupted.
+test('glue-entry beat is blocked while any callback is pending', () => {
+  const state = agentsState(['empathy_demanded', 'patch_built', 'hyped']);
+  state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 2 }];
+  const ids = engine.eligibleArcBeatPool(deck, state).map((entry) => entry.card.id);
+  assert.ok(!ids.includes('AGENT_04_LEAD'),
+    'AGENT_04 (glue entry) must exclude pending callbacks');
+});
+
+// Anti-deadlock (Codex empty-pool scheme): if the arc pool is empty only because
+// the glue entry is waiting on a pending callback, force-deliver that callback
+// instead of ending the run with no_proof.
+test('a stuck arc pool with a pending callback delivers it, not no_proof', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'AGENT_03_HYPE';
+  state.activeArc = 'agents';
+  state.flags = ['empathy_demanded', 'patch_built'];
+  state.shown = ['AGENT_01', 'AGENT_02_DEV'];
+  state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
+  state.pressureCount = deck.meta.maxPressureCards;
+  const res = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 });
+  assert.equal(res.state.gameOver, false, 'must not end while a callback is pending');
+  assert.equal(res.state.currentCardId, 'PAYROLL_RESTRICTED_AI_CALLBACK',
+    'stuck pool must force-deliver the pending callback');
+});
+
 // A free (pool) beat has no hardcoded next; the engine advances to the next
 // eligible arc beat through the pool. Ambient is suppressed here for a
 // deterministic assertion by exhausting the pressure budget.

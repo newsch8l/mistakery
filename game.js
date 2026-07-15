@@ -295,6 +295,16 @@
     return null;
   }
 
+  function takeEarliestPendingCallback(deck, state) {
+    const idx = (state.delayed || []).findIndex((entry) => {
+      const card = cardById(deck, entry.card);
+      return card && cardIsEligible(deck, card, state);
+    });
+    if (idx < 0) return null;
+    const [entry] = state.delayed.splice(idx, 1);
+    return cardById(deck, entry.card);
+  }
+
   function pickPressureCard(deck, state, rng) {
     if (schedulerIsLocked(deck, state)) return null;
     const dueCallback = takeDueCallback(deck, state);
@@ -510,6 +520,18 @@
         ? eligibleArcBeatPool(deck, state)
         : eligibleStoryPool(deck, state, nextIds);
       if (!storyPool.length) {
+        // Pool mode only: the arc pool can be empty transiently while a callback
+        // is pending (the glue entry is gated by excludesPendingCallbacks).
+        // Deliver the callback rather than ending with no_proof. Weighted mode
+        // keeps its original behavior untouched.
+        if (transition.mode === 'pool') {
+          const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
+          if (stalled) {
+            state.currentCardId = stalled.id;
+            if (stalled.kind === 'pressure') state.pressureCount += 1;
+            return;
+          }
+        }
         endWithoutProof(state);
         return;
       }
