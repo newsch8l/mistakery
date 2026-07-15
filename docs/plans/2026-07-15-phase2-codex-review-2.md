@@ -39,6 +39,22 @@ Proven by experiment: removing the `AGENT_02_DEV` → `PRESS_CAPITALISM` delay c
 4. F5 policy "allow overlap, all close before glue": any scenario where multiple pending callbacks + the F1 gate can still starve a beat or reorder a causal pair?
 5. Is `excludesPendingCallbacks` on the single glue-entry beat the right granularity, or should the whole glued chain be marked so a mid-glue reservation (if one ever existed) can't slip in?
 
+## Статус после инкорпорации (обновлено)
+
+Все 5 находок round 2 приняты; два P1 воспроизведены эмпирически. Сделано:
+
+- **Finding 3 (кризис теряет pool-континуацию) — ИСПРАВЛЕНО.** `pendingContinuation` сохраняется для pool/weighted даже с пустым `next`; rescue возобновляет выбор из пула. Тест `a rescued crisis on a pool beat resumes the arc pool`. Это был предсуществующий баг pool-режима.
+- **Finding 1 (force-delivered callback → no_proof) — ИСПРАВЛЕНО.** Введён `state.queuedPool`: после вставленного/force-доставленного callback движок возобновляется через пул. Тест `a force-delivered callback resumes the arc pool afterwards`.
+- **Finding 5 / F3 (resume по stale-снимку) — ИСПРАВЛЕНО.** Pool-origin resume пересобирает `eligibleArcBeatPool` вместо списка id (ветка `transition.pool`).
+- Суита: 18→16 (два старых crisis/Package-A теста позеленели попутно), новых поломок нет. Новые инварианты 10/10.
+
+Осталось по round 2 (в шаге миграции, порядок Codex):
+- **Finding 2** — каждый мигрируемый callback пометить `callbackOnly:true` + причинные `requires` (иначе течёт в side-story пул после снятия scheduler-меты).
+- **Finding 4** — политика для pending-callback, ставшего ineligible (не должен вечно блокировать склейку → no_proof).
+- **answer-3** — force-delivery доставляет только `callbackOnly:true` + `kind:sideStory` (никогда non-due pressure). Добавляю вместе с 2c, когда `PRESS_CAPITALISM` уже повышен (иначе создаёт finding-4 deadlock с ним).
+
+Принятый порядок Codex: (1) generic pool continuation ✅ → (2) 2c promote PRESS_CAPITALISM → (3) migrate+type callbacks → (4) wire gate → (5) remove machinery.
+
 ## How to run
 - Full suite: `node --test`
 - New invariants: `node --test tests/agents-flag-gating.test.cjs`

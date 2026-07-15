@@ -57,6 +57,24 @@ test('arc-beat pool only contains cards of the active arc', () => {
   assert.equal(nonAgents.length, 0, 'pool must be scoped to the active arc');
 });
 
+// Codex round-2 finding 3: a pool beat has no hardcoded next, so a crisis
+// triggered by its choice must still preserve the pool continuation — a rescued
+// crisis must resume arc selection, not strand the run on the resolved beat.
+test('a rescued crisis on a pool beat resumes the arc pool', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'AGENT_02_DEV';
+  state.activeArc = 'agents';
+  state.flags = ['empathy_demanded'];
+  state.shown = ['AGENT_01'];
+  state.resources = { cash: 1, team: 80, customers: 50, founder: 60 };
+  const afterChoice = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 }).state;
+  assert.equal(afterChoice.activeCrisisId, 'cash_low', 'setup: the pool choice must trigger a crisis');
+  const rescued = engine.resolveCrisis(deck, afterChoice, 'rescue', { rng: () => 0.01 }).state;
+  assert.equal(rescued.gameOver, false, 'a successful rescue must not end the run');
+  assert.equal(rescued.currentCardId, 'AGENT_03_HYPE',
+    'pool continuation must survive the crisis and advance to the next gated beat');
+});
+
 // Glue-entry gating (Codex F1 scheme): the customer-conversation glue must not
 // begin while any callback is still pending — so callbacks always resolve during
 // the free-beat phase and the 4->7 chain stays uninterrupted.
@@ -85,6 +103,25 @@ test('a stuck arc pool with a pending callback delivers it, not no_proof', () =>
   assert.equal(res.state.gameOver, false, 'must not end while a callback is pending');
   assert.equal(res.state.currentCardId, 'PAYROLL_RESTRICTED_AI_CALLBACK',
     'stuck pool must force-deliver the pending callback');
+});
+
+// Codex round-2 finding 1: after a force-delivered callback is resolved, the arc
+// must resume through the pool (rebuilt), not dead-end in no_proof.
+test('a force-delivered callback resumes the arc pool afterwards', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'AGENT_03_HYPE';
+  state.activeArc = 'agents';
+  state.flags = ['empathy_demanded', 'patch_built'];
+  state.shown = ['AGENT_01', 'AGENT_02_DEV'];
+  state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
+  state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
+  state.pressureCount = deck.meta.maxPressureCards;
+  const s1 = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 }).state;
+  assert.equal(s1.currentCardId, 'PAYROLL_RESTRICTED_AI_CALLBACK', 'setup: callback force-delivered');
+  const s2 = engine.resolveChoice(deck, s1, 'left', { rng: () => 0.5 }).state;
+  assert.equal(s2.gameOver, false, 'resolving the callback must not end the run');
+  assert.equal(s2.currentCardId, 'AGENT_04_LEAD',
+    'arc must resume to the glue entry once the callback clears the pending gate');
 });
 
 // A free (pool) beat has no hardcoded next; the engine advances to the next

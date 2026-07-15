@@ -70,6 +70,7 @@
       activeArc: null,
       queuedCardId: null,
       queuedCardIds: [],
+      queuedPool: false,
       queuedBoundary: null,
       pendingContinuation: null,
       pressureCount: 0,
@@ -501,6 +502,25 @@
     }
 
     if (transition.mode === 'resume') {
+      if (transition.pool) {
+        // Pool-origin resume rebuilds the arc pool from current flags/resources
+        // (Codex F3) instead of a stale id snapshot, so a beat unlocked by the
+        // inserted card is seen and a completed one is dropped.
+        const selected = weightedPoolPick(eligibleArcBeatPool(deck, state), rng);
+        if (selected) {
+          state.currentCardId = selected.id;
+          return;
+        }
+        const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
+        if (stalled) {
+          state.queuedPool = true;
+          state.currentCardId = stalled.id;
+          if (stalled.kind === 'pressure') state.pressureCount += 1;
+          return;
+        }
+        endWithoutProof(state);
+        return;
+      }
       const preferred = cardById(deck, transition.preferredId);
       if (preferred && cardIsEligible(deck, preferred, state)) {
         state.currentCardId = preferred.id;
@@ -527,6 +547,7 @@
         if (transition.mode === 'pool') {
           const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
           if (stalled) {
+            state.queuedPool = true;
             state.currentCardId = stalled.id;
             if (stalled.kind === 'pressure') state.pressureCount += 1;
             return;
@@ -541,6 +562,7 @@
         const queuedStory = weightedPoolPick(storyPool, rng);
         state.queuedCardId = queuedStory.id;
         state.queuedCardIds = storyPool.map((entry) => entry.card.id);
+        if (transition.mode === 'pool') state.queuedPool = true;
         state.currentCardId = dueCallback.id;
         if (dueCallback.kind === 'pressure') state.pressureCount += 1;
         return;
@@ -566,6 +588,7 @@
         const queuedStory = weightedPoolPick(storyPool, rng);
         state.queuedCardId = queuedStory.id;
         state.queuedCardIds = storyPool.map((entry) => entry.card.id);
+        if (transition.mode === 'pool') state.queuedPool = true;
         if (continuationMode(selected) === 'ambient') state.pressureCount += 1;
       }
       state.currentCardId = selected.id;
@@ -606,11 +629,12 @@
     const choice = card.choices[side];
     if (!choice) throw new Error(`Missing ${side} choice on ${card.id}`);
 
-    const resume = (['pressure', 'sideStory'].includes(card.kind) || schedulerRole(card)) && state.queuedCardId
+    const resume = (['pressure', 'sideStory'].includes(card.kind) || schedulerRole(card)) && (state.queuedCardId || state.queuedPool)
       ? {
         mode: 'resume',
+        pool: Boolean(state.queuedPool),
         preferredId: state.queuedCardId,
-        ids: state.queuedCardIds.length ? [...state.queuedCardIds] : [state.queuedCardId],
+        ids: state.queuedCardIds.length ? [...state.queuedCardIds] : (state.queuedCardId ? [state.queuedCardId] : []),
         skipScheduler: Boolean(state.queuedBoundary),
       }
       : null;
@@ -618,6 +642,7 @@
       state.queuedCardId = null;
       state.queuedCardIds = [];
       state.queuedBoundary = null;
+      state.queuedPool = false;
     }
 
     const deltas = applyEffects(deck, state, card, choice);
@@ -663,7 +688,11 @@
     const crisisId = boundaryCrisisId || forcedCrisisId;
     if (crisisId) {
       state.activeCrisisId = crisisId;
-      state.pendingContinuation = nextIds.length
+      // Pool/weighted beats have no explicit next, but their continuation must
+      // still survive a rescued crisis — otherwise the run strands on the
+      // already-resolved beat. Preserve the transition even with an empty id list.
+      const poolLikeContinuation = transition.mode === 'pool' || transition.mode === 'weighted';
+      state.pendingContinuation = (nextIds.length || poolLikeContinuation)
         ? { ...transition, ids: [...nextIds] }
         : null;
       state.postCrisisOutcome = outcome;
