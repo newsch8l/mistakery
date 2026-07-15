@@ -138,7 +138,7 @@
     },
 
     {
-      "id": "AGENT_01", "kind": "story", "arc": "agents", "arcStep": 1, "source": "@unicorn_hunter", "continuation": "weighted", "opensPressureSlot": true,
+      "id": "AGENT_01", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 1, "source": "@unicorn_hunter", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true,
       "text": "YOU STILL NEED A BUYER.\nAI EMPATHY IS MAKING IDIOTS RICH.\nPUT A SOUL IN B2BUYERSPYER OR ASK MOM FOR MONEY.",
       "actor_action": "The investor orders an empathy modification to the existing product.",
       "player_decision": "Build the empathy layer carefully or force the same real feature out tonight.",
@@ -146,32 +146,32 @@
         { "requires": ["payroll_offer_compute_only"], "effects": { "cash": 1 }, "effect_reason": { "cash": "Cloud credits offset one point of the existing compute expense." } }
       ],
       "choices": {
-        "left": { "label": "Build it properly", "lowLabel": "Build it carefully", "highLabel": "Create digital life", "effects": { "cash": -2, "team": -4, "founder": 4 }, "effect_reason": { "cash": "The empathy build consumes compute and tools.", "team": "The developer receives a large unplanned feature.", "founder": "Creating synthetic life feels historic." }, "next": "AGENT_02_DEV" },
-        "right": { "label": "Ship it tonight", "lowLabel": "Rush it tonight", "highLabel": "Awaken it tonight", "effects": { "cash": -1, "team": -7, "founder": 6 }, "effect_reason": { "cash": "The rushed feature still consumes compute.", "team": "The team must ship synthetic empathy overnight.", "founder": "Shipping artificial souls overnight feels historic." }, "next": "AGENT_02_DEV" }
+        "left": { "label": "Build it properly", "lowLabel": "Build it carefully", "highLabel": "Create digital life", "effects": { "cash": -2, "team": -4, "founder": 4 }, "effect_reason": { "cash": "The empathy build consumes compute and tools.", "team": "The developer receives a large unplanned feature.", "founder": "Creating synthetic life feels historic." }, "setFlags": ["empathy_demanded"] },
+        "right": { "label": "Ship it tonight", "lowLabel": "Rush it tonight", "highLabel": "Awaken it tonight", "effects": { "cash": -1, "team": -7, "founder": 6 }, "effect_reason": { "cash": "The rushed feature still consumes compute.", "team": "The team must ship synthetic empathy overnight.", "founder": "Shipping artificial souls overnight feels historic." }, "setFlags": ["empathy_demanded"] }
       }
     },
     {
-      "id": "AGENT_02_DEV", "kind": "story", "arc": "agents", "arcStep": 2, "source": "@error404", "continuation": "forced",
+      "id": "AGENT_02_DEV", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 2, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["empathy_demanded"],
       "text": "empathy patch is ready\nit apologizes to every lead for capitalism\nand refuses calls during therapy",
       "actor_action": "The developer implements the empathy patch and explains its behavior.",
       "player_decision": "Deploy the patch or publish one controlled demo.",
       "choices": {
-        "left": { "label": "Deploy the patch", "lowLabel": "Deploy carefully", "highLabel": "Awaken production", "effects": { "cash": -1, "team": -4, "founder": 3 }, "effect_reason": { "cash": "Production deployment increases compute use.", "team": "The team must support unstable emotional agents.", "founder": "A live AI workforce feels like a breakthrough." }, "setFlags": ["empathy_deployed", "agents_public"], "delay": { "card": "PRESS_CAPITALISM", "storyDecisions": 2 }, "next": "AGENT_03_HYPE" },
-        "right": { "label": "Publish one demo", "lowLabel": "Show one demo", "highLabel": "Stage the miracle", "effects": { "team": 2, "founder": -2 }, "effect_reason": { "team": "Keeping the patch out of production reduces support work.", "founder": "A controlled demo feels less revolutionary." }, "setFlags": "agents_public", "next": "AGENT_03_HYPE" }
+        "left": { "label": "Deploy the patch", "lowLabel": "Deploy carefully", "highLabel": "Awaken production", "effects": { "cash": -1, "team": -4, "founder": 3 }, "effect_reason": { "cash": "Production deployment increases compute use.", "team": "The team must support unstable emotional agents.", "founder": "A live AI workforce feels like a breakthrough." }, "setFlags": ["empathy_deployed", "agents_public", "patch_built"], "delay": { "card": "PRESS_CAPITALISM", "storyDecisions": 2 } },
+        "right": { "label": "Publish one demo", "lowLabel": "Show one demo", "highLabel": "Stage the miracle", "effects": { "team": 2, "founder": -2 }, "effect_reason": { "team": "Keeping the patch out of production reduces support work.", "founder": "A controlled demo feels less revolutionary." }, "setFlags": ["agents_public", "patch_built"] }
       }
     },
     {
-      "id": "AGENT_03_HYPE", "kind": "story", "arc": "agents", "arcStep": 3, "source": "@hype_queen", "continuation": "weighted", "opensPressureSlot": true,
+      "id": "AGENT_03_HYPE", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 3, "source": "@hype_queen", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "requires": ["patch_built"],
       "text": "the demo is trending 💅\ni called them emotionally abandoned AI employees\nenterprise buyers want the deck",
       "actor_action": "Marketing turns the existing demo into an attention campaign.",
       "player_decision": "Amplify the positioning or correct the exaggeration.",
       "choices": {
-        "left": { "label": "Boost the post", "lowLabel": "Keep the hype", "highLabel": "Own the movement", "effects": { "team": -3, "customers": 7, "founder": 5 }, "effect_reason": { "team": "The team must answer a wave of enterprise questions.", "customers": "Real enterprise prospects request the deck.", "founder": "Public attention inflates confidence." }, "next": "AGENT_04_LEAD" },
-        "right": { "label": "Add disclaimer", "lowLabel": "Add one disclaimer", "highLabel": "Educate the market", "effects": { "team": 3, "customers": -4, "founder": -4 }, "effect_reason": { "team": "The team appreciates accurate product claims.", "customers": "Some interested prospects leave after reading the disclaimer.", "founder": "Correcting viral hype feels like voluntary failure." }, "next": "AGENT_04_LEAD" }
+        "left": { "label": "Boost the post", "lowLabel": "Keep the hype", "highLabel": "Own the movement", "effects": { "team": -3, "customers": 7, "founder": 5 }, "effect_reason": { "team": "The team must answer a wave of enterprise questions.", "customers": "Real enterprise prospects request the deck.", "founder": "Public attention inflates confidence." }, "setFlags": ["hyped"] },
+        "right": { "label": "Add disclaimer", "lowLabel": "Add one disclaimer", "highLabel": "Educate the market", "effects": { "team": 3, "customers": -4, "founder": -4 }, "effect_reason": { "team": "The team appreciates accurate product claims.", "customers": "Some interested prospects leave after reading the disclaimer.", "founder": "Correcting viral hype feels like voluntary failure." }, "setFlags": ["hyped"] }
       }
     },
     {
-      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcStep": 4, "source": "@bigdeals", "continuation": "forced",
+      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hyped"], "oncePerRun": true,
       "text": "Chief, holy shit: our first buyer.\n@head_of_agile wants 500 agents by Friday.\nI offered dev’s passport as collateral.",
       "actor_action": "Sales announces the first credible buyer before the customer appears.",
       "player_decision": "Book a proper call or quote the full order immediately.",

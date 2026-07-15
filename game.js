@@ -438,8 +438,13 @@
     return pool.length ? pool : eligibleFallbackPool(deck, state);
   }
 
+  function eligibleArcBeatPool(deck, state) {
+    return buildEligiblePool(deck, state, { includeScheduled: true })
+      .filter((entry) => entry.card.arcBeat === true && entry.card.arc === state.activeArc);
+  }
+
   function transitionFor(card, openPressureSlot) {
-    if (card.continuation === 'forced' || card.continuation === 'weighted') {
+    if (card.continuation === 'forced' || card.continuation === 'weighted' || card.continuation === 'pool') {
       return { mode: card.continuation };
     }
     return { mode: openPressureSlot ? 'legacy' : 'forced' };
@@ -500,8 +505,10 @@
       return;
     }
 
-    if (transition.mode === 'weighted') {
-      const storyPool = eligibleStoryPool(deck, state, nextIds);
+    if (transition.mode === 'weighted' || transition.mode === 'pool') {
+      const storyPool = transition.mode === 'pool'
+        ? eligibleArcBeatPool(deck, state)
+        : eligibleStoryPool(deck, state, nextIds);
       if (!storyPool.length) {
         endWithoutProof(state);
         return;
@@ -725,6 +732,7 @@
     getAffectedResources,
     buildEligiblePool,
     buildBoundaryPool,
+    eligibleArcBeatPool,
     selectNextCard,
     resolveChoice,
     resolveCrisis,

@@ -74,7 +74,7 @@ test('production deck contains no rejected G2 cards, flags or conditional data',
 test('Publish one demo restores the direct shared Agents route', () => {
   const dev = card('AGENT_02_DEV');
   assert.equal(dev.choices.right.next, 'AGENT_03_HYPE');
-  assert.deepEqual([dev.choices.right.setFlags].flat(), ['agents_public']);
+  assert.deepEqual([dev.choices.right.setFlags].flat(), ['agents_public', 'patch_built']);
   assert.equal(dev.choices.right.effects.cash, undefined);
 
   let state = stateAt(dev.id);
