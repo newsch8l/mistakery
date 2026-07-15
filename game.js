@@ -36,6 +36,12 @@
           if (!ids.has(id)) errors.push(`Card ${card.id} points to missing ${id}.`);
         });
         if (choice && choice.delay && !ids.has(choice.delay.card)) errors.push(`Card ${card.id} delays missing ${choice.delay.card}.`);
+        if (choice && choice.delay && ids.has(choice.delay.card)) {
+          const target = deck.cards.find((item) => item.id === choice.delay.card);
+          if (!target || target.callbackOnly !== true || target.kind !== 'sideStory') {
+            errors.push(`Card ${card.id} delays ${choice.delay.card} which is not a callbackOnly sideStory callback.`);
+          }
+        }
         if (choice && choice.reserveCallback && !ids.has(choice.reserveCallback.callbackId)) {
           errors.push(`Card ${card.id} reserves missing ${choice.reserveCallback.callbackId}.`);
         }
@@ -297,9 +303,12 @@
   }
 
   function takeEarliestPendingCallback(deck, state) {
+    // Force-delivery only ever handles typed callbacks (callbackOnly side-story),
+    // never a pressure or ordinary story card slipped in by a mistaken delay.
     const idx = (state.delayed || []).findIndex((entry) => {
       const card = cardById(deck, entry.card);
-      return card && cardIsEligible(deck, card, state);
+      return card && card.callbackOnly === true && card.kind === 'sideStory'
+        && cardIsEligible(deck, card, state);
     });
     if (idx < 0) return null;
     const [entry] = state.delayed.splice(idx, 1);
@@ -691,7 +700,9 @@
       // Pool/weighted beats have no explicit next, but their continuation must
       // still survive a rescued crisis — otherwise the run strands on the
       // already-resolved beat. Preserve the transition even with an empty id list.
-      const poolLikeContinuation = transition.mode === 'pool' || transition.mode === 'weighted';
+      const poolLikeContinuation = transition.mode === 'pool'
+        || transition.mode === 'weighted'
+        || (transition.mode === 'resume' && transition.pool);
       state.pendingContinuation = (nextIds.length || poolLikeContinuation)
         ? { ...transition, ids: [...nextIds] }
         : null;

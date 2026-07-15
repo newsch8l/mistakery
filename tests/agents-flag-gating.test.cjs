@@ -57,6 +57,22 @@ test('arc-beat pool only contains cards of the active arc', () => {
   assert.equal(nonAgents.length, 0, 'pool must be scoped to the active arc');
 });
 
+// Codex round-3 finding 3: the typed-callback contract must be enforced by the
+// engine, not just a data convention — a delay may only target a callbackOnly
+// side-story, so a mistaken delay can never force-deliver a pressure/story card.
+test('deck validation rejects a delay target that is not a typed callbackOnly side-story', () => {
+  const bad = JSON.parse(JSON.stringify(deck));
+  const seed = bad.cards.find((c) => c.id === 'PAYROLL_RESTRICTED_AI_SEED');
+  seed.choices.left.delay = { card: 'AGENT_04_LEAD', storyDecisions: 2 }; // a story beat, not a callback
+  const errors = engine.validateDeck(bad);
+  assert.ok(errors.some((e) => /AGENT_04_LEAD/.test(e) && /callbackOnly|callback/i.test(e)),
+    'must flag a delay pointing at a non-typed card');
+});
+
+test('the canonical deck satisfies the typed-callback contract', () => {
+  assert.deepEqual(engine.validateDeck(deck), [], 'canonical deck must validate clean');
+});
+
 // Codex round-2 finding 3: a pool beat has no hardcoded next, so a crisis
 // triggered by its choice must still preserve the pool continuation — a rescued
 // crisis must resume arc selection, not strand the run on the resolved beat.
@@ -75,6 +91,24 @@ test('a rescued crisis on a pool beat resumes the arc pool', () => {
     'pool continuation must survive the crisis and advance to the next gated beat');
 });
 
+// Codex round-3 finding 1: a crisis caused by the force-delivered callback itself
+// must still resume the arc pool (pool-origin resume, not just pool/weighted).
+test('a crisis caused by a force-delivered callback still resumes the arc pool', () => {
+  const state = engine.startRun(deck);
+  state.currentCardId = 'PAYROLL_RESTRICTED_AI_CALLBACK';
+  state.activeArc = 'agents';
+  state.flags = ['empathy_demanded', 'patch_built', 'hyped', 'hype_consequence_seen', 'payroll_seeded', 'agents_positioned_ethical'];
+  state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD'];
+  state.queuedPool = true; // as set by force-delivery
+  state.resources = { cash: 60, team: 1, customers: 50, founder: 60 };
+  const afterChoice = engine.resolveChoice(deck, state, 'left', { rng: () => 0.5 }).state;
+  assert.equal(afterChoice.activeCrisisId, 'team_low', 'setup: the callback choice must trigger a crisis');
+  const rescued = engine.resolveCrisis(deck, afterChoice, 'rescue', { rng: () => 0.01 }).state;
+  assert.equal(rescued.gameOver, false, 'a successful rescue must not end the run');
+  assert.equal(rescued.currentCardId, 'AGENT_04_LEAD',
+    'pool-origin resume continuation must survive a crisis on the force-delivered callback');
+});
+
 // Step 2.2 migration (Codex F2/F4): side-story callbacks move off the boundary/
 // reservation machinery onto a typed delayed callback — callbackOnly + a causal
 // requires flag the seed sets, so the callback can never leak into the pool and
@@ -91,6 +125,43 @@ test('migrated payroll uses a typed delayed callback, not a boundary reservation
   assert.equal(cb.callbackOnly, true, 'callback is callbackOnly (Codex F2)');
   assert.ok([cb.requires].flat().includes('payroll_seeded'), 'callback requires its causal flag (Codex F4)');
   assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
+});
+
+// Codex round-3 finding 2: a seed appearing right before the glue would have its
+// callback force-delivered with zero gap. Window the payroll seed to the early
+// phase (before hype) so the delay keeps a real gap before AGENT_04.
+test('the payroll seed is windowed to the early phase (before hype)', () => {
+  const seed = deck.cards.find((c) => c.id === 'PAYROLL_RESTRICTED_AI_SEED');
+  assert.ok([seed.excludes].flat().includes('hyped'),
+    'seed must exclude hyped so it cannot appear right before the glue');
+  // concretely: not eligible once hyped, eligible before it
+  const late = agentsState(['payroll_unresolved', 'empathy_demanded', 'patch_built', 'hyped']);
+  assert.equal(eligible(late, 'PAYROLL_RESTRICTED_AI_SEED'), false, 'not eligible after hype');
+  const early = agentsState(['payroll_unresolved', 'empathy_demanded']);
+  early.resources = { cash: 15, team: 50, founder: 70, customers: 40 };
+  assert.equal(eligible(early, 'PAYROLL_RESTRICTED_AI_SEED'), true, 'eligible in the early window');
+});
+
+// Codex round-3 finding 4: a behavioral timing test for the reference module,
+// required before copying the pattern to dev-hostage and b3.
+test('payroll seed schedules exactly one callback, resumes the arc, decrements on story', () => {
+  let s = engine.startRun(deck);
+  s.currentCardId = 'PAYROLL_RESTRICTED_AI_SEED';
+  s.activeArc = 'agents';
+  s.flags = ['payroll_unresolved', 'empathy_demanded'];
+  s.queuedCardId = 'AGENT_02_DEV';
+  s.queuedCardIds = ['AGENT_02_DEV'];
+  s.queuedPool = true;
+  s.resources = { cash: 15, team: 50, founder: 70, customers: 40 };
+  s.pressureCount = deck.meta.maxPressureCards; // suppress other ambient
+  s = engine.resolveChoice(deck, s, 'left', { rng: () => 0.5 }).state;
+  assert.equal(s.delayed.length, 1, 'exactly one callback scheduled');
+  assert.equal(s.delayed[0].card, 'PAYROLL_RESTRICTED_AI_CALLBACK');
+  assert.equal(s.delayed[0].remainingStoryDecisions, 3, 'target delay of three story decisions');
+  assert.equal(s.currentCardId, 'AGENT_02_DEV', 'resumes to the queued story beat');
+  const afterStory = engine.resolveChoice(deck, s, 'left', { rng: () => 0.5 }).state;
+  assert.equal(afterStory.delayed[0] && afterStory.delayed[0].remainingStoryDecisions, 2,
+    'a story decision decrements the countdown by one');
 });
 
 // Step 2c: PRESS_CAPITALISM promoted to a spine beat AGENT_03B_WILD, sitting

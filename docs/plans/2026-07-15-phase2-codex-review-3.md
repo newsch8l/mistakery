@@ -36,6 +36,19 @@ Question D: anything wrong with migrating dev-hostage and b3 by the exact same r
 
 Old boundary/reservation/lock machinery + old Agents traces (now 8 beats) + retired `PRESS_CAPITALISM` + payroll reservation tests. All to be rewritten in one pass after dev/b3 migrate and the machinery is deleted. No engine regression.
 
+## Статус после инкорпорации (round 3)
+
+Все находки приняты и закрыты (17/17 инвариантов зелёные, полная суита без новых поломок):
+- **F1** — кризис на force-доставленном callback: `poolLikeContinuation` теперь включает `resume && pool`. Тест `a crisis caused by a force-delivered callback still resumes the arc pool`.
+- **F2** — поздний seed: payroll-seed получил `excludes: ["hyped"]` (ранняя витрина). Решение: `storyDecisions` = **целевая/максимальная** задержка (доставка не позже склейки), витрина гарантирует минимальный зазор. Тест `the payroll seed is windowed to the early phase`.
+- **F3** — контракт теперь ЭНФОРСИТСЯ: `validateDeck` отклоняет `delay` не на `callbackOnly` sideStory; `takeEarliestPendingCallback` доставляет только `callbackOnly` sideStory. Тесты на валидацию + чистоту канона.
+- **F4** — добавлен поведенческий тест тайминга payroll.
+
+Принятые решения (Codex B/C):
+- **maxTurns очищает pending callbacks** при достижении лимита — принято как правило жёсткой концовки (прогон и так закончился). Кода не меняем.
+- Типизированный callback, ставший ineligible, — нарушение инварианта (ловим тестом), НЕ молчаливый сброс.
+- **b3 при миграции — асимметрия:** только ветка «Send three more» ставит `delay`/callback; «Leave them alone» не создаёт ни delay, ни pending-флаг. Сохранить branch-specific requires/excludes; тестировать обе ветки.
+
 ## How to run
 - New invariants (12 green): `node --test tests/agents-flag-gating.test.cjs`
 - Full suite: `node --test`

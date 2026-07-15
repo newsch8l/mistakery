@@ -335,7 +335,7 @@
 
     {
       "id": "PAYROLL_RESTRICTED_AI_SEED", "kind": "sideStory", "source": "@unicorn_hunter", "continuation": "sideStory", "weight": 3, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved"],
+      "activeArcs": "agents", "requires": ["payroll_unresolved"], "excludes": ["hyped"],
       "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 53 }, "founder": { "min": 59, "max": 83 } },
       "text": "I BOUGHT AI CREDITS.\nYOUR TEAM CAN WORK FOR THE SUBSCRIPTION.\nNO REVENUE, NO PAYROLL.",
       "actor_action": "The investor presents AI credits as compensation and makes payroll contingent on revenue.",
