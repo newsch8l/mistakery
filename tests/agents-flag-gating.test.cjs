@@ -132,10 +132,10 @@ test('migrated payroll uses a typed delayed callback, not a boundary reservation
 // phase (before hype) so the delay keeps a real gap before AGENT_04.
 test('the payroll seed is windowed to the early phase (before hype)', () => {
   const seed = deck.cards.find((c) => c.id === 'PAYROLL_RESTRICTED_AI_SEED');
-  assert.ok([seed.excludes].flat().includes('hyped'),
+  assert.ok([seed.excludes].flat().includes('hype_consequence_seen'),
     'seed must exclude hyped so it cannot appear right before the glue');
   // concretely: not eligible once hyped, eligible before it
-  const late = agentsState(['payroll_unresolved', 'empathy_demanded', 'patch_built', 'hyped']);
+  const late = agentsState(['payroll_unresolved', 'empathy_demanded', 'patch_built', 'hyped', 'hype_consequence_seen']);
   assert.equal(eligible(late, 'PAYROLL_RESTRICTED_AI_SEED'), false, 'not eligible after hype');
   const early = agentsState(['payroll_unresolved', 'empathy_demanded']);
   early.resources = { cash: 15, team: 50, founder: 70, customers: 40 };
@@ -175,7 +175,7 @@ test('migrated dev-hostage uses a typed delayed callback with a shared seed flag
     assert.ok([seed.choices[side].setFlags].flat().includes('dev_hostage_seeded'), `${side}: shared seed flag`);
   }
   assert.equal(seed.scheduler, undefined, 'seed drops scheduler metadata');
-  assert.ok([seed.excludes].flat().includes('hyped'), 'seed windowed early');
+  assert.ok([seed.excludes].flat().includes('hype_consequence_seen'), 'seed windowed early');
   assert.equal(cb.callbackOnly, true, 'callback is callbackOnly');
   assert.ok([cb.requires].flat().includes('dev_hostage_seeded'), 'callback requires its causal flag');
   assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
@@ -192,7 +192,7 @@ test('migrated b3 schedules its callback only from the follow-up branch', () => 
   assert.equal(seed.choices.right.reserveCallback, undefined, 'right: no reservation');
   assert.ok(![seed.choices.right.setFlags].flat().includes('b3_followups_authorized'), 'right does not set the scheduling flag');
   assert.equal(seed.scheduler, undefined, 'seed drops scheduler metadata');
-  assert.ok([seed.excludes].flat().includes('hyped'), 'seed windowed early');
+  assert.ok([seed.excludes].flat().includes('hype_consequence_seen'), 'seed windowed early');
   assert.equal(cb.callbackOnly, true, 'callback is callbackOnly');
   assert.ok([cb.requires].flat().includes('b3_followups_authorized'), 'callback requires the scheduling-branch flag');
   assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');

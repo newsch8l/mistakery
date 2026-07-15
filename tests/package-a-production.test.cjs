@@ -134,10 +134,10 @@ test('health module keeps named slots; migrated startup modules use typed delaye
     ['left', 'right'].forEach((side) => assert.equal(card(seed).choices[side].delay.card, cb, `${seed} ${side} schedules ${cb}`));
   });
   assert.deepEqual(card(IDS.payrollSeed).resourceRange, {
-    cash: { min: 12, max: 19 }, team: { min: 47, max: 53 }, founder: { min: 59, max: 83 },
+    cash: { max: 30 }, founder: { min: 45 },
   });
   assert.deepEqual(card(IDS.devSeed).resourceRange, {
-    cash: { min: 12, max: 19 }, team: { min: 47, max: 50 }, founder: { min: 56, max: 83 },
+    cash: { max: 30 }, founder: { min: 45 },
   });
   assert.deepEqual(card(IDS.flyers).resourceRange, { founder: { min: 66, max: 78 } });
 });

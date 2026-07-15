@@ -235,12 +235,12 @@ test('uses resource ranges only on ambient premises or named scheduler eligibili
     .map((card) => [card.id, card.resourceRange]));
 
   assert.deepEqual(ranged, {
-    PAYROLL_RESTRICTED_AI_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 53 }, founder: { min: 59, max: 83 } },
-    DEV_HOSTAGE_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 50 }, founder: { min: 56, max: 83 } },
+    PAYROLL_RESTRICTED_AI_SEED: { cash: { max: 30 }, founder: { min: 45 } },
+    DEV_HOSTAGE_SEED: { cash: { max: 30 }, founder: { min: 45 } },
     MOM_INVESTOR_SEED: { founder: { min: 58, max: 65 } },
     COMA_SEED: { founder: { min: 58, max: 65 } },
     MOM_FLYERS: { founder: { min: 66, max: 78 } },
-    B3_SALES_PRESSURE_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 61 }, founder: { min: 56, max: 83 } },
+    B3_SALES_PRESSURE_SEED: { cash: { max: 35 }, founder: { min: 45 } },
     PRESS_FRIDGE: { cash: { max: 25 } },
     PRESS_MOM: { cash: { max: 20 } },
     PRESS_FONT: { cash: { max: 35 } },

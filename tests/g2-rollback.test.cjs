@@ -108,7 +108,7 @@ test('B3 cards keep the exact approved copy and once-per-run behavior', () => {
 test('B3 seed is Agents-only and windowed early; Padel refusal switches to Agents', () => {
   const seed = card('B3_SALES_PRESSURE_SEED');
   assert.equal([seed.activeArcs].flat().includes('agents'), true);
-  assert.ok([seed.excludes].flat().includes('hyped'), 'windowed to the early phase');
+  assert.ok([seed.excludes].flat().includes('hype_consequence_seen'), 'windowed to the early phase');
   // eligible in an Agents opening state, not while active arc is padel
   const agentsState = b3EntryState();
   agentsState.activeArc = 'agents';

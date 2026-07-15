@@ -27,7 +27,7 @@ function median(values) {
 function simulate(runs = 10000) {
   const report = {
     runs, directAgents: 0, zeroPackageA: 0, callbackLoss: 0, protectedPairViolations: 0,
-    postAcceptedPadelInsertions: 0, healthMutexViolations: 0,
+    postAcceptedPadelInsertions: 0, healthMutexViolations: 0, directAgentsWithStartupStory: 0,
     packageA: [], b3: [], nonLegacy: [], total: [],
     shown: Object.fromEntries([...PACKAGE_A_IDS].map((id) => [id, 0])),
     endings: {},
@@ -58,6 +58,9 @@ function simulate(runs = 10000) {
       report.b3.push(b3Count);
       report.nonLegacy.push(packageCount + b3Count);
       report.total.push(packageCount + b3Count + ids.filter((id) => id.startsWith('PRESS_')).length);
+      // Startup-side stories measured separately from the always-present opening health card.
+      const startupStory = ['PAYROLL_RESTRICTED_AI_SEED', 'DEV_HOSTAGE_SEED', 'B3_SALES_PRESSURE_SEED'].some((id) => ids.includes(id));
+      report.directAgentsWithStartupStory += Number(startupStory);
     }
     const callbackPairs = [
       ['PAYROLL_RESTRICTED_AI_SEED', ['PAYROLL_RESTRICTED_AI_CALLBACK'], 'AGENT_04_LEAD'],
@@ -93,6 +96,10 @@ test('10,000 production seeded runs keep Package A callbacks, locks and variable
   // Calmer pool-weighted model: never empty (measured zero-rate 0), median 2.
   assert.equal(report.zeroPackageA, 0, 'every direct-Agents run should still get at least one Package A side story');
   assert.ok(median(report.nonLegacy) >= 2, `side-story richness dropped below the calmer floor: ${median(report.nonLegacy)}`);
+  // Codex round-4 F2: measure the migrated Agents pool specifically (not the always-present
+  // opening health card). After tuning, a majority of direct-Agents runs get a startup story.
+  const startupRate = report.directAgentsWithStartupStory / report.directAgents;
+  assert.ok(startupRate >= 0.4, `Agents-pool startup side-story rate too low: ${(startupRate * 100).toFixed(1)}%`);
   assert.equal(report.callbackLoss, 0);
   assert.equal(report.protectedPairViolations, 0);
   assert.equal(report.postAcceptedPadelInsertions, 0);

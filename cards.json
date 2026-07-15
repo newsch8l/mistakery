@@ -336,9 +336,9 @@
     },
 
     {
-      "id": "PAYROLL_RESTRICTED_AI_SEED", "kind": "sideStory", "source": "@unicorn_hunter", "continuation": "sideStory", "weight": 3, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved"], "excludes": ["hyped"],
-      "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 53 }, "founder": { "min": 59, "max": 83 } },
+      "id": "PAYROLL_RESTRICTED_AI_SEED", "kind": "sideStory", "source": "@unicorn_hunter", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
+      "activeArcs": "agents", "requires": ["payroll_unresolved"], "excludes": ["hype_consequence_seen"],
+      "resourceRange": { "cash": { "max": 30 }, "founder": { "min": 45 } },
       "text": "I BOUGHT AI CREDITS.\nYOUR TEAM CAN WORK FOR THE SUBSCRIPTION.\nNO REVENUE, NO PAYROLL.",
       "actor_action": "The investor presents AI credits as compensation and makes payroll contingent on revenue.",
       "player_decision": "Accept the AI credits or demand actual payroll.",
@@ -358,9 +358,9 @@
       }
     },
     {
-      "id": "DEV_HOSTAGE_SEED", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "weight": 2, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved", "dev_payroll_risk_visible"], "excludes": ["hyped"],
-      "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 50 }, "founder": { "min": 56, "max": 83 } },
+      "id": "DEV_HOSTAGE_SEED", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
+      "activeArcs": "agents", "requires": ["payroll_unresolved", "dev_payroll_risk_visible"], "excludes": ["hype_consequence_seen"],
+      "resourceRange": { "cash": { "max": 30 }, "founder": { "min": 45 } },
       "text": "investor says he'll replace me with ai\ncool. call him an idiot in public\nor lie and say he apologized",
       "actor_action": "Dev reacts to the investor's AI replacement threat and demands public support or a face-saving lie.",
       "player_decision": "Insult the investor publicly or fake his apology.",
@@ -454,11 +454,11 @@
     },
 
     {
-      "id": "B3_SALES_PRESSURE_SEED", "kind": "sideStory", "source": "@bigdeals", "continuation": "sideStory", "weight": 1, "oncePerRun": true,
+      "id": "B3_SALES_PRESSURE_SEED", "kind": "sideStory", "source": "@bigdeals", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
       "activeArcs": "agents",
       "requires": ["sales_outreach_started"],
-      "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 61 }, "founder": { "min": 56, "max": 83 } },
-      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted", "hyped"],
+      "resourceRange": { "cash": { "max": 35 }, "founder": { "min": 45 } },
+      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted", "hype_consequence_seen"],
       "text": "Boss, your pitch deserved a reply.\nThey ignored four emails.\nLet me send three more.",
       "actor_action": "Sales asks permission to continue unwanted follow-ups to one off-screen prospect.",
       "player_decision": "Authorize three more emails or permanently stop contacting the prospect.",
