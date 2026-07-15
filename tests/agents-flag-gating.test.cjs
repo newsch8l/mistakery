@@ -41,12 +41,13 @@ test('patch beat is not eligible before empathy is demanded', () => {
 // pick from directly (free beats). Glued-chain targets (order/legal/invoice)
 // are reached only by forced next and must never be in the pool.
 
-test('arc-beat pool after empathy demanded offers the patch beat only', () => {
+test('arc-beat pool is causally exact: empathy demanded => only the patch beat', () => {
+  // No reliance on presentation history (shown): the completed beat must be
+  // excluded by its own flag, so the pool is patch-only on causal state alone.
   const state = agentsState(['empathy_demanded']);
   const ids = engine.eligibleArcBeatPool(deck, state).map((entry) => entry.card.id);
-  assert.ok(ids.includes('AGENT_02_DEV'), 'patch beat should be selectable');
-  assert.ok(!ids.includes('AGENT_03_HYPE'), 'hype beat is gated on patch_built');
-  assert.ok(!ids.includes('AGENT_05_ORDER'), 'order is glue-internal, never pool-picked');
+  assert.deepEqual(ids, ['AGENT_02_DEV'],
+    'empathy-demand beat must exclude its own flag; hype is gated on patch_built');
 });
 
 test('arc-beat pool only contains cards of the active arc', () => {

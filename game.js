@@ -439,7 +439,7 @@
   }
 
   function eligibleArcBeatPool(deck, state) {
-    return buildEligiblePool(deck, state, { includeScheduled: true })
+    return buildEligiblePool(deck, state)
       .filter((entry) => entry.card.arcBeat === true && entry.card.arc === state.activeArc);
   }
 

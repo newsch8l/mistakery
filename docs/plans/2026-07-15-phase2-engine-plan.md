@@ -42,9 +42,16 @@
 
 Становятся обычными ambient/sideStory-картами:
 - eligible: `activeArc=agents` + свой флаг + `resourceRange` (как сейчас).
-- seed резервирует callback **через N сюжетных карт** (единый механизм `reserveCallback`/`remainingStoryDecisions`, уже в движке).
-- Убрать именованные `slot`, `boundaries`, `reservations`, `remainingSpineSteps`, `protectedPairs`-подсистему, `locks`.
+- seed ставит callback **через N сюжетных карт** через `choice.delay.storyDecisions` → `state.delayed`/`remainingStoryDecisions`.
+- **Поправка (Codex F2):** это НЕ текущий `reserveCallback`. `reserveCallback` → `state.reservations`/`remainingSpineSteps` (удаляемая машинерия). Миграция: переписать `reserveCallback` side-историй на `delay`, затем удалить `reservations`/`remainingSpineSteps`/`boundaries`/`slot`/`protectedPairs`-подсистему/`locks`. Унифицируем на `state.delayed`.
 - Вклиниваются среди свободных битов 1–3 и в паузах; НЕ внутри склейки 4–7.
+
+### Риски ревью, обязательные к закрытию в 2.2
+
+- **F1 — callback в forced-хвосте.** `takeDueCallback` есть только в ветках `weighted`/`pool`, не в `forced`. Callback, ставший due внутри склейки `AGENT_04→07` без weighted-бита до концовки, теряется. Решение: гейт входа в склейку при pending-callback, либо `takeDueCallback` на входе в forced. (В Agents сейчас случайно спасает то, что `AGENT_06` — weighted; опираться нельзя.)
+- **F3 — stale-пул на resume.** После вставки ambient возврат идёт по старому снимку `queuedCardIds`; смена флагов/ресурсов вставленной картой может открыть новый бит или закрыть preferred → пропуск бита или `no_proof`. Для pool-origin resume пересобирать `eligibleArcBeatPool` после вставки, не хранить список id.
+- **F5 — перекрытие микроисторий.** Старые reservations допускали ОДНУ открытую микроисторию (`game.js:239`), `state.delayed` — массив (несколько). Явно решить политику; если перекрытие запрещено — добавить явный инвариант, не полагаясь на удаляемые reservations.
+- **Пустой пул — не концовка.** Если арочный пул временно пуст (ждём флаг от pending-callback), не завершать `no_proof`; определить безопасное не-терминальное поведение.
 
 ## Переселение эффектов
 
@@ -62,7 +69,7 @@
 ## Шаги исполнения (TDD: сначала тест-инвариант, потом код)
 
 - **2.1 — Флаги-маркеры арки.** Проставить условия eligibility на `AGENT_01–04` по таблице, убрать `next` у свободных битов (1–3), оставить forced у склейки (4→7). Тест: биты никогда не в неверном порядке; хайп не раньше патча.
-- **2.2 — Убрать лишнюю машинерию.** Снести boundaries/reservations/slots/locks; side-seeds перевести на `reserveCallback` по счётчику сюжетных карт. Тест: выбор каждого seed достигает своего callback через N карт, смысл сохранён.
+- **2.2 — Убрать лишнюю машинерию.** Переписать `reserveCallback` side-историй на `delay`/`storyDecisions` (унифицировать на `state.delayed`), затем снести boundaries/reservations/slots/locks. Закрыть F1 (callback в forced-хвосте), F3 (пересбор пула на resume), F5 (политика перекрытия), пустой-пул-не-концовка. Тест: выбор каждого seed достигает своего callback через N карт; callback не теряется у границы склейки; resume видит новые биты.
 - **2.3 — Переселить эффекты.** Удалить `stateEffects`-свалки; последствия — в собственные callbacks. Тест: каждый ресурсный эффект применяется там, где принято решение.
 - **2.4 — Инварианты реиграбельности.** 10k прогонов: активная арка чаще всплывает; ~1–2 ambient между битами; нет тупиков/софт-локов; все концовки достижимы; платёжная правда цела; порядок карт различается между прогонами.
 

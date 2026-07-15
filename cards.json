@@ -138,7 +138,7 @@
     },
 
     {
-      "id": "AGENT_01", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 1, "source": "@unicorn_hunter", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true,
+      "id": "AGENT_01", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 1, "source": "@unicorn_hunter", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "excludes": ["empathy_demanded"],
       "text": "YOU STILL NEED A BUYER.\nAI EMPATHY IS MAKING IDIOTS RICH.\nPUT A SOUL IN B2BUYERSPYER OR ASK MOM FOR MONEY.",
       "actor_action": "The investor orders an empathy modification to the existing product.",
       "player_decision": "Build the empathy layer carefully or force the same real feature out tonight.",
@@ -151,7 +151,7 @@
       }
     },
     {
-      "id": "AGENT_02_DEV", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 2, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["empathy_demanded"],
+      "id": "AGENT_02_DEV", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 2, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["empathy_demanded"], "excludes": ["patch_built"],
       "text": "empathy patch is ready\nit apologizes to every lead for capitalism\nand refuses calls during therapy",
       "actor_action": "The developer implements the empathy patch and explains its behavior.",
       "player_decision": "Deploy the patch or publish one controlled demo.",
@@ -161,7 +161,7 @@
       }
     },
     {
-      "id": "AGENT_03_HYPE", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 3, "source": "@hype_queen", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "requires": ["patch_built"],
+      "id": "AGENT_03_HYPE", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 3, "source": "@hype_queen", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "requires": ["patch_built"], "excludes": ["hyped"],
       "text": "the demo is trending 💅\ni called them emotionally abandoned AI employees\nenterprise buyers want the deck",
       "actor_action": "Marketing turns the existing demo into an attention campaign.",
       "player_decision": "Amplify the positioning or correct the exaggeration.",
