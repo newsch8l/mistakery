@@ -171,6 +171,9 @@
       "text": "the apology patch is public now.\nnormal leads keep hanging up.\nbut one enterprise account will not stop opening the deck.",
       "actor_action": "The developer reports the live patch behavior: it repels ordinary leads while hooking one persistent enterprise account.",
       "player_decision": "Keep the apologizing behavior to chase that niche buyer, or strip it to recover the broad funnel.",
+      "stateEffects": [
+        { "requires": ["empathy_deployed"], "effects": { "team": -1 }, "effect_reason": { "team": "The agents are live in production, not a staged demo — the public misbehavior costs real support time." } }
+      ],
       "choices": {
         "left": { "label": "Keep the soul", "effects": { "team": -3, "customers": 4, "founder": 3 }, "effect_reason": { "team": "The team must keep the unstable empathy behavior running in production.", "customers": "The enterprise account leans in precisely because the agents apologize.", "founder": "Betting the company on the strange niche feels like a movement." }, "setFlags": ["hype_consequence_seen", "agents_positioned_ethical"] },
         "right": { "label": "Strip it back", "effects": { "team": 2, "customers": -3, "founder": -2 }, "effect_reason": { "team": "Removing the apologies stops the flood of angry ordinary leads.", "customers": "Dropping the gimmick loses the niche account interest.", "founder": "Retreating from the bold behavior stings." }, "setFlags": ["hype_consequence_seen", "agents_positioned_generic"] }
@@ -202,6 +205,10 @@
       "text": "Your AI apologized for capitalism. Good.\nI need 500 agents for an expensive-looking AI rollout.\nCan you deliver Friday?",
       "actor_action": "The first credible customer requests five hundred agents for corporate theater.",
       "player_decision": "Promise the deadline or check whether procurement can actually buy the agents.",
+      "stateEffects": [
+        { "requires": ["agents_positioned_ethical"], "effects": { "founder": 1 }, "effect_reason": { "founder": "The buyer wants exactly the apologizing agents — the niche bet paid off." } },
+        { "requires": ["agents_positioned_generic"], "effects": { "team": 1 }, "effect_reason": { "team": "A plain rollout is easier for the team to scope." } }
+      ],
       "choices": {
         "left": { "label": "Promise Friday", "lowLabel": "Promise somehow", "highLabel": "Promise tomorrow", "effects": { "team": -8, "customers": 8, "founder": 5 }, "effect_reason": { "team": "The impossible deadline creates severe workload.", "customers": "The buyer values a confident commitment.", "founder": "A large enterprise promise feeds confidence." }, "next": "AGENT_06_LEGAL" },
         "right": { "label": "Check procurement", "lowLabel": "Ask procurement", "highLabel": "Interrogate procurement", "effects": { "team": 3, "customers": 4, "founder": -3 }, "effect_reason": { "team": "Checking the buying process protects the team from blind delivery.", "customers": "The buyer sees a credible enterprise sales process.", "founder": "Asking practical buying questions feels smaller than promising everything." }, "next": "AGENT_06_LEGAL" }

@@ -134,7 +134,7 @@ test('does not award Customers for auditing a list or money for a fake invoice',
 });
 
 test('builds the agent story through dev, hype, an announced lead and the slave-trading problem', () => {
-  assert.equal(deck.cards.filter((card) => card.arc === 'agents').length, 8);
+  assert.equal(deck.cards.filter((card) => card.arc === 'agents').length, 9);
   assert.equal(engine.cardById(deck, 'AGENT_02_DEV').source, '@error404');
   assert.equal(engine.cardById(deck, 'AGENT_03_HYPE').source, '@hype_queen');
   assert.equal(engine.cardById(deck, 'AGENT_04_LEAD').source, '@bigdeals');
@@ -157,13 +157,16 @@ test('builds the agent story through dev, hype, an announced lead and the slave-
   assert.match(deck.crises.freedom_sale.text, /freedom|slave/i);
 });
 
-test('dev publishes both deploy and demo routes before the shared Hype card', () => {
+test('dev publishes both deploy and demo routes, both flag-gating the shared Hype beat', () => {
   const dev = engine.cardById(deck, 'AGENT_02_DEV');
   const hype = engine.cardById(deck, 'AGENT_03_HYPE');
   assert.equal(dev.choices.right.label, 'Publish one demo');
   ['left', 'right'].forEach((side) => assert.ok(flagsFrom(dev.choices[side].setFlags).includes('agents_public')));
-  assert.equal(dev.choices.right.next, 'AGENT_03_HYPE');
-  ['left', 'right'].forEach((side) => assert.equal(hype.choices[side].setFlags, undefined));
+  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(dev.choices[side].setFlags).includes('patch_built')));
+  // pool beats have no hardcoded next; hype is reached by its patch_built gate
+  ['left', 'right'].forEach((side) => assert.equal(dev.choices[side].next, undefined));
+  assert.ok(flagsFrom(hype.requires).includes('patch_built'));
+  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(hype.choices[side].setFlags).includes('hyped')));
 });
 
 test('introduces the ClosedAI CEO before a deterministic throw-or-win padel choice', () => {
@@ -211,9 +214,9 @@ test('uses explicit pressure breaks instead of interrupting immediate story cons
   });
 });
 
-test('declares forced, weighted and ambient scheduler modes without changing the story copy', () => {
-  const weighted = deck.cards.filter((card) => card.continuation === 'weighted').map((card) => card.id).sort();
-  assert.deepEqual(weighted, ['AGENT_01', 'AGENT_03_HYPE'].sort());
+test('declares forced, pool and ambient scheduler modes without changing the story copy', () => {
+  const pool = deck.cards.filter((card) => card.continuation === 'pool').map((card) => card.id).sort();
+  assert.deepEqual(pool, ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD'].sort());
 
   ['OPEN_06', 'AGENT_04_LEAD', 'AGENT_05_ORDER', 'PADEL_01', 'PADEL_03_TEAM', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
     assert.equal(engine.cardById(deck, id).continuation, 'forced', `${id} must continue immediately`);
@@ -246,7 +249,8 @@ test('uses resource ranges only on ambient premises or named scheduler eligibili
   });
   Object.keys(ranged).forEach((id) => {
     const card = engine.cardById(deck, id);
-    assert.ok(card.continuation === 'ambient' || card.scheduler, `${id} lacks an ambient or scheduler gate`);
+    assert.ok(card.continuation === 'ambient' || card.continuation === 'sideStory' || card.scheduler,
+      `${id} lacks an ambient, side-story or scheduler gate`);
   });
 });
 
@@ -260,12 +264,10 @@ test('both pre-match refusals truly leave padel for the agents route', () => {
 
 test('keeps sales inside the agent arc and gates conditional pressure cards', () => {
   const pressure = deck.cards.filter((card) => card.kind === 'pressure');
-  assert.equal(pressure.length, 7);
+  assert.equal(pressure.length, 6);
   assert.equal(pressure.some((card) => card.id === 'PRESS_SALES'), false);
-  const capitalism = engine.cardById(deck, 'PRESS_CAPITALISM');
+  assert.equal(engine.cardById(deck, 'PRESS_CAPITALISM'), null, 'PRESS_CAPITALISM was promoted into the AGENT_03B_WILD beat');
   const family = engine.cardById(deck, 'PRESS_FAMILY');
-  assert.equal(capitalism.callbackOnly, true);
-  assert.ok(flagsFrom(capitalism.trigger.all).includes('empathy_deployed'));
   assert.ok(flagsFrom(family.trigger.all).includes('agents_public'));
 });
 
@@ -292,7 +294,6 @@ test('pressure jokes establish their own premise before asking for a decision', 
   assert.ok(engine.cardById(deck, 'PRESS_RIVAL').choices.left.effects.founder < 0);
   assert.equal(engine.cardById(deck, 'PRESS_RIVAL').choices.right.label, 'Mute him');
   assert.ok(engine.cardById(deck, 'PRESS_RIVAL').choices.right.effects.founder > 0);
-  assert.equal(engine.cardById(deck, 'PRESS_CAPITALISM').choices.right.label, 'Remove apologies');
 });
 
 test('does not keep dead story flags', () => {
