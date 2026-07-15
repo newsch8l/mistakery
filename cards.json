@@ -156,7 +156,7 @@
       "actor_action": "The developer implements the empathy patch and explains its behavior.",
       "player_decision": "Deploy the patch or publish one controlled demo.",
       "choices": {
-        "left": { "label": "Deploy the patch", "lowLabel": "Deploy carefully", "highLabel": "Awaken production", "effects": { "cash": -1, "team": -4, "founder": 3 }, "effect_reason": { "cash": "Production deployment increases compute use.", "team": "The team must support unstable emotional agents.", "founder": "A live AI workforce feels like a breakthrough." }, "setFlags": ["empathy_deployed", "agents_public", "patch_built"], "delay": { "card": "PRESS_CAPITALISM", "storyDecisions": 2 } },
+        "left": { "label": "Deploy the patch", "lowLabel": "Deploy carefully", "highLabel": "Awaken production", "effects": { "cash": -1, "team": -4, "founder": 3 }, "effect_reason": { "cash": "Production deployment increases compute use.", "team": "The team must support unstable emotional agents.", "founder": "A live AI workforce feels like a breakthrough." }, "setFlags": ["empathy_deployed", "agents_public", "patch_built"] },
         "right": { "label": "Publish one demo", "lowLabel": "Show one demo", "highLabel": "Stage the miracle", "effects": { "team": 2, "founder": -2 }, "effect_reason": { "team": "Keeping the patch out of production reduces support work.", "founder": "A controlled demo feels less revolutionary." }, "setFlags": ["agents_public", "patch_built"] }
       }
     },
@@ -171,7 +171,17 @@
       }
     },
     {
-      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hyped"], "oncePerRun": true, "excludesPendingCallbacks": true,
+      "id": "AGENT_03B_WILD", "kind": "story", "arc": "agents", "arcBeat": true, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["hyped"], "excludes": ["hype_consequence_seen"],
+      "text": "the apology patch is public now.\nnormal leads keep hanging up.\nbut one enterprise account will not stop opening the deck.",
+      "actor_action": "The developer reports the live patch behavior: it repels ordinary leads while hooking one persistent enterprise account.",
+      "player_decision": "Keep the apologizing behavior to chase that niche buyer, or strip it to recover the broad funnel.",
+      "choices": {
+        "left": { "label": "Keep the soul", "effects": { "team": -3, "customers": 4, "founder": 3 }, "effect_reason": { "team": "The team must keep the unstable empathy behavior running in production.", "customers": "The enterprise account leans in precisely because the agents apologize.", "founder": "Betting the company on the strange niche feels like a movement." }, "setFlags": ["hype_consequence_seen", "agents_positioned_ethical"] },
+        "right": { "label": "Strip it back", "effects": { "team": 2, "customers": -3, "founder": -2 }, "effect_reason": { "team": "Removing the apologies stops the flood of angry ordinary leads.", "customers": "Dropping the gimmick loses the niche account interest.", "founder": "Retreating from the bold behavior stings." }, "setFlags": ["hype_consequence_seen", "agents_positioned_generic"] }
+      }
+    },
+    {
+      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hype_consequence_seen"], "oncePerRun": true, "excludesPendingCallbacks": true,
       "text": "Chief, holy shit: our first buyer.\n@head_of_agile wants 500 agents by Friday.\nI offered dev’s passport as collateral.",
       "actor_action": "Sales announces the first credible buyer before the customer appears.",
       "player_decision": "Book a proper call or quote the full order immediately.",

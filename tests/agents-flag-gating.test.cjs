@@ -75,6 +75,25 @@ test('a rescued crisis on a pool beat resumes the arc pool', () => {
     'pool continuation must survive the crisis and advance to the next gated beat');
 });
 
+// Step 2c: PRESS_CAPITALISM promoted to a spine beat AGENT_03B_WILD, sitting
+// between hype and the lead. It reads `hyped`, sets `hype_consequence_seen`
+// (+ a positioning flag), and AGENT_04 now unlocks on that consequence.
+test('the wild consequence beat sits between hype and lead', () => {
+  const afterHype = agentsState(['empathy_demanded', 'patch_built', 'hyped']);
+  afterHype.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
+  assert.deepEqual(
+    engine.eligibleArcBeatPool(deck, afterHype).map((entry) => entry.card.id),
+    ['AGENT_03B_WILD'],
+    'only the wild beat is eligible right after hype');
+
+  const afterWild = agentsState(['empathy_demanded', 'patch_built', 'hyped', 'hype_consequence_seen', 'agents_positioned_ethical']);
+  afterWild.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD'];
+  assert.deepEqual(
+    engine.eligibleArcBeatPool(deck, afterWild).map((entry) => entry.card.id),
+    ['AGENT_04_LEAD'],
+    'lead unlocks once the consequence is seen');
+});
+
 // Glue-entry gating (Codex F1 scheme): the customer-conversation glue must not
 // begin while any callback is still pending — so callbacks always resolve during
 // the free-beat phase and the 4->7 chain stays uninterrupted.
@@ -92,10 +111,10 @@ test('glue-entry beat is blocked while any callback is pending', () => {
 // instead of ending the run with no_proof.
 test('a stuck arc pool with a pending callback delivers it, not no_proof', () => {
   const state = engine.startRun(deck);
-  state.currentCardId = 'AGENT_03_HYPE';
+  state.currentCardId = 'AGENT_03B_WILD'; // resolving it leaves AGENT_04 as the only (gated) beat
   state.activeArc = 'agents';
-  state.flags = ['empathy_demanded', 'patch_built'];
-  state.shown = ['AGENT_01', 'AGENT_02_DEV'];
+  state.flags = ['empathy_demanded', 'patch_built', 'hyped'];
+  state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
   state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
   state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
   state.pressureCount = deck.meta.maxPressureCards;
@@ -109,10 +128,10 @@ test('a stuck arc pool with a pending callback delivers it, not no_proof', () =>
 // must resume through the pool (rebuilt), not dead-end in no_proof.
 test('a force-delivered callback resumes the arc pool afterwards', () => {
   const state = engine.startRun(deck);
-  state.currentCardId = 'AGENT_03_HYPE';
+  state.currentCardId = 'AGENT_03B_WILD';
   state.activeArc = 'agents';
-  state.flags = ['empathy_demanded', 'patch_built'];
-  state.shown = ['AGENT_01', 'AGENT_02_DEV'];
+  state.flags = ['empathy_demanded', 'patch_built', 'hyped'];
+  state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
   state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
   state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
   state.pressureCount = deck.meta.maxPressureCards;

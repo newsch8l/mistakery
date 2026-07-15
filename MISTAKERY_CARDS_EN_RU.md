@@ -141,8 +141,8 @@
 > ИИ-ЭМПАТИЯ ДЕЛАЕТ ИДИОТОВ БОГАТЫМИ.  
 > ВСТАВЬ ДУШУ В B2BUYERSPYER ИЛИ ПРОСИ ДЕНЬГИ У МАМЫ.
 
-- **Build it properly — Сделать нормально**: Cash -2, Team -4, Founder +4; → `AGENT_02_DEV`.
-- **Ship it tonight — Выпустить сегодня**: Cash -1, Team -7, Founder +6; → `AGENT_02_DEV`.
+- **Build it properly — Сделать нормально**: Cash -2, Team -4, Founder +4; возврат к основной ветке.
+- **Ship it tonight — Выпустить сегодня**: Cash -1, Team -7, Founder +6; возврат к основной ветке.
 
 ## AGENT_02_DEV — Dev @error404
 
@@ -158,8 +158,8 @@
 > он извиняется перед каждым потенциальным клиентом за капитализм  
 > и отказывается созваниваться во время терапии
 
-- **Deploy the patch — Выпустить патч**: Cash -1, Team -4, Founder +3; → `AGENT_03_HYPE`.
-- **Publish one demo — Опубликовать демо**: Team +2, Founder -2; → `AGENT_03_HYPE`.
+- **Deploy the patch — Выпустить патч**: Cash -1, Team -4, Founder +3; возврат к основной ветке.
+- **Publish one demo — Опубликовать демо**: Team +2, Founder -2; возврат к основной ветке.
 
 ## AGENT_03_HYPE — Marketer @hype_queen
 
@@ -175,8 +175,25 @@
 > я назвала их эмоционально брошенными ИИ-сотрудниками  
 > корпораты хотят презентацию
 
-- **Boost the post — Разогнать пост**: Team -3, Customers +7, Founder +5; → `AGENT_04_LEAD`.
-- **Add disclaimer — Добавить оговорку**: Team +3, Customers -4, Founder -4; → `AGENT_04_LEAD`.
+- **Boost the post — Разогнать пост**: Team -3, Customers +7, Founder +5; возврат к основной ветке.
+- **Add disclaimer — Добавить оговорку**: Team +3, Customers -4, Founder -4; возврат к основной ветке.
+
+## AGENT_03B_WILD — Dev @error404
+
+**EN**
+
+> the apology patch is public now.  
+> normal leads keep hanging up.  
+> but one enterprise account will not stop opening the deck.
+
+**RU**
+
+> патч с извинениями теперь публичный  
+> обычные лиды бросают трубку  
+> но один корпоративный аккаунт не перестаёт открывать презентацию
+
+- **Keep the soul — Оставить душу**: Team -3, Customers +4, Founder +3; возврат к основной ветке.
+- **Strip it back — Убрать извинения**: Team +2, Customers -3, Founder -2; возврат к основной ветке.
 
 ## AGENT_04_LEAD — Sales @bigdeals
 
