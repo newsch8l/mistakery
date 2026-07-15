@@ -337,18 +337,16 @@
       "id": "PAYROLL_RESTRICTED_AI_SEED", "kind": "sideStory", "source": "@unicorn_hunter", "continuation": "sideStory", "weight": 3, "oncePerRun": true,
       "activeArcs": "agents", "requires": ["payroll_unresolved"],
       "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 53 }, "founder": { "min": 59, "max": 83 } },
-      "scheduler": { "role": "seed", "slot": "agents_entry_seed", "moduleId": "payroll" },
       "text": "I BOUGHT AI CREDITS.\nYOUR TEAM CAN WORK FOR THE SUBSCRIPTION.\nNO REVENUE, NO PAYROLL.",
       "actor_action": "The investor presents AI credits as compensation and makes payroll contingent on revenue.",
       "player_decision": "Accept the AI credits or demand actual payroll.",
       "choices": {
-        "left": { "label": "Accept credits", "effects": { "team": -2, "founder": 2 }, "effect_reason": { "team": "The team hears that AI credits are supposed to replace payroll.", "founder": "Accepting AI credits as compensation feeds the founder's automation confidence." }, "setFlags": ["payroll_offer_compute_only"], "reserveCallback": { "callbackId": "PAYROLL_RESTRICTED_AI_CALLBACK", "callbackSlot": "agents_pre_serious_lead", "spineSteps": 3 } },
-        "right": { "label": "Demand payroll", "effects": { "founder": -2 }, "effect_reason": { "founder": "Demanding usable payroll money forces the founder to face the shortage." }, "setFlags": ["payroll_offer_ordinary_compute"], "reserveCallback": { "callbackId": "PAYROLL_RESTRICTED_AI_CALLBACK", "callbackSlot": "agents_pre_serious_lead", "spineSteps": 3 } }
+        "left": { "label": "Accept credits", "effects": { "team": -2, "founder": 2 }, "effect_reason": { "team": "The team hears that AI credits are supposed to replace payroll.", "founder": "Accepting AI credits as compensation feeds the founder's automation confidence." }, "setFlags": ["payroll_offer_compute_only", "payroll_seeded"], "delay": { "card": "PAYROLL_RESTRICTED_AI_CALLBACK", "storyDecisions": 3 } },
+        "right": { "label": "Demand payroll", "effects": { "founder": -2 }, "effect_reason": { "founder": "Demanding usable payroll money forces the founder to face the shortage." }, "setFlags": ["payroll_offer_ordinary_compute", "payroll_seeded"], "delay": { "card": "PAYROLL_RESTRICTED_AI_CALLBACK", "storyDecisions": 3 } }
       }
     },
     {
-      "id": "PAYROLL_RESTRICTED_AI_CALLBACK", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "oncePerRun": true,
-      "scheduler": { "role": "callback", "slot": "agents_pre_serious_lead", "moduleId": "payroll" },
+      "id": "PAYROLL_RESTRICTED_AI_CALLBACK", "kind": "sideStory", "callbackOnly": true, "source": "@error404", "continuation": "sideStory", "oncePerRun": true, "requires": ["payroll_seeded"],
       "text": "the ai has everything\npayroll has nothing\npay us or i shut everything down right now",
       "actor_action": "Dev demands payroll and threatens to shut everything down immediately.",
       "player_decision": "Promise payroll or cover it from personal funds.",

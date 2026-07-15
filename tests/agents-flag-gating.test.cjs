@@ -75,6 +75,24 @@ test('a rescued crisis on a pool beat resumes the arc pool', () => {
     'pool continuation must survive the crisis and advance to the next gated beat');
 });
 
+// Step 2.2 migration (Codex F2/F4): side-story callbacks move off the boundary/
+// reservation machinery onto a typed delayed callback — callbackOnly + a causal
+// requires flag the seed sets, so the callback can never leak into the pool and
+// can never be a stale pending entry that blocks the glue.
+test('migrated payroll uses a typed delayed callback, not a boundary reservation', () => {
+  const seed = deck.cards.find((c) => c.id === 'PAYROLL_RESTRICTED_AI_SEED');
+  const cb = deck.cards.find((c) => c.id === 'PAYROLL_RESTRICTED_AI_CALLBACK');
+  for (const side of ['left', 'right']) {
+    assert.equal(seed.choices[side].reserveCallback, undefined, `${side}: no reservation`);
+    assert.equal(seed.choices[side].delay && seed.choices[side].delay.card, 'PAYROLL_RESTRICTED_AI_CALLBACK', `${side}: delayed callback`);
+    assert.ok([seed.choices[side].setFlags].flat().includes('payroll_seeded'), `${side}: marks payroll_seeded`);
+  }
+  assert.equal(seed.scheduler, undefined, 'seed drops scheduler metadata');
+  assert.equal(cb.callbackOnly, true, 'callback is callbackOnly (Codex F2)');
+  assert.ok([cb.requires].flat().includes('payroll_seeded'), 'callback requires its causal flag (Codex F4)');
+  assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
+});
+
 // Step 2c: PRESS_CAPITALISM promoted to a spine beat AGENT_03B_WILD, sitting
 // between hype and the lead. It reads `hyped`, sets `hype_consequence_seen`
 // (+ a positioning flag), and AGENT_04 now unlocks on that consequence.
@@ -113,7 +131,7 @@ test('a stuck arc pool with a pending callback delivers it, not no_proof', () =>
   const state = engine.startRun(deck);
   state.currentCardId = 'AGENT_03B_WILD'; // resolving it leaves AGENT_04 as the only (gated) beat
   state.activeArc = 'agents';
-  state.flags = ['empathy_demanded', 'patch_built', 'hyped'];
+  state.flags = ['empathy_demanded', 'patch_built', 'hyped', 'payroll_seeded'];
   state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
   state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
   state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
@@ -130,7 +148,7 @@ test('a force-delivered callback resumes the arc pool afterwards', () => {
   const state = engine.startRun(deck);
   state.currentCardId = 'AGENT_03B_WILD';
   state.activeArc = 'agents';
-  state.flags = ['empathy_demanded', 'patch_built', 'hyped'];
+  state.flags = ['empathy_demanded', 'patch_built', 'hyped', 'payroll_seeded'];
   state.shown = ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE'];
   state.resources = { cash: 60, team: 80, customers: 50, founder: 60 };
   state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 3 }];
