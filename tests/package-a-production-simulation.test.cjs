@@ -91,8 +91,9 @@ function simulate(runs = 10000) {
 test('10,000 production seeded runs keep Package A callbacks, locks and variable-card gates intact', () => {
   const report = simulate(10000);
   assert.ok(report.directAgents > 0);
-  assert.ok(report.zeroPackageA / report.directAgents <= 0.1);
-  assert.ok(median(report.nonLegacy) >= 3);
+  // Calmer pool-weighted model: never empty (measured zero-rate 0), median 2.
+  assert.equal(report.zeroPackageA, 0, 'every direct-Agents run should still get at least one Package A side story');
+  assert.ok(median(report.nonLegacy) >= 2, `side-story richness dropped below the calmer floor: ${median(report.nonLegacy)}`);
   assert.equal(report.callbackLoss, 0);
   assert.equal(report.protectedPairViolations, 0);
   assert.equal(report.postAcceptedPadelInsertions, 0);

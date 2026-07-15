@@ -731,18 +731,3 @@
 - **Ask for an intro — Попросить познакомить**: Customers +4, Founder -5; возврат к основной ветке.
 - **Mute him — Заглушить его**: Founder +4; возврат к основной ветке.
 
-## PRESS_CAPITALISM — Dev @error404
-
-**EN**
-
-> empathy patch is live  
-> every lead now gets three follow-ups and a personal apology for capitalism
-
-**RU**
-
-> патч эмпатии уже работает  
-> каждый потенциальный клиент теперь получает три повторных сообщения и личное извинение за капитализм
-
-- **Keep apologies — Оставить извинения**: Customers -5, Founder +5; возврат к основной ветке.
-- **Remove apologies — Убрать извинения**: Team -5, Customers +5; возврат к основной ветке.
-

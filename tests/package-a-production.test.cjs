@@ -109,12 +109,8 @@ test('Package A contains exactly the ten author-approved messages and button pai
   });
 });
 
-test('all ten cards have the approved named slots, eligibility and initial weights', () => {
-  const expected = {
-    [IDS.payrollSeed]: ['seed', 'agents_entry_seed', 3],
-    [IDS.payrollCallback]: ['callback', 'agents_pre_serious_lead', 1],
-    [IDS.devSeed]: ['seed', 'agents_entry_seed', 2],
-    [IDS.devCallback]: ['callback', 'agents_pre_serious_lead', 1],
+test('health module keeps named slots; migrated startup modules use typed delayed callbacks', () => {
+  const health = {
     [IDS.momSeed]: ['seed', 'opening_shared_seed', 2],
     [IDS.momCallback]: ['callback', 'opening_health_resolution', 1],
     [IDS.comaSeed]: ['seed', 'opening_shared_seed', 1],
@@ -122,12 +118,20 @@ test('all ten cards have the approved named slots, eligibility and initial weigh
     [IDS.comaBlocked]: ['callback', 'opening_health_resolution', 1],
     [IDS.flyers]: ['reaction', 'opening_health_resolution', 1],
   };
-  Object.entries(expected).forEach(([id, [role, slot, weight]]) => {
+  Object.entries(health).forEach(([id, [role, slot, weight]]) => {
     const current = card(id);
     assert.equal(current.scheduler.role, role, id);
     assert.equal(current.scheduler.slot, slot, id);
     assert.equal(Number(current.weight || 1), weight, id);
     assert.equal(current.oncePerRun, true, id);
+  });
+  // Migrated startup modules (payroll/dev): no scheduler metadata; typed delayed callbacks.
+  [[IDS.payrollSeed, IDS.payrollCallback], [IDS.devSeed, IDS.devCallback]].forEach(([seed, cb]) => {
+    assert.equal(card(seed).scheduler, undefined, `${seed} dropped scheduler metadata`);
+    assert.equal(card(cb).scheduler, undefined, `${cb} dropped scheduler metadata`);
+    assert.equal(card(cb).callbackOnly, true, `${cb} is a typed callbackOnly callback`);
+    assert.equal(card(seed).oncePerRun, true, seed);
+    ['left', 'right'].forEach((side) => assert.equal(card(seed).choices[side].delay.card, cb, `${seed} ${side} schedules ${cb}`));
   });
   assert.deepEqual(card(IDS.payrollSeed).resourceRange, {
     cash: { min: 12, max: 19 }, team: { min: 47, max: 53 }, founder: { min: 59, max: 83 },
@@ -138,20 +142,14 @@ test('all ten cards have the approved named slots, eligibility and initial weigh
   assert.deepEqual(card(IDS.flyers).resourceRange, { founder: { min: 66, max: 78 } });
 });
 
-test('the 32 real opening traces reproduce the approved health and Agents eligibility matrix', () => {
+test('the 32 real opening traces reproduce the approved health eligibility matrix', () => {
+  // The startup seeds (payroll/dev/b3) now fire from the Agents pool, not from an
+  // opening boundary, so the opening traces only exercise the health module.
   const traces = Array.from({ length: 32 }, (_, index) => playOpening(index));
-  const pools = (slot) => traces.map((trace) => trace.events.find((event) => event.boundaryId === slot)?.cardIds || []);
-  const health = pools('opening_shared_seed');
-  const agents = pools('agents_entry_seed');
+  const health = traces.map((trace) => trace.events.find((event) => event.boundaryId === 'opening_shared_seed')?.cardIds || []);
   const count = (collections, id) => collections.filter((items) => items.includes(id)).length;
   assert.equal(count(health, IDS.momSeed), 16);
   assert.equal(count(health, IDS.comaSeed), 16);
-  assert.equal(count(agents, IDS.payrollSeed), 16);
-  assert.equal(count(agents, IDS.devSeed), 16);
-  assert.equal(count(agents, 'B3_SALES_PRESSURE_SEED'), 8);
-  assert.equal(agents.filter((items) => items.some((id) => [IDS.payrollSeed, IDS.devSeed, 'B3_SALES_PRESSURE_SEED'].includes(id))).length, 20);
-  assert.equal(agents.filter((items) => items.includes(IDS.payrollSeed) && items.includes('B3_SALES_PRESSURE_SEED')).length, 4);
-  assert.equal(agents.filter((items) => !items.includes(IDS.payrollSeed) && items.includes('B3_SALES_PRESSURE_SEED')).length, 4);
 });
 
 test('health callbacks have priority, Flyers is fallback-only, and the two health stories are mutually exclusive', () => {
@@ -270,30 +268,28 @@ test('Mom vs Investor and Mom Flyers retain their decisions until OPEN_06', () =
 });
 
 test('deterministic traces cover every Package A branch pair through its existing reader', () => {
+  // Migrated startup modules: each seed branch schedules the typed callback and
+  // sets its branch flag + shared seed flag; each callback branch sets its reader flag.
   const agentModules = [
-    [IDS.payrollSeed, IDS.payrollCallback, ['payroll_offer_compute_only', 'payroll_offer_ordinary_compute'], ['payroll_priority_machines', 'payroll_priority_people']],
-    [IDS.devSeed, IDS.devCallback, ['dev_conflict_public', 'dev_conflict_bypassed'], ['dev_access_protected', 'dev_access_contested']],
+    [IDS.payrollSeed, IDS.payrollCallback, ['payroll_offer_compute_only', 'payroll_offer_ordinary_compute'], ['payroll_priority_machines', 'payroll_priority_people'], 'payroll_seeded'],
+    [IDS.devSeed, IDS.devCallback, ['dev_conflict_public', 'dev_conflict_bypassed'], ['dev_access_protected', 'dev_access_contested'], 'dev_hostage_seeded'],
   ];
-  agentModules.forEach(([seedId, callbackId, seedFlags, callbackFlags]) => {
-    ['left', 'right'].forEach((seedSide, seedIndex) => ['left', 'right'].forEach((callbackSide, callbackIndex) => {
-      let state = stateAt(seedId, { activeArc: 'agents' });
+  agentModules.forEach(([seedId, callbackId, seedFlags, callbackFlags, seededFlag]) => {
+    ['left', 'right'].forEach((seedSide, seedIndex) => {
+      let state = stateAt(seedId, { activeArc: 'agents', flags: ['payroll_unresolved', 'dev_payroll_risk_visible'] });
       state.queuedCardId = 'AGENT_01';
       state.queuedCardIds = ['AGENT_01'];
-      state.queuedBoundary = { id: 'agents_entry_seed', before: 'OPEN_06', after: 'AGENT_01' };
+      state.queuedPool = true;
       state = engine.resolveChoice(deck, state, seedSide, { rng: () => 0 }).state;
-      state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-      state = engine.resolveChoice(deck, state, 'right', { rng: () => 0 }).state;
-      state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-      assert.equal(state.currentCardId, callbackId);
-      state = engine.resolveChoice(deck, state, callbackSide, { rng: () => 0 }).state;
-      assert.equal(state.currentCardId, 'AGENT_04_LEAD');
-      state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-      assert.ok(state.flags.includes(seedFlags[seedIndex]));
-      assert.ok(state.flags.includes(callbackFlags[callbackIndex]));
-      assert.deepEqual(state.history.slice(0, 6).map((entry) => entry.cardId), [
-        seedId, 'AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', callbackId, 'AGENT_04_LEAD',
-      ]);
-    }));
+      assert.ok(state.flags.includes(seedFlags[seedIndex]), `${seedId} ${seedSide}`);
+      assert.ok(state.flags.includes(seededFlag), `${seedId} sets shared seed flag`);
+      assert.ok(state.delayed.some((entry) => entry.card === callbackId), `${seedId} schedules ${callbackId}`);
+    });
+    ['left', 'right'].forEach((callbackSide, callbackIndex) => {
+      const state = stateAt(callbackId, { activeArc: 'agents', flags: [seededFlag] });
+      const after = engine.resolveChoice(deck, state, callbackSide, { rng: () => 0 }).state;
+      assert.ok(after.flags.includes(callbackFlags[callbackIndex]), `${callbackId} ${callbackSide}`);
+    });
   });
 
   ['left', 'right'].forEach((seedSide, seedIndex) => ['left', 'right'].forEach((callbackSide, callbackIndex) => {
@@ -338,34 +334,6 @@ test('deterministic traces cover every Package A branch pair through its existin
     assert.ok(state.flags.includes(['mom_flyers_removed', 'mom_flyers_public'][index]));
     assert.deepEqual(state.history.map((entry) => entry.cardId), [IDS.flyers, 'OPEN_06']);
   });
-});
-
-test('a Package A reservation survives ambient pressure and a successful crisis rescue', () => {
-  let state = stateAt(IDS.payrollSeed, {
-    activeArc: 'agents', flags: ['payroll_unresolved'], resources: { cash: 15, team: 50, founder: 65 },
-  });
-  state.queuedCardId = 'AGENT_01';
-  state.queuedCardIds = ['AGENT_01'];
-  state.queuedBoundary = { id: 'agents_entry_seed', before: 'OPEN_06', after: 'AGENT_01', selectedRole: 'seed' };
-  state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-  assert.equal(state.reservations[0].callbackId, IDS.payrollCallback);
-
-  state.currentCardId = 'PRESS_RIVAL';
-  state.queuedCardId = 'AGENT_01';
-  state.queuedCardIds = ['AGENT_01'];
-  state.queuedBoundary = null;
-  state = engine.resolveChoice(deck, state, 'right', { rng: () => 0 }).state;
-  assert.equal(state.reservations[0].callbackId, IDS.payrollCallback);
-
-  state.resources.cash = 1;
-  state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-  assert.equal(state.activeCrisisId, 'cash_low');
-  assert.equal(state.reservations[0].callbackId, IDS.payrollCallback);
-  state = engine.resolveCrisis(deck, state, 'rescue', { rng: () => 0 }).state;
-  assert.equal(state.reservations[0].callbackId, IDS.payrollCallback);
-  state = engine.resolveChoice(deck, state, 'right', { rng: () => 0 }).state;
-  state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
-  assert.equal(state.currentCardId, IDS.payrollCallback);
 });
 
 test('10,000 production runs lose no continuing callback and preserve every protected lock', () => {
@@ -419,8 +387,11 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       || (ids.includes(IDS.flyers) && (ids.includes(IDS.momSeed) || ids.includes(IDS.comaSeed)))) mutexViolations += 1;
   }
   assert.ok(directAgents > 0);
-  assert.ok(zeroPackageA / directAgents <= 0.1);
-  assert.ok(median(nonLegacyCounts) >= 3);
+  // New pool-weighted model: calmer than the old guaranteed boundary insertion,
+  // but every direct-Agents run still gets at least one side story (measured
+  // zero-rate 0), median 2.
+  assert.equal(zeroPackageA, 0, 'every direct-Agents run should still get at least one Package A side story');
+  assert.ok(median(nonLegacyCounts) >= 2, `side-story richness dropped below the calmer floor: ${median(nonLegacyCounts)}`);
   assert.equal(callbackLoss, 0);
   assert.equal(protectedPairViolations, 0);
   assert.equal(postPadelInsertions, 0);

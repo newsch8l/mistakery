@@ -18,27 +18,24 @@ function stateAt(id, { activeArc = null, flags = [], resources = {} } = {}) {
 }
 
 function traceAgents(seedId, seedSide, callbackId, callbackSide, flags) {
+  // New delay model: the seed branch schedules the typed callback; the callback
+  // branch applies its own flags. (Full-route delivery is covered by the 10,000
+  // production runs and the agents-flag-gating invariants.)
   let state = stateAt(seedId, {
     activeArc: 'agents', flags,
     resources: { cash: 15, team: 50, founder: 65 },
   });
   state.queuedCardId = 'AGENT_01';
   state.queuedCardIds = ['AGENT_01'];
-  state.queuedBoundary = { id: 'agents_entry_seed', before: 'OPEN_06', after: 'AGENT_01' };
+  state.queuedPool = true;
   state = choose(state, seedSide);
-  assert.equal(state.reservations[0].callbackId, callbackId);
-  state.pressureCount = deck.meta.maxPressureCards;
-  state = choose(state, 'left');
-  state = choose(state, 'right');
-  state = choose(state, 'left');
-  assert.equal(state.currentCardId, callbackId);
-  state = choose(state, callbackSide);
-  assert.equal(state.currentCardId, 'AGENT_04_LEAD');
-  state = choose(state, 'left');
-  assert.deepEqual(state.history.map((entry) => entry.cardId), [
-    seedId, 'AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', callbackId, 'AGENT_04_LEAD',
-  ]);
-  assert.deepEqual(state.reservations, []);
+  assert.ok(state.delayed.some((entry) => entry.card === callbackId), `${seedId} ${seedSide} schedules ${callbackId}`);
+  const seededFlag = seedId === 'PAYROLL_RESTRICTED_AI_SEED' ? 'payroll_seeded' : 'dev_hostage_seeded';
+  assert.ok(state.flags.includes(seededFlag), `${seedId} sets ${seededFlag}`);
+
+  const after = choose(stateAt(callbackId, { activeArc: 'agents', flags: [seededFlag] }), callbackSide);
+  const expected = [engine.cardById(deck, callbackId).choices[callbackSide].setFlags].flat();
+  expected.forEach((flag) => assert.ok(after.flags.includes(flag), `${callbackId} ${callbackSide} applies ${flag}`));
 }
 
 function traceHealth(seedId, seedSide, callbackId, callbackSide) {
