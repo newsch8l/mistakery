@@ -164,6 +164,40 @@ test('payroll seed schedules exactly one callback, resumes the arc, decrements o
     'a story decision decrements the countdown by one');
 });
 
+// Dev-hostage migrates by the same pattern (Codex D: both branches set one shared
+// immutable seed flag and schedule the same typed callback).
+test('migrated dev-hostage uses a typed delayed callback with a shared seed flag', () => {
+  const seed = deck.cards.find((c) => c.id === 'DEV_HOSTAGE_SEED');
+  const cb = deck.cards.find((c) => c.id === 'DEV_HOSTAGE_CALLBACK');
+  for (const side of ['left', 'right']) {
+    assert.equal(seed.choices[side].reserveCallback, undefined, `${side}: no reservation`);
+    assert.equal(seed.choices[side].delay && seed.choices[side].delay.card, 'DEV_HOSTAGE_CALLBACK', `${side}: delayed callback`);
+    assert.ok([seed.choices[side].setFlags].flat().includes('dev_hostage_seeded'), `${side}: shared seed flag`);
+  }
+  assert.equal(seed.scheduler, undefined, 'seed drops scheduler metadata');
+  assert.ok([seed.excludes].flat().includes('hyped'), 'seed windowed early');
+  assert.equal(cb.callbackOnly, true, 'callback is callbackOnly');
+  assert.ok([cb.requires].flat().includes('dev_hostage_seeded'), 'callback requires its causal flag');
+  assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
+});
+
+// b3 migrates asymmetrically (Codex D): only the "Send three more" branch
+// schedules the typed callback; "Leave them alone" creates no delay/pending flag.
+test('migrated b3 schedules its callback only from the follow-up branch', () => {
+  const seed = deck.cards.find((c) => c.id === 'B3_SALES_PRESSURE_SEED');
+  const cb = deck.cards.find((c) => c.id === 'B3_PAID_OPTOUT_CALLBACK');
+  assert.equal(seed.choices.left.reserveCallback, undefined, 'left: no old reservation');
+  assert.equal(seed.choices.left.delay && seed.choices.left.delay.card, 'B3_PAID_OPTOUT_CALLBACK', 'left: delayed callback');
+  assert.equal(seed.choices.right.delay, undefined, 'right: no delay');
+  assert.equal(seed.choices.right.reserveCallback, undefined, 'right: no reservation');
+  assert.ok(![seed.choices.right.setFlags].flat().includes('b3_followups_authorized'), 'right does not set the scheduling flag');
+  assert.equal(seed.scheduler, undefined, 'seed drops scheduler metadata');
+  assert.ok([seed.excludes].flat().includes('hyped'), 'seed windowed early');
+  assert.equal(cb.callbackOnly, true, 'callback is callbackOnly');
+  assert.ok([cb.requires].flat().includes('b3_followups_authorized'), 'callback requires the scheduling-branch flag');
+  assert.equal(cb.scheduler, undefined, 'callback drops scheduler metadata');
+});
+
 // Step 2c: PRESS_CAPITALISM promoted to a spine beat AGENT_03B_WILD, sitting
 // between hype and the lead. It reads `hyped`, sets `hype_consequence_seen`
 // (+ a positioning flag), and AGENT_04 now unlocks on that consequence.

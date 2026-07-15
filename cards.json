@@ -357,20 +357,18 @@
     },
     {
       "id": "DEV_HOSTAGE_SEED", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "weight": 2, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved", "dev_payroll_risk_visible"],
+      "activeArcs": "agents", "requires": ["payroll_unresolved", "dev_payroll_risk_visible"], "excludes": ["hyped"],
       "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 50 }, "founder": { "min": 56, "max": 83 } },
-      "scheduler": { "role": "seed", "slot": "agents_entry_seed", "moduleId": "dev_hostage" },
       "text": "investor says he'll replace me with ai\ncool. call him an idiot in public\nor lie and say he apologized",
       "actor_action": "Dev reacts to the investor's AI replacement threat and demands public support or a face-saving lie.",
       "player_decision": "Insult the investor publicly or fake his apology.",
       "choices": {
-        "left": { "label": "Call him an idiot", "effects": { "team": 1, "founder": -3 }, "effect_reason": { "team": "Publicly backing Dev restores some team trust.", "founder": "Insulting the investor in public costs founder confidence." }, "setFlags": ["dev_conflict_public"], "reserveCallback": { "callbackId": "DEV_HOSTAGE_CALLBACK", "callbackSlot": "agents_pre_serious_lead", "spineSteps": 3 } },
-        "right": { "label": "Fake investor's apology", "effects": { "team": -3, "founder": 2 }, "effect_reason": { "team": "The fake apology calms no one for long.", "founder": "Avoiding a public confrontation with the investor protects confidence." }, "setFlags": ["dev_conflict_bypassed"], "reserveCallback": { "callbackId": "DEV_HOSTAGE_CALLBACK", "callbackSlot": "agents_pre_serious_lead", "spineSteps": 3 } }
+        "left": { "label": "Call him an idiot", "effects": { "team": 1, "founder": -3 }, "effect_reason": { "team": "Publicly backing Dev restores some team trust.", "founder": "Insulting the investor in public costs founder confidence." }, "setFlags": ["dev_conflict_public", "dev_hostage_seeded"], "delay": { "card": "DEV_HOSTAGE_CALLBACK", "storyDecisions": 3 } },
+        "right": { "label": "Fake investor's apology", "effects": { "team": -3, "founder": 2 }, "effect_reason": { "team": "The fake apology calms no one for long.", "founder": "Avoiding a public confrontation with the investor protects confidence." }, "setFlags": ["dev_conflict_bypassed", "dev_hostage_seeded"], "delay": { "card": "DEV_HOSTAGE_CALLBACK", "storyDecisions": 3 } }
       }
     },
     {
-      "id": "DEV_HOSTAGE_CALLBACK", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "oncePerRun": true,
-      "scheduler": { "role": "callback", "slot": "agents_pre_serious_lead", "moduleId": "dev_hostage" },
+      "id": "DEV_HOSTAGE_CALLBACK", "kind": "sideStory", "callbackOnly": true, "source": "@error404", "continuation": "sideStory", "oncePerRun": true, "requires": ["dev_hostage_seeded"],
       "text": "updates are back\nwrite down who has access\nor schedule my 3am call now",
       "actor_action": "Dev confirms updates are back and sarcastically asks for durable rules or another scheduled emergency call.",
       "player_decision": "Write access rules or book the next emergency call.",
@@ -458,20 +456,18 @@
       "activeArcs": "agents",
       "requires": ["sales_outreach_started"],
       "resourceRange": { "cash": { "min": 12, "max": 19 }, "team": { "min": 47, "max": 61 }, "founder": { "min": 56, "max": 83 } },
-      "scheduler": { "role": "seed", "slot": "agents_entry_seed", "moduleId": "b3" },
-      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted"],
+      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted", "hyped"],
       "text": "Boss, your pitch deserved a reply.\nThey ignored four emails.\nLet me send three more.",
       "actor_action": "Sales asks permission to continue unwanted follow-ups to one off-screen prospect.",
       "player_decision": "Authorize three more emails or permanently stop contacting the prospect.",
       "choices": {
-        "left": { "label": "Send three more", "effects": { "team": -2, "founder": 2 }, "effect_reason": { "team": "Sales spends more time pursuing a company that has not replied.", "founder": "Aggressive follow-ups make the founder feel commercially decisive." }, "setFlags": ["b3_seed_seen", "b3_followups_authorized"], "reserveCallback": { "callbackId": "B3_PAID_OPTOUT_CALLBACK", "callbackSlot": "agents_pre_serious_lead", "spineSteps": 3 } },
+        "left": { "label": "Send three more", "effects": { "team": -2, "founder": 2 }, "effect_reason": { "team": "Sales spends more time pursuing a company that has not replied.", "founder": "Aggressive follow-ups make the founder feel commercially decisive." }, "setFlags": ["b3_seed_seen", "b3_followups_authorized"], "delay": { "card": "B3_PAID_OPTOUT_CALLBACK", "storyDecisions": 3 } },
         "right": { "label": "Leave them alone", "effects": { "team": 2, "founder": -2 }, "effect_reason": { "team": "Sales can remove a dead account from the follow-up queue.", "founder": "Giving up the account feels like admitting the pitch failed." }, "setFlags": ["b3_seed_seen", "b3_contact_stopped", "b3_resolved_without_offer"] }
       }
     },
     {
       "id": "B3_PAID_OPTOUT_CALLBACK", "kind": "sideStory", "callbackOnly": true, "source": "@bigdeals", "continuation": "sideStory", "oncePerRun": true,
       "activeArcs": "agents",
-      "scheduler": { "role": "callback", "slot": "agents_pre_serious_lead", "moduleId": "b3" },
       "requires": ["b3_seed_seen", "b3_followups_authorized"],
       "excludes": ["b3_contact_stopped", "b3_resolved_without_offer", "b3_callback_resolved", "b3_free_optout_granted"],
       "text": "We closed their hatred 🎉\nThey’ll pay to never hear from us again.\nSay yes and this beautiful first invoice hits my commission.",
