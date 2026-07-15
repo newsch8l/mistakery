@@ -10,11 +10,7 @@
     "scheduler": {
       "boundaries": [
         { "id": "opening_shared_seed", "before": "OPEN_04", "after": "OPEN_05", "roles": ["seed"] },
-        { "id": "opening_health_resolution", "before": "OPEN_05", "after": "OPEN_06", "roles": ["callback", "reaction"] },
-        { "id": "agents_entry_seed", "before": "OPEN_06", "after": "AGENT_01", "roles": ["seed"] },
-        { "id": "agents_entry_seed", "before": "PADEL_01", "after": "AGENT_01", "roles": ["seed"] },
-        { "id": "agents_entry_seed", "before": "PADEL_02", "after": "AGENT_01", "roles": ["seed"] },
-        { "id": "agents_pre_serious_lead", "before": "AGENT_03_HYPE", "after": "AGENT_04_LEAD", "roles": ["callback"] }
+        { "id": "opening_health_resolution", "before": "OPEN_05", "after": "OPEN_06", "roles": ["callback", "reaction"] }
       ],
       "protectedPairs": [
         ["AGENT_02_DEV", "AGENT_03_HYPE"],
@@ -542,17 +538,6 @@
       "choices": {
         "left": { "label": "Ask for an intro", "lowLabel": "Beg for an intro", "highLabel": "Demand his network", "effects": { "customers": 4, "founder": -5 }, "effect_reason": { "customers": "The rival introduces one real prospect.", "founder": "Asking the victorious rival for help is humiliating." } },
         "right": { "label": "Mute him", "lowLabel": "Hide the update", "highLabel": "Erase the winner", "effects": { "founder": 4 }, "effect_reason": { "founder": "Removing the rival stops the immediate humiliation." } }
-      }
-    },
-    {
-      "id": "PRESS_CAPITALISM", "kind": "pressure", "callbackOnly": true, "source": "@error404", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "trigger": { "all": "empathy_deployed" },
-      "text": "empathy patch is live\nevery lead now gets three follow-ups and a personal apology for capitalism",
-      "actor_action": "The deployed empathy patch returns with a concrete sales consequence.",
-      "player_decision": "Keep the apologies or remove them without changing the agents' sentience.",
-      "choices": {
-        "left": { "label": "Keep apologies", "lowLabel": "Leave them alone", "highLabel": "Apologize at scale", "effects": { "customers": -5, "founder": 5 }, "effect_reason": { "customers": "Real leads dislike repeated ideological apologies.", "founder": "The strange behavior still feels culturally important." } },
-        "right": { "label": "Remove apologies", "lowLabel": "Delete apologies", "highLabel": "Optimize the follow-ups", "effects": { "team": -5, "customers": 5 }, "effect_reason": { "team": "The developer must rewrite the live follow-up copy.", "customers": "Leads respond better to useful messages." } }
       }
     }
   ],
