@@ -1,4 +1,5 @@
 {
+  "_legacyNote": "LEGACY (pre-Phase-2 boundary/reservation model). The Agents side-stories (payroll/dev/b3) migrated to typed delayed callbacks in Phase 2, and the agents_entry_seed / agents_pre_serious_lead boundaries + the AGENT_02_DEV->AGENT_03_HYPE / AGENT_03_HYPE->AGENT_04_LEAD adjacencies below no longer exist in cards.json (AGENT_03B_WILD sits between hype and lead). This policy and the callback-slot-audit tests still validate the audit TOOL against a fixture and remain meaningful only for the still-boundary-based opening health module. To be rewritten alongside the opening-health migration.",
   "protectedPairs": [
     ["AGENT_02_DEV", "AGENT_03_HYPE"],
     ["AGENT_04_LEAD", "AGENT_05_ORDER"],
