@@ -111,13 +111,13 @@ test('the capitalism callback returns two to five intervening decisions after de
   assert.ok(interveningDecisions >= 2 && interveningDecisions <= 5, `Callback gap ${interveningDecisions}`);
 });
 
-test('a delayed callback keeps the final pressure slot after leaving padel for agents', () => {
+test('accepting Padel suppresses later variable callbacks even after leaving for agents', () => {
   const state = playStory('PADEL_01', 'padel', {
     PADEL_01: 'left', PADEL_02: 'right', AGENT_01: 'right',
     AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left', AGENT_04_LEAD: 'left',
     AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'right',
   });
-  assert.ok(state.history.some((entry) => entry.cardId === 'PRESS_CAPITALISM'));
+  assert.equal(state.history.some((entry) => entry.cardId === 'PRESS_CAPITALISM'), false);
   assert.ok(state.pressureCount <= deck.meta.maxPressureCards);
 });
 

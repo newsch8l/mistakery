@@ -30,3 +30,12 @@ test('flags converging choices that create no future state for the scheduler to 
   const report = auditDeck(productionDeck);
   assert.ok(report.findings.some((finding) => finding.cardId === 'OPEN_04' && finding.code === 'same-next-without-future-state'));
 });
+
+test('treats card-level state effects as real readers of retained flags', () => {
+  const report = auditDeck(productionDeck);
+  const unused = report.findings
+    .filter((finding) => finding.code === 'unused-flag')
+    .map((finding) => finding.message);
+  ['payroll_offer_compute_only', 'dev_updates_restored', 'mom_investor_clash_resolved', 'coma_callback_public', 'mom_flyers_public']
+    .forEach((flag) => assert.equal(unused.some((message) => message.includes(flag)), false, flag));
+});

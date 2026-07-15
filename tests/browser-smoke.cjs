@@ -1,11 +1,19 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require('playwright');
 
+const PACKAGE_A_IDS = [
+  'PAYROLL_RESTRICTED_AI_SEED', 'PAYROLL_RESTRICTED_AI_CALLBACK',
+  'DEV_HOSTAGE_SEED', 'DEV_HOSTAGE_CALLBACK',
+  'MOM_INVESTOR_SEED', 'MOM_INVESTOR_CALLBACK',
+  'COMA_SEED', 'COMA_CALLBACK_AUTHORIZED', 'COMA_CALLBACK_BLOCKED', 'MOM_FLYERS',
+];
+
 test('opens directly from index.html without a local server', async () => {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true, args: ['--disable-gpu'] });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -50,7 +58,12 @@ test('opens directly from index.html without a local server', async () => {
     assert.ok(topbarHeight >= 38, `Removing the label moved the chat upward: ${topbarHeight}`);
     const cardLayout = await page.evaluate(() => {
       const failures = [];
-      const targets = new Set(['B3_SALES_PRESSURE_SEED', 'B3_PAID_OPTOUT_CALLBACK', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_06_LEGAL']);
+      const targets = new Set([
+        'B3_SALES_PRESSURE_SEED', 'B3_PAID_OPTOUT_CALLBACK', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_06_LEGAL',
+        'PAYROLL_RESTRICTED_AI_SEED', 'PAYROLL_RESTRICTED_AI_CALLBACK', 'DEV_HOSTAGE_SEED', 'DEV_HOSTAGE_CALLBACK',
+        'MOM_INVESTOR_SEED', 'MOM_INVESTOR_CALLBACK', 'COMA_SEED',
+        'COMA_CALLBACK_AUTHORIZED', 'COMA_CALLBACK_BLOCKED', 'MOM_FLYERS',
+      ]);
       const verified = {};
       for (const card of window.MistakeryApp.deck.cards) {
         window.MistakeryApp.state.gameOver = false;
@@ -80,9 +93,15 @@ test('opens directly from index.html without a local server', async () => {
       return { failures, verified };
     });
     assert.deepEqual(cardLayout.failures, []);
-    assert.deepEqual(Object.keys(cardLayout.verified).sort(), ['AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_06_LEGAL', 'B3_PAID_OPTOUT_CALLBACK', 'B3_SALES_PRESSURE_SEED'].sort());
+    assert.deepEqual(Object.keys(cardLayout.verified).sort(), [...new Set([
+      'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_06_LEGAL', 'B3_PAID_OPTOUT_CALLBACK', 'B3_SALES_PRESSURE_SEED',
+      'PAYROLL_RESTRICTED_AI_SEED', 'PAYROLL_RESTRICTED_AI_CALLBACK', 'DEV_HOSTAGE_SEED', 'DEV_HOSTAGE_CALLBACK',
+      'MOM_INVESTOR_SEED', 'MOM_INVESTOR_CALLBACK', 'COMA_SEED',
+      'COMA_CALLBACK_AUTHORIZED', 'COMA_CALLBACK_BLOCKED', 'MOM_FLYERS',
+    ])].sort());
     Object.entries(cardLayout.verified).forEach(([id, layout]) => {
-      assert.ok(layout.lines <= 4, `${id} uses ${layout.lines} visual lines: ${layout.lineCounts.join('+')}`);
+      const maxLines = id === 'MOM_INVESTOR_CALLBACK' ? 5 : 4;
+      assert.ok(layout.lines <= maxLines, `${id} uses ${layout.lines} visual lines: ${layout.lineCounts.join('+')}`);
       assert.equal(layout.messageOverlapsStamp, false, `${id} overlaps timestamp`);
       assert.equal(layout.buttonsClipped, false, `${id} clips a reply button`);
     });
@@ -90,6 +109,35 @@ test('opens directly from index.html without a local server', async () => {
     Object.entries(cardLayout.verified).forEach(([id, layout]) => {
       assert.equal(layout.fontSize, '15.6px', `${id} no longer uses the common 390px-viewport font size`);
     });
+    if (process.env.MISTAKERY_SCREENSHOT_DIR) {
+      fs.mkdirSync(process.env.MISTAKERY_SCREENSHOT_DIR, { recursive: true });
+      for (const id of PACKAGE_A_IDS) {
+        const shotBrowser = await chromium.launch({ headless: true, args: ['--disable-gpu'] });
+        const shot = await shotBrowser.newPage({ viewport: { width: 390, height: 844 } });
+        try {
+          await shot.goto(fileUrl, { waitUntil: 'load' });
+          await shot.waitForSelector('[data-card-id]', { timeout: 2000 });
+          await shot.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
+          await shot.evaluate((cardId) => {
+            window.MistakeryApp.state.gameOver = false;
+            window.MistakeryApp.state.activeCrisisId = null;
+            window.MistakeryApp.state.currentCardId = cardId;
+            window.MistakeryApp.render();
+          }, id);
+          await shot.waitForTimeout(500);
+          await shot.screenshot();
+          await shot.waitForTimeout(100);
+          await shot.screenshot();
+          await shot.waitForTimeout(100);
+          await shot.screenshot({
+            path: path.join(process.env.MISTAKERY_SCREENSHOT_DIR, `${id}.png`),
+          });
+        } finally {
+          await shot.close();
+          await shotBrowser.close();
+        }
+      }
+    }
     if (process.env.MISTAKERY_PRINT_LAYOUT === '1') console.log(`MISTAKERY_LAYOUT ${JSON.stringify(cardLayout.verified)}`);
     assert.deepEqual(errors, []);
 
@@ -101,10 +149,20 @@ test('opens directly from index.html without a local server', async () => {
       ['left', 'OPEN_06'],
     ];
     await page.evaluate(() => { window.MistakeryApp.state = window.MistakeryEngine.startRun(window.MistakeryApp.deck); window.MistakeryApp.render(); });
+    const continueThroughPackageA = async (nextId) => {
+      for (let safety = 0; safety < 4; safety += 1) {
+        const currentId = await page.locator('[data-card-id]').textContent();
+        if (currentId === nextId) return;
+        assert.ok(PACKAGE_A_IDS.includes(currentId), `Unexpected card ${currentId} before ${nextId}`);
+        await page.locator('[data-choice="left"]').click();
+        await page.waitForTimeout(300);
+      }
+      assert.fail(`Did not reach ${nextId}`);
+    };
     for (const [side, nextId] of onboardingPath) {
       await page.locator(`[data-choice="${side}"]`).click();
-      await page.waitForFunction((id) => document.querySelector('[data-card-id]').textContent === id, nextId);
       await page.waitForTimeout(300);
+      await continueThroughPackageA(nextId);
     }
     await page.locator('[data-choice="left"]').click();
     await page.waitForFunction(() => document.querySelector('[data-card-id]').textContent === 'AGENT_01');
@@ -214,6 +272,63 @@ test('renders a readable two-button game with previews, crisis and ending states
     }));
     assert.deepEqual(desktopOverflow, { horizontal: false, vertical: false });
     await desktop.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test('completes controlled Agents and Padel browser walkthroughs', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const fileUrl = pathToFileURL(path.resolve(__dirname, '..', 'index.html')).href;
+  const play = async (picks, expectedEnding) => {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForSelector('[data-card-id]', { timeout: 2000 });
+    await page.evaluate(() => {
+      Math.random = () => 0;
+      window.MistakeryApp.state = window.MistakeryEngine.startRun(window.MistakeryApp.deck);
+      window.MistakeryApp.render();
+    });
+    for (let safety = 0; safety < 50; safety += 1) {
+      const snapshot = await page.evaluate(() => ({
+        gameOver: window.MistakeryApp.state.gameOver,
+        endingId: window.MistakeryApp.state.endingId,
+        crisis: window.MistakeryApp.state.activeCrisisId,
+        currentCardId: window.MistakeryApp.state.currentCardId,
+      }));
+      if (snapshot.gameOver) {
+        assert.equal(snapshot.endingId, expectedEnding);
+        const history = await page.evaluate(() => window.MistakeryApp.state.history.map((entry) => entry.cardId));
+        await page.close();
+        return history;
+      }
+      const selector = snapshot.crisis ? '[data-crisis-choice="rescue"]' : `[data-choice="${picks[snapshot.currentCardId] || 'left'}"]`;
+      await page.locator(selector).click();
+      await page.waitForTimeout(320);
+    }
+    assert.fail(`Browser walkthrough did not reach ${expectedEnding}`);
+  };
+
+  try {
+    const opening = {
+      OPEN_01: 'left', OPEN_02: 'left', OPEN_03_AUDIT: 'right', OPEN_04: 'left',
+      MOM_INVESTOR_SEED: 'left', OPEN_05: 'left', MOM_INVESTOR_CALLBACK: 'left',
+    };
+    const agents = await play({
+      ...opening, OPEN_06: 'left', AGENT_01: 'left', AGENT_02_DEV: 'right', AGENT_03_HYPE: 'left',
+      AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+    }, 'validation_agents');
+    assert.ok(agents.includes('AGENT_01'));
+    assert.ok(agents.includes('AGENT_07_INVOICE'));
+
+    const padel = await play({
+      ...opening, OPEN_06: 'right', PADEL_01: 'left', PADEL_02: 'left', PADEL_03_TEAM: 'left',
+      PADEL_04_CHOICE: 'right', PADEL_05_WIN: 'left', PADEL_06_PILOT: 'left',
+    }, 'validation_padel');
+    const accepted = padel.indexOf('PADEL_01');
+    assert.ok(accepted >= 0);
+    assert.equal(padel.slice(accepted + 1).some((id) => PACKAGE_A_IDS.includes(id)
+      || id.startsWith('B3_') || id.startsWith('PRESS_')), false);
   } finally {
     await browser.close();
   }

@@ -54,6 +54,10 @@ function auditDeck(deck) {
     asArray(card.excludes).forEach((flag) => readFlags.add(flag));
     const trigger = card.trigger || {};
     ['all', 'any', 'none'].forEach((key) => asArray(trigger[key]).forEach((flag) => readFlags.add(flag)));
+    asArray(card.stateEffects).forEach((effect) => {
+      asArray(effect.requires).forEach((flag) => readFlags.add(flag));
+      asArray(effect.excludes).forEach((flag) => readFlags.add(flag));
+    });
   }
 
   for (const card of cards) {

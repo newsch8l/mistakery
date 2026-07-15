@@ -225,7 +225,7 @@ test('forced continuation cannot be interrupted by an ambient pressure card', ()
     card.oncePerRun = true;
   });
 
-  const state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0 }).state;
+  const state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.9 }).state;
   assert.equal(state.currentCardId, 'agent_1');
   assert.equal(state.queuedCardId, null);
   assert.equal(state.pressureCount, 0);
@@ -440,4 +440,110 @@ test('resourceRange requires every configured resource condition to match', () =
 
   const pool = engine.buildEligiblePool(deck, state, { ids: ['pressure_a'] });
   assert.deepEqual(pool, []);
+});
+
+test('card-level state effects apply only when their required flags match', () => {
+  const deck = fixtureDeck();
+  deck.meta.baseCashBurn = 0;
+  const card = deck.cards.find((item) => item.id === 'agent_1');
+  card.stateEffects = [
+    {
+      requires: ['remembered_choice'],
+      effects: { team: 3, founder: -2 },
+      effect_reason: { team: 'The remembered choice helps the team.', founder: 'The remembered choice costs confidence.' },
+    },
+  ];
+  const baseline = engine.startRun(deck);
+  baseline.currentCardId = 'agent_1';
+  const withoutFlag = engine.resolveChoice(deck, baseline, 'left', { rng: () => 0 }).deltas;
+  assert.deepEqual(withoutFlag, { cash: 0, team: 5, customers: 0, founder: 0 });
+
+  const remembered = engine.startRun(deck);
+  remembered.currentCardId = 'agent_1';
+  remembered.flags = ['remembered_choice'];
+  const withFlag = engine.resolveChoice(deck, remembered, 'left', { rng: () => 0 }).deltas;
+  assert.deepEqual(withFlag, { cash: 0, team: 8, customers: 0, founder: -2 });
+});
+
+test('a named callback boundary cannot fall through to ambient selection when no callback is due', () => {
+  const deck = fixtureDeck();
+  deck.meta.scheduler = {
+    boundaries: [{ id: 'callback_only', before: 'start', after: 'agent_1', roles: ['callback'] }],
+    locks: [],
+  };
+  deck.cards.find((card) => card.id === 'start').continuation = 'weighted';
+  const state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.9 }).state;
+  assert.equal(state.currentCardId, 'agent_1');
+  assert.equal(state.queuedCardId, null);
+  assert.equal(state.pressureCount, 0);
+});
+
+test('a later scheduler lane uses spine resources rather than effects from an earlier scheduled lane', () => {
+  const deck = fixtureDeck();
+  deck.meta.scheduler = {
+    boundaries: [
+      { id: 'first_lane', before: 'start', after: 'agent_1', roles: ['seed'] },
+      { id: 'second_lane', before: 'agent_1', after: 'agent_2', roles: ['seed'] },
+    ],
+    locks: [],
+  };
+  const first = deck.cards.find((card) => card.id === 'pressure_a');
+  first.kind = 'sideStory';
+  first.continuation = 'sideStory';
+  first.scheduler = { role: 'seed', slot: 'first_lane', moduleId: 'first' };
+  first.choices.left.effects = { team: -20 };
+  const second = deck.cards.find((card) => card.id === 'pressure_b');
+  second.kind = 'sideStory';
+  second.continuation = 'sideStory';
+  second.scheduler = { role: 'seed', slot: 'second_lane', moduleId: 'second' };
+  second.resourceRange = { team: { min: 65, max: 65 } };
+
+  let state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0 }).state;
+  assert.equal(state.currentCardId, 'pressure_a');
+  state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
+  assert.equal(state.currentCardId, 'agent_1');
+  state = engine.resolveChoice(deck, state, 'left', { rng: () => 0 }).state;
+  assert.equal(state.resources.team, 45);
+  assert.equal(state.currentCardId, 'pressure_b');
+  assert.equal(state.queuedCardId, 'agent_2');
+});
+
+test('scheduler-managed cards never leak into the legacy eligible pool', () => {
+  const deck = fixtureDeck();
+  const scheduled = deck.cards.find((card) => card.id === 'pressure_a');
+  scheduled.scheduler = { role: 'callback', slot: 'callback_only', moduleId: 'fixture' };
+  scheduled.continuation = 'sideStory';
+  scheduled.kind = 'sideStory';
+  const state = engine.startRun(deck);
+  assert.deepEqual(engine.buildEligiblePool(deck, state).map((entry) => entry.card.id).includes('pressure_a'), false);
+});
+
+test('a refused Padel meeting stays unlocked while an accepted Padel lock survives later arc switches', () => {
+  const deck = fixtureDeck();
+  deck.meta.scheduler = {
+    boundaries: [
+      { id: 'agents_entry_seed', before: 'padel_1', after: 'agent_1', roles: ['seed'] },
+      { id: 'agents_entry_seed', before: 'start', after: 'agent_1', roles: ['seed'] },
+    ],
+    locks: [{ lockCardId: 'padel_1', arc: 'padel', forbidVariableSlots: true }],
+  };
+  const seed = deck.cards.find((card) => card.id === 'pressure_a');
+  seed.scheduler = { role: 'seed', slot: 'agents_entry_seed', moduleId: 'fixture_seed' };
+  seed.activeArcs = ['agents'];
+  seed.continuation = 'sideStory';
+  const refused = engine.startRun(deck);
+  refused.currentCardId = 'padel_1';
+  refused.activeArc = 'padel';
+  const switched = engine.resolveChoice(deck, refused, 'right', { rng: () => 0 }).state;
+  assert.equal(switched.activeArc, 'agents');
+  assert.equal(switched.currentCardId, 'pressure_a');
+  assert.equal(switched.queuedCardId, 'agent_1');
+
+  const acceptedThenSwitched = engine.startRun(deck);
+  acceptedThenSwitched.activeArc = 'agents';
+  acceptedThenSwitched.schedulerLocks = ['padel_1'];
+  const locked = engine.resolveChoice(deck, acceptedThenSwitched, 'left', { rng: () => 0 }).state;
+  assert.equal(locked.activeArc, 'agents');
+  assert.equal(locked.currentCardId, 'agent_1');
+  assert.equal(locked.queuedCardId, null);
 });

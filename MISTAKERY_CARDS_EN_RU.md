@@ -217,12 +217,12 @@
 **EN**
 
 > Our lawyers saw “sentient employees” in your deck.  
-> Buying them is slavery. Remove their souls or evacuate them free.
+> Buying them is slave trading.
 
 **RU**
 
-> Наши юристы увидели в презентации «разумных сотрудников».  
-> Покупать их — рабство. Удалите души или эвакуируйте их бесплатно.
+> Наши юристы увидели в вашей презентации «разумных сотрудников».  
+> Покупать их — это работорговля.
 
 - **Remove souls — Удалить души**: Team -5, Customers +5, Founder -5; → `AGENT_07_INVOICE`.
 - **Keep them sentient — Оставить разумными**: Team +3, Customers -4, Founder +6; → `AGENT_07_DONATE`.
@@ -411,6 +411,176 @@
 - **Send invoice — Отправить счёт**: Cash +12, Team -8, Customers +10, Founder -8; финал `acquired_validation`.
 
 # 4. Global side-stories
+
+## PAYROLL_RESTRICTED_AI_SEED — Investor @unicorn_hunter
+
+**EN**
+
+> I BOUGHT AI CREDITS.  
+> YOUR TEAM CAN WORK FOR THE SUBSCRIPTION.  
+> NO REVENUE, NO PAYROLL.
+
+**RU**
+
+> Я КУПИЛ КРЕДИТЫ НА ИИ.  
+> ПУСТЬ КОМАНДА РАБОТАЕТ ЗА ПОДПИСКУ.  
+> НЕ БУДЕТ ВЫРУЧКИ — НЕ БУДЕТ ЗАРПЛАТЫ.
+
+- **Accept credits — Принять кредиты**: Team -2, Founder +2; возврат к основной ветке.
+- **Demand payroll — Потребовать зарплату**: Founder -2; возврат к основной ветке.
+
+## PAYROLL_RESTRICTED_AI_CALLBACK — Dev @error404
+
+**EN**
+
+> the ai has everything  
+> payroll has nothing  
+> pay us or i shut everything down right now
+
+**RU**
+
+> для ии есть все  
+> для зарплат ничего  
+> давай деньги, или я прямо сейчас всё вырублю
+
+- **Promise payroll — Пообещать зарплату**: Team -3; возврат к основной ветке.
+- **Pay out of pocket — Заплатить из своих**: Team +2, Founder -2; возврат к основной ветке.
+
+## DEV_HOSTAGE_SEED — Dev @error404
+
+**EN**
+
+> investor says he'll replace me with ai  
+> cool. call him an idiot in public  
+> or lie and say he apologized
+
+**RU**
+
+> инвестор сказал, что заменит меня ИИ  
+> круто. назови его придурком при всех  
+> или соври, что он извинился
+
+- **Call him an idiot — Назвать его придурком**: Team +1, Founder -3; возврат к основной ветке.
+- **Fake investor's apology — Соврать извинения инвестора**: Team -3, Founder +2; возврат к основной ветке.
+
+## DEV_HOSTAGE_CALLBACK — Dev @error404
+
+**EN**
+
+> updates are back  
+> write down who has access  
+> or schedule my 3am call now
+
+**RU**
+
+> обновления снова работают  
+> запиши, у кого есть доступ  
+> или сразу назначай мне звонок на три ночи
+
+- **Write the rules — Записать правила**: Team +2, Founder -1; возврат к основной ветке.
+- **Book the call — Назначить звонок**: Team -3, Founder +2; возврат к основной ветке.
+
+## MOM_INVESTOR_SEED — Mom @i_love_cats72
+
+**EN**
+
+> That investor keeps calling about money.  
+> You don't eat. You don't sleep.  
+> Give me his number.
+
+**RU**
+
+> Этот инвестор всё звонит из-за денег.  
+> Ты не ешь. Ты не спишь.  
+> Дай мне его номер.
+
+- **Let Mom call — Пусть мама звонит**: Team +1, Founder -2; возврат к основной ветке.
+- **I'm fine, Mom — Я в порядке, мам**: Team -2, Founder +2; возврат к основной ветке.
+
+## MOM_INVESTOR_CALLBACK — Investor @unicorn_hunter
+
+**EN**
+
+> YOUR MOTHER CALLED ME ABOUT YOUR SLEEP.  
+> WHAT THE HELL? I DIDN'T FUND A BEDTIME.  
+> GET BACK TO WORK.
+
+**RU**
+
+> ТВОЯ МАТЬ ПОЗВОНИЛА МНЕ НАСЧЁТ ТВОЕГО СНА.  
+> Я НЕ ФИНАНСИРОВАЛ ТВОЙ РЕЖИМ СНА.  
+> ВОЗВРАЩАЙСЯ К РАБОТЕ.
+
+- **Take the break — Послушать маму и отдохнуть**: без отдельного эффекта; возврат к основной ветке.
+- **Keep working — Продолжить работать**: без отдельного эффекта; возврат к основной ветке.
+
+## COMA_SEED — Marketer @hype_queen
+
+**EN**
+
+> okay hear me out  
+> we say you worked yourself into a coma  
+> tragic founder lore. people will eat this up 😭
+
+**RU**
+
+> так, выслушай меня  
+> скажем, что ты доработался до комы  
+> трагическая легенда фаундера. народ такое обожает 😭
+
+- **Approve the post — Разрешить пост**: Team -2, Founder +1; возврат к основной ветке.
+- **Kill the story — Запретить пост**: Team +1, Founder -2; возврат к основной ветке.
+
+## COMA_CALLBACK_AUTHORIZED — Marketer @hype_queen
+
+**EN**
+
+> oh my god they believed the coma 😭  
+> people are asking what we built  
+> do not wake up online yet
+
+**RU**
+
+> боже мой, они поверили в кому 😭  
+> люди спрашивают, что мы вообще сделали  
+> пока не просыпайся в интернете
+
+- **Keep the post — Оставить пост**: Customers +2; возврат к основной ветке.
+- **Delete the post — Удалить пост**: Founder -2; возврат к основной ветке.
+
+## COMA_CALLBACK_BLOCKED — Marketer @hype_queen
+
+**EN**
+
+> fine. no coma post  
+> you still look like shit though  
+> take a rest. this one isn't content
+
+**RU**
+
+> ладно. никакого поста про кому  
+> но выглядишь ты всё равно как дерьмо  
+> отдохни. это не контент
+
+- **Take rest — Отдохнуть**: Team +2, Founder -3; возврат к основной ветке.
+- **Keep working — Продолжить работать**: Team -2, Founder -3; возврат к основной ветке.
+
+## MOM_FLYERS — Mom @i_love_cats72
+
+**EN**
+
+> I put up flyers.  
+> B2BuyerSpyer and your phone number are on them.  
+> They say you need help. Don't be mad.
+
+**RU**
+
+> Я расклеила объявления.  
+> На них B2BuyerSpyer и твой номер телефона.  
+> Там написано, что тебе нужна помощь. Не сердись.
+
+- **Take them down — Снять объявления**: Team +1, Founder -1; возврат к основной ветке.
+- **Leave them up — Оставить объявления**: Team -1, Founder -3; возврат к основной ветке.
 
 ## B3_SALES_PRESSURE_SEED — Sales @bigdeals
 

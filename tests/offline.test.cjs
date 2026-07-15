@@ -32,6 +32,12 @@ test('bilingual catalog contains every canonical card and its current English co
   });
 });
 
+test('bilingual catalog contains the approved AGENT_06_LEGAL Russian copy', () => {
+  const catalog = fs.readFileSync(catalogPath, 'utf8');
+  assert.ok(catalog.includes('Наши юристы увидели в вашей презентации «разумных сотрудников».'));
+  assert.ok(catalog.includes('Покупать их — это работорговля.'));
+});
+
 test('uses a neutral typing status instead of the obsolete aggressive status', () => {
   assert.ok(appSource.includes("setThread(card.source, 'typing...')"));
   assert.ok(indexSource.includes('typing...'));

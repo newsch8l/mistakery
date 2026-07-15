@@ -1,0 +1,21 @@
+{
+  "protectedPairs": [
+    ["AGENT_02_DEV", "AGENT_03_HYPE"],
+    ["AGENT_04_LEAD", "AGENT_05_ORDER"],
+    ["AGENT_05_ORDER", "AGENT_06_LEGAL"],
+    ["PADEL_01", "PADEL_02"],
+    ["PADEL_04_CHOICE", "PADEL_05_WIN"],
+    ["PADEL_04_CHOICE", "PADEL_05_LOSE"],
+    ["PADEL_05_WIN", "PADEL_06_PILOT"],
+    ["PADEL_05_WIN", "PADEL_06_WAR"],
+    ["PADEL_05_LOSE", "PADEL_06_ACQUIRED"]
+  ],
+  "callbackOnlyBoundaries": [
+    {"before":"AGENT_03_HYPE","after":"AGENT_04_LEAD","id":"agents_pre_serious_lead"}
+  ],
+  "reactionOnlyBoundaries": [
+    {"before":"OPEN_03_AUDIT","after":"OPEN_04","id":"opening_after_evidence"},
+    {"before":"OPEN_03_INVOICES","after":"OPEN_04","id":"opening_after_evidence"}
+  ],
+  "locks": [{"lockCardId":"PADEL_01","arc":"padel","forbidVariableSlots":true}]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mistakery Reigns Scheduler"
+  short_description: "Audit Reigns-like callbacks and slots"
+  default_prompt: "Use $mistakery-reigns-scheduler to audit callback capacity in this Mistakery deck."

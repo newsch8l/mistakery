@@ -44,11 +44,20 @@ function choose(state, side, random = 0) {
   return engine.resolveChoice(deck, state, side, { rng: () => random }).state;
 }
 
-function startAuthorizedB3(queuedCardId = 'AGENT_04_LEAD') {
+function b3EntryState(id = 'OPEN_06') {
+  const state = stateAt(id);
+  state.flags = ['sales_outreach_started'];
+  state.resources = { cash: 15, team: 50, customers: 15, founder: 65 };
+  state.schedulerResources = { ...state.resources };
+  return state;
+}
+
+function startAuthorizedB3(queuedCardId = 'AGENT_01') {
   const state = stateAt('B3_SALES_PRESSURE_SEED');
-  state.flags = ['empathy_deployed', 'agents_public'];
+  state.flags = ['sales_outreach_started'];
   state.queuedCardId = queuedCardId;
   state.queuedCardIds = [queuedCardId];
+  state.queuedBoundary = { id: 'agents_entry_seed', before: 'OPEN_06', after: queuedCardId };
   return choose(state, 'left');
 }
 
@@ -122,29 +131,33 @@ test('B3 cards keep the exact approved copy and once-per-run behavior', () => {
 
 test('B3 remains Agents-only, including after a Padel refusal switches to Agents', () => {
   const seed = card('B3_SALES_PRESSURE_SEED');
-  assert.ok(engine.buildEligiblePool(deck, stateAt('AGENT_03_HYPE', 'agents'), { ids: [seed.id] }).length);
-  assert.deepEqual(engine.buildEligiblePool(deck, stateAt('PADEL_03_TEAM', 'padel'), { ids: [seed.id] }), []);
-  const refused = choose(stateAt('PADEL_02', 'padel'), 'right');
+  assert.ok(engine.buildBoundaryPool(deck, b3EntryState(), 'agents_entry_seed').some((entry) => entry.card.id === seed.id));
+  const padel = b3EntryState('PADEL_01');
+  padel.activeArc = 'padel';
+  assert.deepEqual(engine.buildBoundaryPool(deck, padel, 'agents_entry_seed'), []);
+  const refused = choose(padel, 'right');
   assert.equal(refused.activeArc, 'agents');
-  assert.ok(engine.buildEligiblePool(deck, refused, { ids: [seed.id] }).length);
+  assert.equal(refused.currentCardId, seed.id);
+
+  const acceptedThenRefused = b3EntryState('PADEL_01');
+  acceptedThenRefused.activeArc = 'padel';
+  const accepted = choose(acceptedThenRefused, 'left');
+  const lateRefusal = choose(accepted, 'right');
+  assert.equal(lateRefusal.activeArc, 'agents');
+  assert.equal(lateRefusal.currentCardId, 'AGENT_01');
 });
 
-test('a safe Agents weighted boundary can insert B3 and preserve its exact story', () => {
-  const state = stateAt('AGENT_03_HYPE');
-  state.flags = ['agents_public'];
-  const result = engine.resolveChoice(deck, state, 'left', { rng: () => 0.999 }).state;
+test('the named Agents entry boundary can insert B3 and preserve its exact story', () => {
+  const result = engine.resolveChoice(deck, b3EntryState(), 'left', { rng: () => 0.999 }).state;
   assert.equal(result.currentCardId, 'B3_SALES_PRESSURE_SEED');
-  assert.equal(result.queuedCardId, 'AGENT_04_LEAD');
-  assert.deepEqual(result.queuedCardIds, ['AGENT_04_LEAD']);
+  assert.equal(result.queuedCardId, 'AGENT_01');
+  assert.deepEqual(result.queuedCardIds, ['AGENT_01']);
 });
 
-test('B3 seed is withheld while another delayed callback is pending', () => {
-  const state = stateAt('AGENT_03_HYPE');
-  state.flags = ['empathy_deployed', 'agents_public'];
-  state.delayed = [{ card: 'PRESS_CAPITALISM', dueAfter: 999 }];
-  const result = engine.resolveChoice(deck, state, 'left', { rng: () => 0.999 }).state;
-  assert.notEqual(result.currentCardId, 'B3_SALES_PRESSURE_SEED');
-  assert.ok(result.delayed.some((entry) => entry.card === 'PRESS_CAPITALISM'));
+test('B3 seed is withheld while another named callback is reserved', () => {
+  const state = b3EntryState();
+  state.reservations = [{ callbackId: 'DEV_HOSTAGE_CALLBACK', callbackSlot: 'agents_pre_serious_lead', remainingSpineSteps: 2 }];
+  assert.deepEqual(engine.buildBoundaryPool(deck, state, 'agents_entry_seed'), []);
 });
 
 test('B3 cannot interrupt forced causal pairs or an earlier due callback', () => {
@@ -156,7 +169,14 @@ test('B3 cannot interrupt forced causal pairs or an earlier due callback', () =>
   state.flags = ['empathy_deployed', 'agents_public'];
   state.delayed = [{ card: 'PRESS_CAPITALISM', dueAfter: 0 }];
   state = choose(state, 'left');
+  assert.equal(state.currentCardId, 'AGENT_04_LEAD');
+  state = choose(state, 'left');
+  assert.equal(state.currentCardId, 'AGENT_05_ORDER');
+  state = choose(state, 'right');
+  assert.equal(state.currentCardId, 'AGENT_06_LEGAL');
+  state = choose(state, 'left');
   assert.equal(state.currentCardId, 'PRESS_CAPITALISM');
+  assert.equal(state.queuedCardId, 'AGENT_07_INVOICE');
 });
 
 test('B3 stop excludes callback', () => {
@@ -171,19 +191,22 @@ test('B3 stop excludes callback', () => {
 
 test('B3 callback counts story decisions and ignores ambient cards', () => {
   let state = startAuthorizedB3();
-  let delayed = state.delayed.find((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(delayed.remainingStoryDecisions, 2);
+  let reservation = state.reservations.find((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK');
+  assert.equal(reservation.remainingSpineSteps, 3);
   state.currentCardId = 'PRESS_RIVAL';
-  state.queuedCardId = 'AGENT_04_LEAD';
-  state.queuedCardIds = ['AGENT_04_LEAD'];
+  state.queuedCardId = 'AGENT_01';
+  state.queuedCardIds = ['AGENT_01'];
   state = choose(state, 'right');
-  delayed = state.delayed.find((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(delayed.remainingStoryDecisions, 2);
+  reservation = state.reservations.find((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK');
+  assert.equal(reservation.remainingSpineSteps, 3);
+  state.pressureCount = deck.meta.maxPressureCards;
   state = choose(state, 'left');
-  assert.equal(state.currentCardId, 'AGENT_05_ORDER');
+  assert.equal(state.currentCardId, 'AGENT_02_DEV');
   state = choose(state, 'right');
+  assert.equal(state.currentCardId, 'AGENT_03_HYPE');
+  state = choose(state, 'left');
   assert.equal(state.currentCardId, 'B3_PAID_OPTOUT_CALLBACK');
-  assert.equal(state.queuedCardId, 'AGENT_06_LEGAL');
+  assert.equal(state.queuedCardId, 'AGENT_04_LEAD');
 });
 
 test('B3 free opt-out restores the exact queued story without Cash or Customers', () => {
@@ -220,10 +243,10 @@ test('crisis rescue preserves the pending B3 callback', () => {
   state.resources.cash = 1;
   state = choose(state, 'left');
   assert.equal(state.activeCrisisId, 'cash_low');
-  assert.ok(state.delayed.some((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK'));
+  assert.ok(state.reservations.some((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK'));
   state = engine.resolveCrisis(deck, state, 'rescue', { rng: () => 0 }).state;
-  assert.equal(state.currentCardId, 'AGENT_05_ORDER');
-  assert.ok(state.delayed.some((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK'));
+  assert.equal(state.currentCardId, 'AGENT_02_DEV');
+  assert.ok(state.reservations.some((entry) => entry.callbackId === 'B3_PAID_OPTOUT_CALLBACK'));
 });
 
 function playDeterministic(startId, activeArc, picks) {

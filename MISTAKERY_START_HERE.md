@@ -41,4 +41,6 @@ The documents are intentionally separate. Do not merge them into one large brief
 
 ## Current test status
 
-The current runtime is a full-run direction-review build. After the approved onboarding, `Build for enterprise` enters Agents and `Hunt a whale` enters ClosedAI Padel; both arcs can reach their complete paid and unpaid endings. Treat the existing scheduler as a vertical-slice implementation under review, not as an approved final architecture, and do not rewrite card copy until the full-run Direction Review is resolved.
+Stage 2B Package A reached its production technical checkpoint on 13 July 2026. The canonical deck now contains the ten author-approved Package A cards, named seed/callback boundaries, retained-state readers and the existing B3 migration. The full Agents and Padel routes remain playable; accepted `PADEL_01` locks later variable content. See `MISTAKERY_STAGE_2B_PACKAGE_A_PRODUCTION_CHECKPOINT.md` for the verified suite, analyzer, 10,000-run frequencies and 390×844 browser results.
+
+Package A English copy is frozen at the approved audition text. Package B has not started. Do not modify Package A copy, begin Package B, or change a fundamental scheduler invariant without separate approval.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mistakery Messenger Writer"
+  short_description: "Write vivid Mistakery messenger cards"
+  default_prompt: "Use $mistakery-messenger-writer to audition approved Mistakery card situations without changing production copy."

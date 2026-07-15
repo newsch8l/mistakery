@@ -1,0 +1,47 @@
+{
+  "cards": [
+    {
+      "id": "FACT_LOCK_B3_S5",
+      "source": "@bigdeals",
+      "text": "Four emails have no reply.\nDo you want me to send three more or stop?",
+      "choices": {
+        "left": { "label": "Send three more" },
+        "right": { "label": "Leave them alone" }
+      },
+      "audition": { "finalType": "question" }
+    },
+    {
+      "id": "FACT_LOCK_HYPE_H5",
+      "source": "@hype_queen",
+      "text": "Public attention has arrived for the ready demo.\nPlease choose between the post and the disclaimer.",
+      "choices": {
+        "left": { "label": "Boost post" },
+        "right": { "label": "Add disclaimer" }
+      },
+      "audition": { "finalType": "decision" }
+    },
+    {
+      "id": "FACT_LOCK_DESIGN_D1",
+      "source": "@pixel_perfect",
+      "text": "The font costs $4,500.\nThe server bill is lower.\nI recommend buying it.",
+      "choices": {
+        "left": { "label": "Buy font" },
+        "right": { "label": "Use Arial" }
+      },
+      "audition": { "finalType": "recommendation" }
+    },
+    {
+      "id": "FACT_LOCK_BOT_B5",
+      "source": "@b2buddy_bot",
+      "text": "Food delivery is canceled.\nThe fridge stays locked until the first paid invoice; raw carrots remain available.",
+      "choices": {
+        "left": { "label": "Break fridge lock" },
+        "right": { "label": "Eat carrots" }
+      },
+      "audition": {
+        "choiceObjects": { "left": "fridge", "right": "carrots" },
+        "finalType": "policy"
+      }
+    }
+  ]
+}

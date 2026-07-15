@@ -36,6 +36,9 @@
           if (!ids.has(id)) errors.push(`Card ${card.id} points to missing ${id}.`);
         });
         if (choice && choice.delay && !ids.has(choice.delay.card)) errors.push(`Card ${card.id} delays missing ${choice.delay.card}.`);
+        if (choice && choice.reserveCallback && !ids.has(choice.reserveCallback.callbackId)) {
+          errors.push(`Card ${card.id} reserves missing ${choice.reserveCallback.callbackId}.`);
+        }
         if (choice && choice.crisis && !deck.crises?.[choice.crisis]) errors.push(`Card ${card.id} forces missing crisis ${choice.crisis}.`);
       });
     });
@@ -53,16 +56,21 @@
   function startRun(deck, options = {}) {
     const errors = validateDeck(deck);
     if (errors.length) throw new Error(errors.join('\n'));
+    const resources = initialResources(deck);
     return {
       turn: 1,
-      resources: initialResources(deck),
+      resources,
+      schedulerResources: { ...resources },
       flags: [],
       shown: [],
       delayed: [],
+      reservations: [],
+      schedulerLocks: [],
       currentCardId: deck.meta.startCard,
       activeArc: null,
       queuedCardId: null,
       queuedCardIds: [],
+      queuedBoundary: null,
       pendingContinuation: null,
       pressureCount: 0,
       activeCrisisId: null,
@@ -80,10 +88,14 @@
     return {
       ...state,
       resources: { ...state.resources },
+      schedulerResources: { ...(state.schedulerResources || state.resources) },
       flags: [...state.flags],
       shown: [...state.shown],
       delayed: state.delayed.map((entry) => ({ ...entry })),
+      reservations: (state.reservations || []).map((entry) => ({ ...entry })),
+      schedulerLocks: [...(state.schedulerLocks || [])],
       queuedCardIds: [...(state.queuedCardIds || [])],
+      queuedBoundary: state.queuedBoundary ? { ...state.queuedBoundary } : null,
       pendingContinuation: state.pendingContinuation
         ? { ...state.pendingContinuation, ids: [...state.pendingContinuation.ids] }
         : null,
@@ -120,15 +132,99 @@
   }
 
   function resourceRangeMatches(card, state) {
+    const resources = schedulerRole(card) && state.schedulerResources
+      ? state.schedulerResources
+      : state.resources;
     return Object.entries(card.resourceRange || {}).every(([resource, range]) => {
       if (!RESOURCE_KEYS.includes(resource) || !range) return false;
-      const value = Number(state.resources[resource]);
+      const value = Number(resources[resource]);
       const min = range.min == null ? null : Number(range.min);
       const max = range.max == null ? null : Number(range.max);
       if (!Number.isFinite(value)) return false;
       if (min != null && (!Number.isFinite(min) || value < min)) return false;
       if (max != null && (!Number.isFinite(max) || value > max)) return false;
       return true;
+    });
+  }
+
+  function schedulerConfig(deck) {
+    return deck && deck.meta && deck.meta.scheduler ? deck.meta.scheduler : null;
+  }
+
+  function schedulerRole(card) {
+    return card && card.scheduler ? card.scheduler.role : null;
+  }
+
+  function schedulerIsLocked(deck, state) {
+    const config = schedulerConfig(deck);
+    if (!config) return false;
+    return (config.locks || []).some((lock) =>
+      (state.schedulerLocks || []).includes(lock.lockCardId));
+  }
+
+  function boundaryFor(deck, before, after) {
+    const config = schedulerConfig(deck);
+    if (!config) return null;
+    return (config.boundaries || []).find((boundary) => boundary.before === before && boundary.after === after) || null;
+  }
+
+  function reservationForBoundary(deck, state, boundary) {
+    if (!boundary) return null;
+    return (state.reservations || []).find((reservation) => {
+      if (reservation.callbackSlot !== boundary.id || Number(reservation.remainingSpineSteps || 0) > 0) return false;
+      const callback = cardById(deck, reservation.callbackId);
+      return callback && schedulerRole(callback) === 'callback' && cardIsEligible(deck, callback, state);
+    }) || null;
+  }
+
+  function buildBoundaryPool(deck, state, boundaryId) {
+    const config = schedulerConfig(deck);
+    const boundary = config && (config.boundaries || []).find((item) => item.id === boundaryId);
+    if (!boundary || schedulerIsLocked(deck, state)) return [];
+    const allowedRoles = new Set(asArray(boundary.roles));
+    if (allowedRoles.has('callback')) {
+      const reservation = reservationForBoundary(deck, state, boundary);
+      if (reservation) return [{ card: cardById(deck, reservation.callbackId), weight: 1, reservation }];
+    }
+    if ((state.reservations || []).length) return [];
+    return buildEligiblePool(deck, state, { includeScheduled: true }).filter((entry) => {
+      const role = schedulerRole(entry.card);
+      return role !== 'callback' && allowedRoles.has(role) && entry.card.scheduler.slot === boundary.id;
+    });
+  }
+
+  function scheduleVariableAtBoundary(deck, state, boundary, after, rng, onSchedulerBoundary) {
+    if (!boundary || schedulerIsLocked(deck, state)) return false;
+    const pool = buildBoundaryPool(deck, state, boundary.id);
+    if (typeof onSchedulerBoundary === 'function') {
+      onSchedulerBoundary({
+        boundary: { ...boundary },
+        state: cloneState(state),
+        pool: pool.map((entry) => ({ cardId: entry.card.id, role: schedulerRole(entry.card), moduleId: entry.card.scheduler?.moduleId || null })),
+      });
+    }
+    const reservation = pool[0] && pool[0].reservation;
+    const selected = weightedPoolPick(pool, rng);
+    if (!selected) return false;
+
+    if (reservation) {
+      state.reservations = state.reservations.filter((entry) => entry !== reservation);
+    }
+    state.queuedCardId = after;
+    state.queuedCardIds = [after];
+    state.queuedBoundary = { id: boundary.id, before: boundary.before, after };
+    state.currentCardId = selected.id;
+    return true;
+  }
+
+  function activateSchedulerLock(deck, state, card, choice) {
+    const config = schedulerConfig(deck);
+    if (!config || choice.switchArc) return;
+    (config.locks || []).forEach((lock) => {
+      if (lock.forbidVariableSlots && card.id === lock.lockCardId && state.activeArc === lock.arc
+        && !state.schedulerLocks.includes(lock.lockCardId)) {
+        state.schedulerLocks.push(lock.lockCardId);
+      }
     });
   }
 
@@ -139,6 +235,8 @@
     if (asArray(card.requires).some((flag) => !state.flags.includes(flag))) return false;
     if (asArray(card.excludes).some((flag) => state.flags.includes(flag))) return false;
     if (!resourceRangeMatches(card, state)) return false;
+    if (schedulerIsLocked(deck, state) && schedulerRole(card)) return false;
+    if (schedulerRole(card) === 'seed' && (state.reservations || []).length) return false;
     const oncePerRun = card.oncePerRun === true
       || (card.oncePerRun == null && card.kind === 'pressure');
     if (oncePerRun && state.shown.includes(card.id)) return false;
@@ -159,6 +257,7 @@
     return deck.cards
       .filter((card) => !ids || ids.has(card.id))
       .filter((card) => !modes || modes.has(continuationMode(card)))
+      .filter((card) => options.includeScheduled === true || !schedulerRole(card))
       .filter((card) => cardIsEligible(deck, card, state))
       .filter((card) => !(previousWasAmbient && continuationMode(card) === 'ambient'))
       .map((card) => ({
@@ -197,6 +296,7 @@
   }
 
   function pickPressureCard(deck, state, rng) {
+    if (schedulerIsLocked(deck, state)) return null;
     const dueCallback = takeDueCallback(deck, state);
     if (dueCallback) return dueCallback;
 
@@ -235,21 +335,38 @@
   }
 
   function advanceStoryDelays(state, card) {
-    if (card.kind !== 'story') return;
+    if (card.kind !== 'story' && card.schedulerSpineStep !== true) return;
     state.delayed.forEach((entry) => {
       if (entry.remainingStoryDecisions != null && entry.remainingStoryDecisions > 0) {
         entry.remainingStoryDecisions -= 1;
       }
     });
+    (state.reservations || []).forEach((entry) => {
+      if (entry.remainingSpineSteps > 0) entry.remainingSpineSteps -= 1;
+    });
   }
 
-  function applyEffects(deck, state, choice) {
+  function stateEffectMatches(effect, state) {
+    return asArray(effect.requires).every((flag) => state.flags.includes(flag))
+      && asArray(effect.excludes).every((flag) => !state.flags.includes(flag));
+  }
+
+  function applyEffects(deck, state, card, choice) {
     const before = { ...state.resources };
+    const stateEffects = asArray(card.stateEffects).filter((effect) => stateEffectMatches(effect, state));
     RESOURCE_KEYS.forEach((key) => {
       const base = key === 'cash' ? Number(deck.meta.baseCashBurn || 0) : 0;
       const effect = Number(choice.effects && choice.effects[key] || 0);
+      const remembered = stateEffects.reduce((sum, item) => sum + Number(item.effects && item.effects[key] || 0), 0);
       const config = deck.resources[key];
-      state.resources[key] = clamp(state.resources[key] + base + effect, config.min, config.max);
+      state.resources[key] = clamp(state.resources[key] + base + effect + remembered, config.min, config.max);
+      if (!schedulerRole(card)) {
+        state.schedulerResources[key] = clamp(
+          state.schedulerResources[key] + base + effect,
+          config.min,
+          config.max,
+        );
+      }
     });
     return RESOURCE_KEYS.reduce((all, key) => {
       all[key] = state.resources[key] - before[key];
@@ -295,7 +412,9 @@
     state.pendingContinuation = null;
     state.queuedCardId = null;
     state.queuedCardIds = [];
+    state.queuedBoundary = null;
     state.delayed = [];
+    state.reservations = [];
   }
 
   function endWithoutProof(state) {
@@ -304,7 +423,9 @@
     state.pendingContinuation = null;
     state.queuedCardId = null;
     state.queuedCardIds = [];
+    state.queuedBoundary = null;
     state.delayed = [];
+    state.reservations = [];
   }
 
   function eligibleFallbackPool(deck, state) {
@@ -329,8 +450,26 @@
     return !permitted.length || storyPool.some((entry) => permitted.includes(entry.card.id));
   }
 
-  function queueOrContinue(deck, state, next, transition, rng) {
+  function queueOrContinue(deck, state, next, transition, rng, onSchedulerBoundary) {
     const nextIds = asArray(next);
+    if (!transition.skipScheduler && nextIds.length === 1) {
+      const boundary = boundaryFor(deck, transition.beforeId, nextIds[0]);
+      if (boundary) {
+        if (scheduleVariableAtBoundary(deck, state, boundary, nextIds[0], rng, onSchedulerBoundary)) return;
+        const continuation = cardById(deck, nextIds[0]);
+        if (continuation && cardIsEligible(deck, continuation, state)) {
+          state.currentCardId = continuation.id;
+          return;
+        }
+        const fallback = eligibleFallbackPool(deck, state)[0]?.card;
+        if (fallback) {
+          state.currentCardId = fallback.id;
+          return;
+        }
+        endWithoutProof(state);
+        return;
+      }
+    }
     if (transition.mode === 'forced') {
       const forcedId = pickNextId(nextIds, rng);
       if (forcedId) {
@@ -438,22 +577,25 @@
     const choice = card.choices[side];
     if (!choice) throw new Error(`Missing ${side} choice on ${card.id}`);
 
-    const resume = ['pressure', 'sideStory'].includes(card.kind) && state.queuedCardId
+    const resume = (['pressure', 'sideStory'].includes(card.kind) || schedulerRole(card)) && state.queuedCardId
       ? {
         mode: 'resume',
         preferredId: state.queuedCardId,
         ids: state.queuedCardIds.length ? [...state.queuedCardIds] : [state.queuedCardId],
+        skipScheduler: Boolean(state.queuedBoundary),
       }
       : null;
     if (resume) {
       state.queuedCardId = null;
       state.queuedCardIds = [];
+      state.queuedBoundary = null;
     }
 
-    const deltas = applyEffects(deck, state, choice);
+    const deltas = applyEffects(deck, state, card, choice);
     applyFlags(state, choice);
     if (choice.startArc) state.activeArc = choice.startArc;
     if (choice.switchArc) state.activeArc = choice.switchArc;
+    activateSchedulerLock(deck, state, card, choice);
     if (!state.shown.includes(card.id)) state.shown.push(card.id);
     state.history.push({ turn: state.turn, cardId: card.id, side, deltas });
     advanceStoryDelays(state, card);
@@ -466,11 +608,20 @@
       }
       state.delayed.push(delayed);
     }
+    if (choice.reserveCallback) {
+      const reservation = choice.reserveCallback;
+      state.reservations = [{
+        callbackId: reservation.callbackId,
+        callbackSlot: reservation.callbackSlot,
+        remainingSpineSteps: Number(reservation.spineSteps || 0),
+        moduleId: card.scheduler && card.scheduler.moduleId,
+      }];
+    }
     state.turn += 1;
 
     const nextIds = resume ? resume.ids : asArray(choice.next);
     const openPressureSlot = card.kind !== 'pressure' && shouldOpenPressureSlot(deck, card, state);
-    const transition = resume || transitionFor(card, openPressureSlot);
+    const transition = { ...(resume || transitionFor(card, openPressureSlot)), beforeId: card.id };
     const outcome = choice.ending || (choice.paid && choice.validationProof)
       ? { endingId: choice.ending || 'validation', win: Boolean(choice.paid && choice.validationProof) }
       : null;
@@ -505,7 +656,7 @@
       return { state, deltas };
     }
 
-    queueOrContinue(deck, state, nextIds, transition, rng);
+    queueOrContinue(deck, state, nextIds, transition, rng, options.onSchedulerBoundary);
     return { state, deltas };
   }
 
@@ -525,6 +676,7 @@
       state.postCrisisOutcome = null;
       state.pendingContinuation = null;
       state.delayed = [];
+      state.reservations = [];
       return { state, deltas: deltas() };
     }
     const chance = state.rescueAttempts === 0 ? 0.35 : 0.15;
@@ -535,6 +687,7 @@
       state.postCrisisOutcome = null;
       state.pendingContinuation = null;
       state.delayed = [];
+      state.reservations = [];
       return { state, deltas: deltas() };
     }
 
@@ -571,6 +724,7 @@
     getChoiceLabel,
     getAffectedResources,
     buildEligiblePool,
+    buildBoundaryPool,
     selectNextCard,
     resolveChoice,
     resolveCrisis,

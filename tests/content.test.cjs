@@ -21,7 +21,7 @@ function flagsFrom(value) {
 
 test('ships one valid canonical deck for a full run', () => {
   assert.deepEqual(engine.validateDeck(deck), []);
-  assert.equal(deck.cards.length, 33);
+  assert.equal(deck.cards.length, 43);
   assert.equal(deck.resources.customers.label, 'Customers');
   assert.equal('demand' in deck.resources, false);
 });
@@ -64,10 +64,14 @@ test('plays six onboarding decisions, keeps the audit and invoice branches separ
   const play = (secondChoice, routeChoice) => {
     let state = engine.startRun(deck);
     const visited = [];
-    ['left', secondChoice, 'left', 'left', 'left', routeChoice].forEach((side) => {
-      visited.push(state.currentCardId);
-      state = engine.resolveChoice(deck, state, side, { rng: () => 0 }).state;
-    });
+    const openingSides = {
+      OPEN_01: 'left', OPEN_02: secondChoice, OPEN_03_AUDIT: 'left', OPEN_03_INVOICES: 'left',
+      OPEN_04: 'left', OPEN_05: 'left', OPEN_06: routeChoice,
+    };
+    for (let safety = 0; !state.activeArc && safety < 12; safety += 1) {
+      if (state.currentCardId.startsWith('OPEN_')) visited.push(state.currentCardId);
+      state = engine.resolveChoice(deck, state, openingSides[state.currentCardId] || 'left', { rng: () => 0 }).state;
+    }
     return { state, visited };
   };
 
@@ -129,7 +133,7 @@ test('does not award Customers for auditing a list or money for a fake invoice',
   assert.doesNotMatch(invoice.text, /@unicorn_hunter|WHERE IS THE FUCKING REVENUE/i);
 });
 
-test('builds the agent story through dev, hype, an announced lead and the slavery problem', () => {
+test('builds the agent story through dev, hype, an announced lead and the slave-trading problem', () => {
   assert.equal(deck.cards.filter((card) => card.arc === 'agents').length, 8);
   assert.equal(engine.cardById(deck, 'AGENT_02_DEV').source, '@error404');
   assert.equal(engine.cardById(deck, 'AGENT_03_HYPE').source, '@hype_queen');
@@ -137,8 +141,10 @@ test('builds the agent story through dev, hype, an announced lead and the slaver
   assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text.toLowerCase(), /first|actual budget|serious buyer/);
   assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text.toLowerCase(), /first buyer/);
   assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text, /@head_of_agile/);
-  assert.match(engine.cardById(deck, 'AGENT_06_LEGAL').text.toLowerCase(), /deck/);
-  assert.match(engine.cardById(deck, 'AGENT_06_LEGAL').text.toLowerCase(), /slavery/);
+  assert.equal(
+    engine.cardById(deck, 'AGENT_06_LEGAL').text,
+    'Our lawyers saw “sentient employees” in your deck.\nBuying them is slave trading.',
+  );
   assert.match(engine.cardById(deck, 'AGENT_07_INVOICE').text.toLowerCase(), /suppliers/);
   assert.equal(engine.cardById(deck, 'AGENT_01').choices.left.label, 'Build it properly');
   assert.equal(engine.cardById(deck, 'AGENT_01').choices.right.label, 'Ship it tonight');
@@ -199,7 +205,7 @@ test('introduces the ClosedAI CEO before a deterministic throw-or-win padel choi
 test('uses explicit pressure breaks instead of interrupting immediate story consequences', () => {
   assert.deepEqual(deck.meta.pressureAfterArcSteps, []);
   const slots = deck.cards.filter((card) => card.opensPressureSlot).map((card) => card.id).sort();
-  assert.deepEqual(slots, ['AGENT_01', 'AGENT_03_HYPE', 'AGENT_05_ORDER', 'PADEL_03_TEAM'].sort());
+  assert.deepEqual(slots, ['AGENT_01', 'AGENT_03_HYPE', 'AGENT_06_LEGAL'].sort());
   ['OPEN_05', 'PADEL_01', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
     assert.notEqual(engine.cardById(deck, id).opensPressureSlot, true, `${id} should continue immediately`);
   });
@@ -207,11 +213,12 @@ test('uses explicit pressure breaks instead of interrupting immediate story cons
 
 test('declares forced, weighted and ambient scheduler modes without changing the story copy', () => {
   const weighted = deck.cards.filter((card) => card.continuation === 'weighted').map((card) => card.id).sort();
-  assert.deepEqual(weighted, ['AGENT_01', 'AGENT_03_HYPE', 'AGENT_05_ORDER', 'PADEL_03_TEAM'].sort());
+  assert.deepEqual(weighted, ['AGENT_01', 'AGENT_03_HYPE'].sort());
 
-  ['OPEN_06', 'AGENT_04_LEAD', 'PADEL_01', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
+  ['OPEN_06', 'AGENT_04_LEAD', 'AGENT_05_ORDER', 'PADEL_01', 'PADEL_03_TEAM', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
     assert.equal(engine.cardById(deck, id).continuation, 'forced', `${id} must continue immediately`);
   });
+  assert.equal(engine.cardById(deck, 'AGENT_06_LEGAL').opensPressureSlot, true);
 
   deck.cards.filter((card) => card.kind === 'pressure').forEach((card) => {
     assert.equal(card.continuation, 'ambient', `${card.id} must be ambient`);
@@ -219,19 +226,28 @@ test('declares forced, weighted and ambient scheduler modes without changing the
   });
 });
 
-test('uses resource ranges only on ambient cards with a state-dependent premise', () => {
+test('uses resource ranges only on ambient premises or named scheduler eligibility', () => {
   const ranged = Object.fromEntries(deck.cards
     .filter((card) => card.resourceRange)
     .map((card) => [card.id, card.resourceRange]));
 
   assert.deepEqual(ranged, {
+    PAYROLL_RESTRICTED_AI_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 53 }, founder: { min: 59, max: 83 } },
+    DEV_HOSTAGE_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 50 }, founder: { min: 56, max: 83 } },
+    MOM_INVESTOR_SEED: { founder: { min: 58, max: 65 } },
+    COMA_SEED: { founder: { min: 58, max: 65 } },
+    MOM_FLYERS: { founder: { min: 66, max: 78 } },
+    B3_SALES_PRESSURE_SEED: { cash: { min: 12, max: 19 }, team: { min: 47, max: 61 }, founder: { min: 56, max: 83 } },
     PRESS_FRIDGE: { cash: { max: 25 } },
     PRESS_MOM: { cash: { max: 20 } },
     PRESS_FONT: { cash: { max: 35 } },
     PRESS_FIGHT: { founder: { min: 55 } },
     PRESS_RIVAL: { founder: { max: 70 } },
   });
-  Object.keys(ranged).forEach((id) => assert.equal(engine.cardById(deck, id).continuation, 'ambient'));
+  Object.keys(ranged).forEach((id) => {
+    const card = engine.cardById(deck, id);
+    assert.ok(card.continuation === 'ambient' || card.scheduler, `${id} lacks an ambient or scheduler gate`);
+  });
 });
 
 test('both pre-match refusals truly leave padel for the agents route', () => {
@@ -288,6 +304,10 @@ test('does not keep dead story flags', () => {
     flagsFrom(card.trigger && card.trigger.all).forEach((flag) => consumedFlags.add(flag));
     flagsFrom(card.trigger && card.trigger.any).forEach((flag) => consumedFlags.add(flag));
     flagsFrom(card.trigger && card.trigger.none).forEach((flag) => consumedFlags.add(flag));
+    flagsFrom(card.stateEffects).forEach((effect) => {
+      flagsFrom(effect.requires).forEach((flag) => consumedFlags.add(flag));
+      flagsFrom(effect.excludes).forEach((flag) => consumedFlags.add(flag));
+    });
     ['left', 'right'].forEach((side) => {
       flagsFrom(card.choices[side].setFlags).forEach((flag) => setFlags.add(flag));
       flagsFrom(card.choices[side].conditional).forEach((condition) => flagsFrom(condition.when).forEach((flag) => consumedFlags.add(flag)));

@@ -1,0 +1,47 @@
+{
+  "cards": [
+    {
+      "id": "VOICE_B3_S2",
+      "source": "@bigdeals",
+      "text": "Four emails in. Still nothing.\nIf we stop now, you look like you lost patience first.",
+      "choices": {
+        "left": { "label": "Send three more" },
+        "right": { "label": "Leave them alone" }
+      },
+      "audition": { "finalType": "guilt" }
+    },
+    {
+      "id": "VOICE_HYPE_H4",
+      "source": "@hype_queen",
+      "text": "the trending demo is finally doing its job\nplease let me make the post louder 💀",
+      "choices": {
+        "left": { "label": "Boost post" },
+        "right": { "label": "Add disclaimer" }
+      },
+      "audition": { "finalType": "ask" }
+    },
+    {
+      "id": "VOICE_DESIGN_D2",
+      "source": "@pixel_perfect",
+      "text": "Every screen can look pre-apologized in Arial.\nThe font is $4,500.",
+      "choices": {
+        "left": { "label": "Buy font" },
+        "right": { "label": "Use Arial" }
+      },
+      "audition": { "finalType": "contempt" }
+    },
+    {
+      "id": "VOICE_BOT_B4",
+      "source": "@b2buddy_bot",
+      "text": "I protected runway from food delivery 🎉\nThe fridge is locked.\nPlease select carrots or a fridge-lock override.",
+      "choices": {
+        "left": { "label": "Break fridge lock" },
+        "right": { "label": "Eat carrots" }
+      },
+      "audition": {
+        "choiceObjects": { "left": "fridge", "right": "carrots" },
+        "finalType": "automation"
+      }
+    }
+  ]
+}

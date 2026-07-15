@@ -1,0 +1,11 @@
+{
+  "cards": [
+    { "id": "AUDITION_MOM", "source": "@i_love_cats72", "text": "that money man called again!!\ni said you were eating\nhe said you need discipline\nhe can come say it here.", "choices": { "left": { "label": "Back Mom" }, "right": { "label": "Back Investor" } } },
+    { "id": "AUDITION_PAYROLL", "source": "@unicorn_hunter", "text": "COMPUTE IS PAID.\nPEOPLE ARE EXPENSIVE.\nONE OF THESE THINGS WORKS AT NIGHT.\nTAKE THE CREDITS.", "choices": { "left": { "label": "Take credits" }, "right": { "label": "Demand cash" } } },
+    { "id": "AUDITION_DEV", "source": "@error404", "text": "investor said i'm replaceable\nso i took the password keeping us open\nhe can test that theory tomorrow\nfun experiment.", "choices": { "left": { "label": "Back Dev" }, "right": { "label": "Bypass Dev" } } },
+    { "id": "AUDITION_SALES", "source": "@bigdeals", "text": "Boss, they opened the fourth email.\nNo reply.\nThat is a pulse in this market.", "choices": { "left": { "label": "Send follow-up" }, "right": { "label": "Close account" } } },
+    { "id": "AUDITION_HYPE", "source": "@hype_queen", "text": "someone clipped the awkward part — it has more views than the product.\nwe have an angle.", "choices": { "left": { "label": "Boost clip" }, "right": { "label": "Correct post" } } },
+    { "id": "AUDITION_FONT", "source": "@pixel_perfect", "text": "Arial is not neutral.\nArial is an apology.\nThe better font costs $4,500.", "choices": { "left": { "label": "Buy font" }, "right": { "label": "Keep Arial" } } },
+    { "id": "AUDITION_BOT", "source": "@b2buddy_bot", "text": "I found team snacks.\nThey recurred.\nI resolved them.\nYou are welcome.", "choices": { "left": { "label": "Restore lunch" }, "right": { "label": "Keep saving" } } }
+  ]
+}

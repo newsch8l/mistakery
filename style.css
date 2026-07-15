@@ -104,7 +104,7 @@ h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spa
   display: grid;
   align-content: center;
   gap: 16px;
-  padding: 22px 14px 86px;
+  padding: 22px 8px 86px;
   overflow: hidden;
   background:
     linear-gradient(rgba(231,239,247,.88), rgba(231,239,247,.88)),
@@ -113,7 +113,7 @@ h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spa
 }
 .date-chip { justify-self: center; padding: 4px 9px; color: var(--muted); border-radius: 99px; background: rgba(255,255,255,.72); font-size: .61rem; }
 .message-row { position: relative; display: flex; align-items: flex-end; }
-.bubble { position: relative; min-width: 0; max-width: calc(100% - 18px); margin-left: 18px; padding: 15px 16px 23px; border-radius: 18px 18px 18px 5px; background: var(--bubble); box-shadow: 0 10px 30px rgba(39,65,88,.12); }
+.bubble { position: relative; min-width: 0; max-width: calc(100% - 18px); margin-left: 18px; padding: 15px 12px 23px; border-radius: 18px 18px 18px 5px; background: var(--bubble); box-shadow: 0 10px 30px rgba(39,65,88,.12); }
 .bubble::after { content: ""; position: absolute; left: -6px; bottom: 0; border: 7px solid transparent; border-right-color: var(--bubble); transform: rotate(17deg); }
 .bubble p { margin: 0; font-size: clamp(.94rem, 4vw, 1.08rem); line-height: 1.38; letter-spacing: -.012em; }
 .bubble p span { display: block; }
