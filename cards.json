@@ -599,20 +599,20 @@
       }
     },
     {
-      "id": "AMBIENT_DECK_XXX", "kind": "pressure", "source": "@hype_queen", "continuation": "ambient", "weight": 3, "oncePerRun": true,
+      "id": "AMBIENT_PROMO_XXX", "kind": "pressure", "source": "@hype_queen", "continuation": "ambient", "weight": 3, "oncePerRun": true,
       "excludes": ["patch_built"],
-      "text": "put our pitch deck on a porn site — tech investors browse there too 😌\ntraffic is INSANE rn.\nyou're welcome",
-      "actor_action": "The marketer uploads the pitch deck to a porn site as a guerrilla-marketing stunt.",
-      "player_decision": "Leave the deck up for the traffic or take it down.",
+      "text": "put our promo video on a porn site — tech investors browse there too 😌\ntraffic is INSANE rn.\nyou're welcome",
+      "actor_action": "The marketer uploads the company promo video to a porn site as a guerrilla-marketing stunt.",
+      "player_decision": "Leave the video up for the traffic or take it down.",
       "choices": {
-        "left": { "label": "Leave it up", "lowLabel": "Ride the traffic", "highLabel": "Milk the traffic", "effects": { "founder": 3 }, "effect_reason": { "founder": "Betting on the stunt makes the founder feel dangerous." }, "setFlags": ["deck_on_xxx"], "delay": { "card": "AMBIENT_DECK_XXX_INVESTOR", "storyDecisions": 3 } },
+        "left": { "label": "Leave it up", "lowLabel": "Ride the traffic", "highLabel": "Milk the traffic", "effects": { "founder": 3 }, "effect_reason": { "founder": "Betting on the stunt makes the founder feel dangerous." }, "setFlags": ["promo_on_xxx"], "delay": { "card": "AMBIENT_PROMO_XXX_INVESTOR", "storyDecisions": 3 } },
         "right": { "label": "Take it down", "lowLabel": "Kill the post", "highLabel": "Scrub it now", "effects": { "team": -3 }, "effect_reason": { "team": "Fining the marketer for her best idea sours the team." } }
       }
     },
     {
-      "id": "AMBIENT_DECK_XXX_INVESTOR", "kind": "sideStory", "callbackOnly": true, "source": "@unicorn_hunter", "continuation": "sideStory", "oncePerRun": true, "requires": ["deck_on_xxx"],
-      "text": "MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!\nEXPLAIN YOURSELF RIGHT NOW!!!",
-      "actor_action": "The investor blames a friend for finding the deck on the porn site and demands an explanation.",
+      "id": "AMBIENT_PROMO_XXX_INVESTOR", "kind": "sideStory", "callbackOnly": true, "source": "@unicorn_hunter", "continuation": "sideStory", "oncePerRun": true, "requires": ["promo_on_xxx"],
+      "text": "MY FRIEND JUST FOUND OUR PROMO VIDEO ON A PORN SITE!!\nEXPLAIN YOURSELF RIGHT NOW!!!",
+      "actor_action": "The investor blames a friend for finding the promo video on the porn site and demands an explanation.",
       "player_decision": "Call the stunt a mistake or defend it as smart marketing.",
       "choices": {
         "left": { "label": "Call it a mistake", "lowLabel": "Blame the stunt", "highLabel": "Disown it fully", "effects": { "founder": -2, "team": -2 }, "effect_reason": { "founder": "Disowning your own company looks weak.", "team": "Throwing the marketer under the bus stings the team." } },

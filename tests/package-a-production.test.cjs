@@ -340,7 +340,7 @@ test('deterministic traces cover every Package A branch pair through its existin
 // side sets the flag and schedules the delay, so only that side owes a callback.
 const NEW_PAIRS = [
   ['AMBIENT_DOMAIN_RANSOM', 'right', 'AMBIENT_DOMAIN_LAWSUIT'],
-  ['AMBIENT_DECK_XXX', 'left', 'AMBIENT_DECK_XXX_INVESTOR'],
+  ['AMBIENT_PROMO_XXX', 'left', 'AMBIENT_PROMO_XXX_INVESTOR'],
   ['AMBIENT_MOM_POLICE', 'right', 'AMBIENT_MOM_FAMILY'],
 ];
 

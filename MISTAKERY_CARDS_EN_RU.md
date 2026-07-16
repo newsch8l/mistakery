@@ -650,16 +650,16 @@
 - **Settle quietly — Замять**: Cash -4; возврат к основной ветке.
 - **Lawyer up — Судиться**: Founder -3, Team -2; возврат к основной ветке.
 
-## AMBIENT_DECK_XXX_INVESTOR — Investor @unicorn_hunter
+## AMBIENT_PROMO_XXX_INVESTOR — Investor @unicorn_hunter
 
 **EN**
 
-> MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!  
+> MY FRIEND JUST FOUND OUR PROMO VIDEO ON A PORN SITE!!  
 > EXPLAIN YOURSELF RIGHT NOW!!!
 
 **RU**
 
-> МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!!  
+> МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПРОМО-РОЛИК НА ПОРНОСАЙТЕ!!  
 > ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!
 
 - **Call it a mistake — Сказать, что ошибка**: Founder -2, Team -2; возврат к основной ветке.
@@ -848,17 +848,17 @@
 - **Buy it back — Выкупить**: Cash -4, Team -2, Founder +2; возврат к основной ветке.
 - **Threaten him — Напугать подделкой**: Founder +2; возврат к основной ветке.
 
-## AMBIENT_DECK_XXX — Marketer @hype_queen
+## AMBIENT_PROMO_XXX — Marketer @hype_queen
 
 **EN**
 
-> put our pitch deck on a porn site — tech investors browse there too 😌  
+> put our promo video on a porn site — tech investors browse there too 😌  
 > traffic is INSANE rn.  
 > you're welcome
 
 **RU**
 
-> закинула нашу деку на порносайт — техноинвесторы туда тоже заходят 😌  
+> закинула наш промо-ролик на порносайт — техноинвесторы туда тоже заходят 😌  
 > трафик сейчас БЕЗУМНЫЙ.  
 > не благодари
 
