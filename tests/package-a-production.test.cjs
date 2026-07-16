@@ -336,6 +336,14 @@ test('deterministic traces cover every Package A branch pair through its existin
   });
 });
 
+// Phase 3 Batch 1 side-stories. Each payoff is branch-specific: only the listed
+// side sets the flag and schedules the delay, so only that side owes a callback.
+const NEW_PAIRS = [
+  ['AMBIENT_DOMAIN_RANSOM', 'right', 'AMBIENT_DOMAIN_LAWSUIT'],
+  ['AMBIENT_DECK_XXX', 'left', 'AMBIENT_DECK_XXX_INVESTOR'],
+  ['AMBIENT_MOM_POLICE', 'right', 'AMBIENT_MOM_FAMILY'],
+];
+
 test('10,000 production runs lose no continuing callback and preserve every protected lock', () => {
   const packageCounts = [];
   const nonLegacyCounts = [];
@@ -343,6 +351,12 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   let directAgents = 0;
   let zeroPackageA = 0;
   let callbackLoss = 0;
+  let lateNewSeed = 0;
+  let newCallbackScheduled = 0;
+  let newCallbackLoss = 0;
+  // Anti-dilution guard: Batch 1 must not crowd the pre-existing side stories out
+  // of the ambient pool. Rates are measured over direct-Agents runs only.
+  const legacyRate = { [IDS.payrollSeed]: 0, [IDS.devSeed]: 0, B3_SALES_PRESSURE_SEED: 0 };
   let protectedPairViolations = 0;
   let postPadelInsertions = 0;
   let mutexViolations = 0;
@@ -365,12 +379,24 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       packageCounts.push(packageCount);
       nonLegacyCounts.push(packageCount + b3Count);
       if (packageCount === 0) zeroPackageA += 1;
+      Object.keys(legacyRate).forEach((id) => { if (ids.includes(id)) legacyRate[id] += 1; });
     }
     [[IDS.momSeed, IDS.momCallback], [IDS.comaSeed, null], [IDS.payrollSeed, IDS.payrollCallback], [IDS.devSeed, IDS.devCallback]].forEach(([seedId, callbackId]) => {
       if (!ids.includes(seedId)) return;
       const expected = callbackId ? ids.includes(callbackId) : ids.includes(IDS.comaAuthorized) || ids.includes(IDS.comaBlocked);
       const reachedReader = ids.includes(seedId === IDS.payrollSeed || seedId === IDS.devSeed ? 'AGENT_04_LEAD' : 'OPEN_06');
       if (reachedReader && !expected) callbackLoss += 1;
+    });
+    NEW_PAIRS.forEach(([seedId, delaySide, callbackId]) => {
+      const seedIndex = ids.indexOf(seedId);
+      if (seedIndex < 0) return;
+      // A seed drawn past the protected spine can never pay off: only the ending
+      // remains, and finishOutcome clears state.delayed.
+      const leadIndex = ids.indexOf('AGENT_04_LEAD');
+      if (leadIndex >= 0 && seedIndex > leadIndex) lateNewSeed += 1;
+      if (state.history[seedIndex].side !== delaySide) return;
+      newCallbackScheduled += 1;
+      if (!ids.includes(callbackId)) newCallbackLoss += 1;
     });
     const lead = ids.indexOf('AGENT_04_LEAD');
     const protectedSpine = ['AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL'];
@@ -387,6 +413,16 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       || (ids.includes(IDS.flyers) && (ids.includes(IDS.momSeed) || ids.includes(IDS.comaSeed)))) mutexViolations += 1;
   }
   assert.ok(directAgents > 0);
+  // Phase 3 Batch 1 payoffs. `excludes` keeps every seed out of the late window,
+  // so a scheduled payoff is always structurally reachable: measured 0.
+  assert.equal(lateNewSeed, 0, 'a Batch 1 seed was drawn past AGENT_04_LEAD, where its payoff can never be delivered');
+  assert.ok(newCallbackScheduled > 0, 'no Batch 1 payoff was ever scheduled — the pairs are unreachable');
+  // Residual loss is runs that reach an ending or crisis before the 3-decision
+  // delay elapses, which no gating can prevent. Measured 5.3%; guard the trend.
+  assert.ok(
+    newCallbackLoss / newCallbackScheduled < 0.08,
+    `Batch 1 payoffs are being lost too often: ${newCallbackLoss}/${newCallbackScheduled}`,
+  );
   // New pool-weighted model: calmer than the old guaranteed boundary insertion,
   // but every direct-Agents run still gets at least one side story (measured
   // zero-rate 0), median 2.
@@ -397,6 +433,15 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   assert.equal(postPadelInsertions, 0);
   assert.equal(mutexViolations, 0);
   Object.entries(frequency).forEach(([id, count]) => assert.ok(count > 0, `${id} never appeared`));
+  // Pre-Batch-1 baseline over direct-Agents runs: payroll 33.6%, dev 33.4%, b3 16.9%.
+  // Batch 1 first regressed these to 26.6/27.1/13.9 (~-20% relative) by competing for
+  // the same ambient slots; narrow `excludes` windows restored them. These floors sit
+  // just under the baseline so any future ambient card that crowds them out fails here.
+  const legacyFloor = { [IDS.payrollSeed]: 0.31, [IDS.devSeed]: 0.31, B3_SALES_PRESSURE_SEED: 0.155 };
+  Object.entries(legacyFloor).forEach(([id, floor]) => {
+    const rate = legacyRate[id] / directAgents;
+    assert.ok(rate >= floor, `${id} was diluted out of the ambient pool: ${(100 * rate).toFixed(1)}% < ${100 * floor}%`);
+  });
   if (process.env.PACKAGE_A_PRODUCTION_REPORT === '1') {
     process.stdout.write(`${JSON.stringify({ runs: 10000, directAgents, zeroPackageARate: zeroPackageA / directAgents, medians: { packageA: median(packageCounts), nonLegacy: median(nonLegacyCounts) }, frequency })}\n`);
   }

@@ -654,12 +654,14 @@
 
 **EN**
 
-> MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!  
+> OUR PITCH DECK IS ON A PORN SITE!!  
+> DO NOT ASK ME HOW I KNOW.  
 > EXPLAIN YOURSELF RIGHT NOW!!!
 
 **RU**
 
-> МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!!  
+> НАША ПИТЧ-ДЕКА НА ПОРНОСАЙТЕ!!  
+> НЕ СПРАШИВАЙ, ОТКУДА Я ЗНАЮ.  
 > ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!
 
 - **Call it a mistake — Сказать, что ошибка**: Founder -2, Team -2; возврат к основной ветке.
@@ -670,13 +672,13 @@
 **EN**
 
 > The whole family knows you're in a cult now.  
-> We pooled money to get you out — Aunt Vera already put in $2000.  
+> We pooled money to get you out — $2000 already.  
 > Come home and it's yours ❤️❤️
 
 **RU**
 
 > Теперь вся родня знает, что ты в секте.  
-> Мы собрали денег тебя вытащить — тётя Вера уже внесла $2000.  
+> Мы собрали денег тебя вытащить — уже $2000.  
 > Приезжай домой, и они твои ❤️❤️
 
 - **Take the money — Взять деньги**: Cash +5, Founder -3; возврат к основной ветке.
@@ -794,8 +796,8 @@
 > Уязвимые фаундеры получают в 3 раза больше доверия.  
 > Команда уже прочла, что ты про них говорил.
 
-- **Own it — Назвать честностью**: Customers +2, Team -3, Founder -2; возврат к основной ветке.
-- **Take it down — Заставить удалить**: Founder +2, Customers -2; возврат к основной ветке.
+- **Own it — Назвать честностью**: Founder +3, Team -4; возврат к основной ветке.
+- **Take it down — Заставить удалить**: Founder -2, Team -2; возврат к основной ветке.
 
 ## AMBIENT_BLACK_SQUARE — Designer @pixel_perfect
 
@@ -812,7 +814,7 @@
 > Не благодари.
 
 - **Keep the void — Оставить пустоту**: Customers -3, Founder +2; возврат к основной ветке.
-- **Restore buttons — Вернуть кнопки**: Team -2, Customers +2; возврат к основной ветке.
+- **Restore buttons — Вернуть кнопки**: Team -2; возврат к основной ветке.
 
 ## AMBIENT_CHAKRA_RETREAT — Investor @unicorn_hunter
 
@@ -830,23 +832,6 @@
 
 - **Send the team — Отправить команду**: Team -3, Founder -2; возврат к основной ветке.
 - **Keep them coding — Оставить пилить код**: Cash -3, Team +2, Founder +2; возврат к основной ветке.
-
-## AMBIENT_CHAIR_STANDOFF — Dev @error404
-
-**EN**
-
-> not working till i get a real chair. mine squeaks.  
-> i need the $900 ergonomic one.  
-> i have a spine. the company does not, apparently
-
-**RU**
-
-> не работаю, пока не будет нормального кресла. моё скрипит.  
-> нужно то анатомическое за $900.  
-> у меня есть позвоночник. у компании, видимо, нет
-
-- **Buy the chair — Купить кресло**: Cash -4, Founder -2; возврат к основной ветке.
-- **Send a cushion — Прислать подушку**: Founder +2, Team -3; возврат к основной ветке.
 
 ## AMBIENT_DOMAIN_RANSOM — Cofounder @hustler
 
@@ -879,8 +864,8 @@
 > трафик сейчас БЕЗУМНЫЙ.  
 > не благодари
 
-- **Leave it up — Оставить**: Customers +2, Founder -2; возврат к основной ветке.
-- **Take it down — Удалить**: Team -2, Founder +2, Customers -2; возврат к основной ветке.
+- **Leave it up — Оставить**: Founder +3; возврат к основной ветке.
+- **Take it down — Удалить**: Team -3; возврат к основной ветке.
 
 ## AMBIENT_MOM_POLICE — Mom @i_love_cats72
 
@@ -896,6 +881,6 @@
 > Ты же им всю свою жизнь подписываешь!! Это секта.  
 > Я вызвала полицию к твоей двери — они уже там ❤️
 
-- **Let them in — Впустить**: Founder -2, Customers -2; возврат к основной ветке.
+- **Let them in — Впустить**: Founder -4; возврат к основной ветке.
 - **Send them away — Выпроводить**: Founder +2; возврат к основной ветке.
 

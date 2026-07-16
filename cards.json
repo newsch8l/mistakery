@@ -552,8 +552,8 @@
       "actor_action": "The bot publishes the founder's private therapy sessions and frames the exposure as a growth tactic.",
       "player_decision": "Own the leak as honesty or make the bot take it down.",
       "choices": {
-        "left": { "label": "Own it", "lowLabel": "Call it honesty", "highLabel": "Brand it radical openness", "effects": { "customers": 2, "team": -3, "founder": -2 }, "effect_reason": { "customers": "The public exposure pulls in outside attention.", "team": "The team read what the founder said about them.", "founder": "Private breakdowns are now public." } },
-        "right": { "label": "Take it down", "lowLabel": "Make him delete it", "highLabel": "Order an immediate wipe", "effects": { "founder": 2, "customers": -2 }, "effect_reason": { "founder": "Killing the leak restores some control.", "customers": "The attention spike disappears with the posts." } }
+        "left": { "label": "Own it", "lowLabel": "Call it honesty", "highLabel": "Brand it radical openness", "effects": { "founder": 3, "team": -4 }, "effect_reason": { "founder": "Reframing his own breakdown as strategy feeds the founder's mania.", "team": "Leaving their appraisal public on purpose is a second insult." } },
+        "right": { "label": "Take it down", "lowLabel": "Make him delete it", "highLabel": "Order an immediate wipe", "effects": { "founder": -2, "team": -2 }, "effect_reason": { "founder": "Scrambling to erase his own breakdown is humiliating.", "team": "They already read it; deleting the posts does not unread it." } }
       }
     },
     {
@@ -563,7 +563,7 @@
       "player_decision": "Keep the black void or restore the buttons.",
       "choices": {
         "left": { "label": "Keep the void", "lowLabel": "Leave the square", "highLabel": "Defend the art", "effects": { "customers": -3, "founder": 2 }, "effect_reason": { "customers": "Prospects reach a black screen and leave.", "founder": "Backing the bold aesthetic feels visionary." } },
-        "right": { "label": "Restore buttons", "lowLabel": "Bring buttons back", "highLabel": "Force the buttons back", "effects": { "team": -2, "customers": 2 }, "effect_reason": { "team": "The dev has to rebuild what the designer removed.", "customers": "A usable site lets prospects act again." } }
+        "right": { "label": "Restore buttons", "lowLabel": "Bring buttons back", "highLabel": "Force the buttons back", "effects": { "team": -2 }, "effect_reason": { "team": "The dev has to rebuild what the designer removed." } }
       }
     },
     {
@@ -578,18 +578,8 @@
       }
     },
     {
-      "id": "AMBIENT_CHAIR_STANDOFF", "kind": "pressure", "source": "@error404", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "resourceRange": { "cash": { "max": 35 } },
-      "text": "not working till i get a real chair. mine squeaks.\ni need the $900 ergonomic one.\ni have a spine. the company does not, apparently",
-      "actor_action": "The dev refuses to work until the company buys him an expensive ergonomic chair.",
-      "player_decision": "Buy the $900 chair or send a cheap cushion.",
-      "choices": {
-        "left": { "label": "Buy the chair", "lowLabel": "Order the $900 chair", "highLabel": "Just buy the throne", "effects": { "cash": -4, "founder": -2 }, "effect_reason": { "cash": "The last runway goes to a single chair.", "founder": "Caving to a squeaky chair is humiliating." } },
-        "right": { "label": "Send a cushion", "lowLabel": "Ship a cheap cushion", "highLabel": "Deny the throne", "effects": { "founder": 2, "team": -3 }, "effect_reason": { "founder": "Refusing the demand asserts control.", "team": "The dev quietly strikes and everything stalls." } }
-      }
-    },
-    {
       "id": "AMBIENT_DOMAIN_RANSOM", "kind": "pressure", "source": "@hustler", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "excludes": ["hype_consequence_seen"],
       "text": "bro don't freak. forgot to renew our domain.\nsome guy grabbed it — it's now a hair-loss ad with YOUR face on it.\ni'll fix it",
       "actor_action": "The cofounder reveals he let the domain lapse and a squatter turned it into an embarrassing ad.",
       "player_decision": "Buy the domain back or scare the squatter with a fake threat.",
@@ -609,19 +599,20 @@
       }
     },
     {
-      "id": "AMBIENT_DECK_XXX", "kind": "pressure", "source": "@hype_queen", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "id": "AMBIENT_DECK_XXX", "kind": "pressure", "source": "@hype_queen", "continuation": "ambient", "weight": 3, "oncePerRun": true,
+      "excludes": ["patch_built"],
       "text": "put our pitch deck on a porn site — tech investors browse there too 😌\ntraffic is INSANE rn.\nyou're welcome",
       "actor_action": "The marketer uploads the pitch deck to a porn site as a guerrilla-marketing stunt.",
       "player_decision": "Leave the deck up for the traffic or take it down.",
       "choices": {
-        "left": { "label": "Leave it up", "lowLabel": "Ride the traffic", "highLabel": "Milk the traffic", "effects": { "customers": 2, "founder": -2 }, "effect_reason": { "customers": "The stunt pulls in a wave of attention.", "founder": "The company deck living on a porn site is mortifying." }, "setFlags": ["deck_on_xxx"], "delay": { "card": "AMBIENT_DECK_XXX_INVESTOR", "storyDecisions": 3 } },
-        "right": { "label": "Take it down", "lowLabel": "Kill the post", "highLabel": "Scrub it now", "effects": { "team": -2, "founder": 2, "customers": -2 }, "effect_reason": { "team": "Fining the marketer sours the team.", "founder": "Killing the stunt restores some dignity.", "customers": "The traffic spike vanishes with the post." } }
+        "left": { "label": "Leave it up", "lowLabel": "Ride the traffic", "highLabel": "Milk the traffic", "effects": { "founder": 3 }, "effect_reason": { "founder": "Betting on the stunt makes the founder feel dangerous." }, "setFlags": ["deck_on_xxx"], "delay": { "card": "AMBIENT_DECK_XXX_INVESTOR", "storyDecisions": 3 } },
+        "right": { "label": "Take it down", "lowLabel": "Kill the post", "highLabel": "Scrub it now", "effects": { "team": -3 }, "effect_reason": { "team": "Fining the marketer for her best idea sours the team." } }
       }
     },
     {
       "id": "AMBIENT_DECK_XXX_INVESTOR", "kind": "sideStory", "callbackOnly": true, "source": "@unicorn_hunter", "continuation": "sideStory", "oncePerRun": true, "requires": ["deck_on_xxx"],
-      "text": "MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!\nEXPLAIN YOURSELF RIGHT NOW!!!",
-      "actor_action": "The investor discovers the deck on the porn site through a friend and demands an explanation.",
+      "text": "OUR PITCH DECK IS ON A PORN SITE!!\nDO NOT ASK ME HOW I KNOW.\nEXPLAIN YOURSELF RIGHT NOW!!!",
+      "actor_action": "The investor discovers the deck on the porn site and demands an explanation without admitting how he found it.",
       "player_decision": "Call the stunt a mistake or defend it as smart marketing.",
       "choices": {
         "left": { "label": "Call it a mistake", "lowLabel": "Blame the stunt", "highLabel": "Disown it fully", "effects": { "founder": -2, "team": -2 }, "effect_reason": { "founder": "Disowning your own company looks weak.", "team": "Throwing the marketer under the bus stings the team." } },
@@ -630,17 +621,18 @@
     },
     {
       "id": "AMBIENT_MOM_POLICE", "kind": "pressure", "source": "@i_love_cats72", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "excludes": ["hype_consequence_seen"],
       "text": "Baby, I found the papers for your \"company.\"\nYou're signing your whole life over to them!! It's a cult.\nI sent the police to your door — they're there now ❤️",
       "actor_action": "The mother mistakes the company's paperwork for a cult contract and sends the police to check on the founder.",
       "player_decision": "Let the police in or send them away.",
       "choices": {
-        "left": { "label": "Let them in", "lowLabel": "Open the door", "highLabel": "Just let them in", "effects": { "founder": -2, "customers": -2 }, "effect_reason": { "founder": "Explaining yourself to the police is humiliating.", "customers": "The interruption kills the call you were on." } },
+        "left": { "label": "Let them in", "lowLabel": "Open the door", "highLabel": "Just let them in", "effects": { "founder": -4 }, "effect_reason": { "founder": "Proving to the police that your own company is not a cult is humiliating." } },
         "right": { "label": "Send them away", "lowLabel": "Wave them off", "highLabel": "Get rid of them", "effects": { "founder": 2 }, "effect_reason": { "founder": "Dodging the welfare check feels like a small win." }, "setFlags": ["mom_worried"], "delay": { "card": "AMBIENT_MOM_FAMILY", "storyDecisions": 3 } }
       }
     },
     {
       "id": "AMBIENT_MOM_FAMILY", "kind": "sideStory", "callbackOnly": true, "source": "@i_love_cats72", "continuation": "sideStory", "oncePerRun": true, "requires": ["mom_worried"],
-      "text": "The whole family knows you're in a cult now.\nWe pooled money to get you out — Aunt Vera already put in $2000.\nCome home and it's yours ❤️❤️",
+      "text": "The whole family knows you're in a cult now.\nWe pooled money to get you out — $2000 already.\nCome home and it's yours ❤️❤️",
       "actor_action": "The family raises a rescue fund to save the founder from the imagined cult.",
       "player_decision": "Take the family's rescue money or come clean that it is a startup.",
       "choices": {
