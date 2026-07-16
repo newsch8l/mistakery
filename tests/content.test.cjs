@@ -21,7 +21,7 @@ function flagsFrom(value) {
 
 test('ships one valid canonical deck for a full run', () => {
   assert.deepEqual(engine.validateDeck(deck), []);
-  assert.equal(deck.cards.length, 47);
+  assert.equal(deck.cards.length, 53);
   assert.equal(deck.resources.customers.label, 'Customers');
   assert.equal('demand' in deck.resources, false);
 });
@@ -266,7 +266,7 @@ test('both pre-match refusals truly leave padel for the agents route', () => {
 
 test('keeps sales inside the agent arc and gates conditional pressure cards', () => {
   const pressure = deck.cards.filter((card) => card.kind === 'pressure');
-  assert.equal(pressure.length, 10);
+  assert.equal(pressure.length, 13);
   assert.equal(pressure.some((card) => card.id === 'PRESS_SALES'), false);
   assert.equal(engine.cardById(deck, 'PRESS_CAPITALISM'), null, 'PRESS_CAPITALISM was promoted into the AGENT_03B_WILD beat');
   const family = engine.cardById(deck, 'PRESS_FAMILY');

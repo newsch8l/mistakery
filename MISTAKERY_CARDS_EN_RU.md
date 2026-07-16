@@ -633,6 +633,55 @@
 - **Send invoice — Отправить счёт**: Cash +12, Team -1, Founder +6; финал `paid_to_disappear`.
 - **Waive the fee — Отменить плату**: Team +2, Founder -3; возврат к основной ветке.
 
+## AMBIENT_DOMAIN_LAWSUIT — Cofounder @hustler
+
+**EN**
+
+> so that domain guy? turns out he's a lawyer.  
+> your fake FBI letter is now 'forgery.' he's suing us.  
+> i'm sorry bro
+
+**RU**
+
+> а тот тип с доменом? оказался юристом.  
+> твоё фейк-письмо от ФБР теперь «подделка». он подаёт в суд.  
+> прости, бро
+
+- **Settle quietly — Замять**: Cash -4; возврат к основной ветке.
+- **Lawyer up — Судиться**: Founder -3, Team -2; возврат к основной ветке.
+
+## AMBIENT_DECK_XXX_INVESTOR — Investor @unicorn_hunter
+
+**EN**
+
+> MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!  
+> EXPLAIN YOURSELF RIGHT NOW!!!
+
+**RU**
+
+> МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!!  
+> ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!
+
+- **Call it a mistake — Сказать, что ошибка**: Founder -2, Team -2; возврат к основной ветке.
+- **Defend the traffic — Стоять на хайпе**: Founder +2, Cash -4; возврат к основной ветке.
+
+## AMBIENT_MOM_FAMILY — Mom @i_love_cats72
+
+**EN**
+
+> The whole family knows you're in a cult now.  
+> We pooled money to get you out — Aunt Vera already put in $2000.  
+> Come home and it's yours ❤️❤️
+
+**RU**
+
+> Теперь вся родня знает, что ты в секте.  
+> Мы собрали денег тебя вытащить — тётя Вера уже внесла $2000.  
+> Приезжай домой, и они твои ❤️❤️
+
+- **Take the money — Взять деньги**: Cash +5, Founder -3; возврат к основной ветке.
+- **Come clean — Признаться**: Founder -2; возврат к основной ветке.
+
 # 5. Pressure cards
 
 ## PRESS_FRIDGE — AI Assistant @b2buddy_bot
@@ -798,4 +847,55 @@
 
 - **Buy the chair — Купить кресло**: Cash -4, Founder -2; возврат к основной ветке.
 - **Send a cushion — Прислать подушку**: Founder +2, Team -3; возврат к основной ветке.
+
+## AMBIENT_DOMAIN_RANSOM — Cofounder @hustler
+
+**EN**
+
+> bro don't freak. forgot to renew our domain.  
+> some guy grabbed it — it's now a hair-loss ad with YOUR face on it.  
+> i'll fix it
+
+**RU**
+
+> бро, не паникуй. забыл продлить домен.  
+> какой-то тип его перехватил — теперь там реклама от облысения с ТВОИМ лицом.  
+> я разрулю
+
+- **Buy it back — Выкупить**: Cash -4, Team -2, Founder +2; возврат к основной ветке.
+- **Threaten him — Напугать подделкой**: Founder +2; возврат к основной ветке.
+
+## AMBIENT_DECK_XXX — Marketer @hype_queen
+
+**EN**
+
+> put our pitch deck on a porn site — tech investors browse there too 😌  
+> traffic is INSANE rn.  
+> you're welcome
+
+**RU**
+
+> закинула нашу деку на порносайт — техноинвесторы туда тоже заходят 😌  
+> трафик сейчас БЕЗУМНЫЙ.  
+> не благодари
+
+- **Leave it up — Оставить**: Customers +2, Founder -2; возврат к основной ветке.
+- **Take it down — Удалить**: Team -2, Founder +2, Customers -2; возврат к основной ветке.
+
+## AMBIENT_MOM_POLICE — Mom @i_love_cats72
+
+**EN**
+
+> Baby, I found the papers for your "company."  
+> You're signing your whole life over to them!! It's a cult.  
+> I sent the police to your door — they're there now ❤️
+
+**RU**
+
+> Малыш, я нашла документы на твою «компанию».  
+> Ты же им всю свою жизнь подписываешь!! Это секта.  
+> Я вызвала полицию к твоей двери — они уже там ❤️
+
+- **Let them in — Впустить**: Founder -2, Customers -2; возврат к основной ветке.
+- **Send them away — Выпроводить**: Founder +2; возврат к основной ветке.
 
