@@ -77,6 +77,7 @@
       queuedCardId: null,
       queuedCardIds: [],
       queuedPool: false,
+      queuedPoolMode: null,
       queuedBoundary: null,
       pendingContinuation: null,
       pressureCount: 0,
@@ -463,8 +464,35 @@
       .filter((entry) => entry.card.arcBeat === true && entry.card.arc === state.activeArc);
   }
 
+  // The general storylet pool: every eligible entry point in the deck, with no
+  // arc scoping. This is what lets a story be picked without an arc having been
+  // entered by a hard-coded arrow — the difference between a deck and a rail.
+  function eligibleStoryletPool(deck, state) {
+    return buildEligiblePool(deck, state)
+      .filter((entry) => entry.card.storyletEntry === true);
+  }
+
+  function poolForMode(deck, state, transition, nextIds) {
+    if (transition.mode === 'pool') return eligibleArcBeatPool(deck, state);
+    if (transition.mode === 'storylet') return eligibleStoryletPool(deck, state);
+    return eligibleStoryPool(deck, state, nextIds);
+  }
+
+  // Both pool-like modes rebuild their pool from live state on resume, so the
+  // interrupting card's own flags are seen. Remember which one to rebuild.
+  function markQueuedPool(state, mode) {
+    if (mode !== 'pool' && mode !== 'storylet') return;
+    state.queuedPool = true;
+    state.queuedPoolMode = mode;
+  }
+
+  function isPoolLikeMode(mode) {
+    return mode === 'pool' || mode === 'storylet';
+  }
+
   function transitionFor(card, openPressureSlot) {
-    if (card.continuation === 'forced' || card.continuation === 'weighted' || card.continuation === 'pool') {
+    if (card.continuation === 'forced' || card.continuation === 'weighted'
+      || card.continuation === 'pool' || card.continuation === 'storylet') {
       return { mode: card.continuation };
     }
     return { mode: openPressureSlot ? 'legacy' : 'forced' };
@@ -515,7 +543,10 @@
         // Pool-origin resume rebuilds the arc pool from current flags/resources
         // (Codex F3) instead of a stale id snapshot, so a beat unlocked by the
         // inserted card is seen and a completed one is dropped.
-        const selected = weightedPoolPick(eligibleArcBeatPool(deck, state), rng);
+        const rebuilt = transition.poolMode === 'storylet'
+          ? eligibleStoryletPool(deck, state)
+          : eligibleArcBeatPool(deck, state);
+        const selected = weightedPoolPick(rebuilt, rng);
         if (selected) {
           state.currentCardId = selected.id;
           return;
@@ -544,16 +575,14 @@
       return;
     }
 
-    if (transition.mode === 'weighted' || transition.mode === 'pool') {
-      const storyPool = transition.mode === 'pool'
-        ? eligibleArcBeatPool(deck, state)
-        : eligibleStoryPool(deck, state, nextIds);
+    if (transition.mode === 'weighted' || isPoolLikeMode(transition.mode)) {
+      const storyPool = poolForMode(deck, state, transition, nextIds);
       if (!storyPool.length) {
-        // Pool mode only: the arc pool can be empty transiently while a callback
+        // Pool modes only: the pool can be empty transiently while a callback
         // is pending (the glue entry is gated by excludesPendingCallbacks).
         // Deliver the callback rather than ending with no_proof. Weighted mode
         // keeps its original behavior untouched.
-        if (transition.mode === 'pool') {
+        if (isPoolLikeMode(transition.mode)) {
           const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
           if (stalled) {
             state.queuedPool = true;
@@ -571,7 +600,7 @@
         const queuedStory = weightedPoolPick(storyPool, rng);
         state.queuedCardId = queuedStory.id;
         state.queuedCardIds = storyPool.map((entry) => entry.card.id);
-        if (transition.mode === 'pool') state.queuedPool = true;
+        markQueuedPool(state, transition.mode);
         state.currentCardId = dueCallback.id;
         if (dueCallback.kind === 'pressure') state.pressureCount += 1;
         return;
@@ -597,7 +626,7 @@
         const queuedStory = weightedPoolPick(storyPool, rng);
         state.queuedCardId = queuedStory.id;
         state.queuedCardIds = storyPool.map((entry) => entry.card.id);
-        if (transition.mode === 'pool') state.queuedPool = true;
+        markQueuedPool(state, transition.mode);
         if (continuationMode(selected) === 'ambient') state.pressureCount += 1;
       }
       state.currentCardId = selected.id;
@@ -642,6 +671,7 @@
       ? {
         mode: 'resume',
         pool: Boolean(state.queuedPool),
+        poolMode: state.queuedPoolMode || 'pool',
         preferredId: state.queuedCardId,
         ids: state.queuedCardIds.length ? [...state.queuedCardIds] : (state.queuedCardId ? [state.queuedCardId] : []),
         skipScheduler: Boolean(state.queuedBoundary),
@@ -652,6 +682,7 @@
       state.queuedCardIds = [];
       state.queuedBoundary = null;
       state.queuedPool = false;
+      state.queuedPoolMode = null;
     }
 
     const deltas = applyEffects(deck, state, card, choice);
@@ -700,7 +731,7 @@
       // Pool/weighted beats have no explicit next, but their continuation must
       // still survive a rescued crisis — otherwise the run strands on the
       // already-resolved beat. Preserve the transition even with an empty id list.
-      const poolLikeContinuation = transition.mode === 'pool'
+      const poolLikeContinuation = isPoolLikeMode(transition.mode)
         || transition.mode === 'weighted'
         || (transition.mode === 'resume' && transition.pool);
       state.pendingContinuation = (nextIds.length || poolLikeContinuation)
