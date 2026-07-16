@@ -63,9 +63,9 @@
 **D1 — завязка.** Маркетолог залила питч-деку на порносайт как «партизанский маркетинг».
 
 > **@hype_queen** · *typing…*
-> `ok this is my best idea yet. put our pitch deck on a porn site — tech investors browse there too 😌 the traffic is INSANE. you're welcome`
+> `put our pitch deck on a porn site — tech investors browse there too 😌 traffic is INSANE rn. you're welcome`
 
-*Рус:* «так, это моя лучшая идея. закинула нашу деку на порносайт — техноинвесторы туда тоже заходят 😌 трафик БЕЗУМНЫЙ. не благодари»
+*Рус:* «закинула нашу деку на порносайт — техноинвесторы туда тоже заходят 😌 трафик сейчас БЕЗУМНЫЙ. не благодари»
 
 - 🟦 **Leave it up** (Оставить ради трафика) → Customers↑, Founder↓, флаг `deck_on_xxx`.
 - 🟥 **Take it down** (Удалить) → Team↓ (маркетолог в обиде), Founder↑, Customers↓.
@@ -73,12 +73,12 @@
 **D2 — возвращение** (только если `deck_on_xxx`). Инвестор натыкается на профиль.
 
 > **@unicorn_hunter** · *typing…*
-> `My golf buddy just sent me your pitch deck. He found it on a porn site. Now he thinks I browse there. Explain. NOW.`
+> `MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!! EXPLAIN YOURSELF RIGHT NOW!!!`
 
-*Рус:* «Мой приятель по гольфу скинул мне вашу питч-деку. Нашёл на порносайте. Теперь думает, что я сам туда захожу. Объясни. СЕЙЧАС.»
+*Рус:* «МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!! ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!»
 
 - 🟦 **Apologize** (Извиниться) → Founder↓, сделка спасена.
-- 🟥 **Ask which site** (Спросить, на каком сайте — намекнуть, что и он там был) → Cash↓↓ (инвестор в ярости выходит), Founder↑ (мелкая победа).
+- 🟥 **Ask which site** (Спросить, а на каком сайте — намекнуть, что его приятель там и был) → Cash↓↓ (инвестор в ярости выходит), Founder↑ (мелкая победа).
 
 ---
 
@@ -87,9 +87,9 @@
 **E1 — завязка.** Мама нашла term sheet, приняла за секту, вызвала полицию проверить тебя. Без бизнес-лексики.
 
 > **@i_love_cats72** · *typing…*
-> `Baby, I found that paper where you sign your whole life away to that man!! It's a cult. I sent the police to check you're still alive. They're at your door right now ❤️`
+> `Baby, I found that contract where you sign your whole life away!! This is a cult. I sent the police to check you're still alive. They're at your door right now ❤️`
 
-*Рус:* «Малыш, я нашла ту бумагу, где ты подписываешь всю жизнь тому мужчине!! Это секта. Я вызвала полицию — проверить, что ты жив. Они уже у двери ❤️»
+*Рус:* «Малыш, я нашла тот контракт, где ты подписываешь всю свою жизнь!! Это секта. Я вызвала полицию — проверить, что ты жив. Они уже у двери ❤️»
 
 - 🟦 **Let them in** (Впустить) → Founder↓, Customers↓ (сорван важный созвон). *(немедленно)*
 - 🟥 **Send them away** (Выпроводить) → Founder↑, ставит флаг `mom_worried`.
@@ -97,12 +97,13 @@
 **E2 — возвращение** (только если `mom_worried`). Мама эскалирует до родни.
 
 > **@i_love_cats72** · *typing…*
-> `Since you wouldn't open the door, I told the whole family you're in a cult. Your aunt is driving three hours to save you. Please just talk to her ❤️❤️`
+> `The whole family knows you're in a cult now. We pooled money to get you out — Aunt Vera already put in $2000. Come home and it's yours ❤️❤️`
 
-*Рус:* «Раз ты не открыл дверь, я сказала всей родне, что ты в секте. Тётя едет к тебе три часа, спасать. Пожалуйста, просто поговори с ней ❤️❤️»
+*Рус:* «Теперь вся родня знает, что ты в секте. Мы собрали денег, чтобы тебя вытащить — тётя Вера уже внесла $2000. Приезжай домой, и они твои ❤️❤️»
 
-- 🟦 **Let her come** (Впустить тётю, пережить «спасение») → Founder↓ (унижение), но родня успокаивается.
-- 🟥 **Prove you're fine** (Доказывать родне, что ты в порядке) → Founder↓↓ (правда — что ты просто на мели — ещё жальче секты).
+**Дилемма — настоящие деньги за настоящее унижение:**
+- 🟦 **Take the money** (Взять «фонд спасения») → Cash↑ (родня собрала), Founder↓↓ (ты официально жертва секты для всей семьи).
+- 🟥 **Come clean** (Признаться, что это стартап) → денег нет, родня в ужасе, что ты неудачник-фаундер → Founder↓, но достоинство при тебе.
 
 ---
 
@@ -111,9 +112,9 @@
 Инвестор требует команду на молчаливый ретрит по чакрам с его гуру, иначе морозит транш.
 
 > **@unicorn_hunter** · *typing…*
-> `My guru runs a silent chakra retreat this weekend. Your whole team goes, or I freeze the money. Real founders align their energy before their burn rate.`
+> `MY GURU RUNS A SILENT CHAKRA RETREAT THIS WEEKEND. SEND THE WHOLE TEAM OR I FREEZE THE MONEY. REAL FOUNDERS ALIGN THEIR CHAKRAS BEFORE THEY SCALE.`
 
-*Рус:* «Мой гуру ведёт молчаливый ретрит по чакрам в эти выходные. Вся команда едет — или я морожу деньги. Настоящие фаундеры выравнивают энергию раньше, чем burn rate.»
+*Рус:* «МОЙ ГУРУ ВЕДЁТ МОЛЧАЛИВЫЙ РЕТРИТ ПО ЧАКРАМ В ВЫХОДНЫЕ. ВСЯ КОМАНДА ЕДЕТ — ИЛИ Я МОРОЖУ ДЕНЬГИ. НАСТОЯЩИЕ ФАУНДЕРЫ ВЫРАВНИВАЮТ ЧАКРЫ РАНЬШЕ, ЧЕМ МАСШТАБ.»
 
 - 🟦 **Send the team** (Отправить в лес) → Cash сохранён (транш не заморожен), Team↓↓ (выходные украдены, дев на грани), Founder↓.
 - 🟥 **Keep them coding** (Оставить пилить код) → Cash↓ (транш урезан), Team↑, Founder↑.
