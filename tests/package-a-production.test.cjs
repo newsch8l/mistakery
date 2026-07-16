@@ -344,6 +344,52 @@ const NEW_PAIRS = [
   ['AMBIENT_MOM_POLICE', 'right', 'AMBIENT_MOM_FAMILY'],
 ];
 
+test('the scheduler force-delivers a Batch 1 payoff as soon as the arc pool empties, not only after the full delay', () => {
+  // Real production traces, no fixture. The delay is 3 story decisions, but a due
+  // payoff is force-delivered earlier whenever the arc pool is empty and the next
+  // spine beat is blocked, so delivery legitimately lands after 1 or 2 beats too.
+  // Any "a slot only existed after 3 beats" heuristic would misclassify a lost
+  // early payoff as an acceptable ending. These seeds pin the real behaviour.
+  const cases = [
+    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 1, 13],
+    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 2, 32],
+    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 3, 21],
+    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 1, 55],
+    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 2, 42],
+    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 3, 17],
+    ['AMBIENT_PROMO_XXX', 'AMBIENT_PROMO_XXX_INVESTOR', 3, 4],
+  ];
+  cases.forEach(([seedId, callbackId, expectedBeats, seed]) => {
+    const rng = seeded(seed);
+    let state = engine.startRun(deck, { seed });
+    let becameCurrent = false;
+    for (let safety = 0; !state.gameOver && safety < 60; safety += 1) {
+      state = state.activeCrisisId
+        ? engine.resolveCrisis(deck, state, 'rescue', { rng }).state
+        : engine.resolveChoice(deck, state, rng() < 0.5 ? 'left' : 'right', { rng }).state;
+      if (state.currentCardId === callbackId) becameCurrent = true;
+    }
+    const ids = state.history.map((entry) => entry.cardId);
+    const seedIndex = ids.indexOf(seedId);
+    const callbackIndex = ids.indexOf(callbackId);
+    assert.ok(seedIndex >= 0, `${seedId} never appeared in seed ${seed}`);
+    assert.ok(callbackIndex > seedIndex, `${callbackId} was never delivered in seed ${seed}`);
+    assert.ok(becameCurrent, `${callbackId} never became currentCardId in seed ${seed}`);
+    // Count beats the way advanceStoryDelays does, including schedulerSpineStep.
+    let beats = 0;
+    for (let i = seedIndex + 1; i < callbackIndex; i += 1) {
+      const card = engine.cardById(deck, ids[i]);
+      if (card.kind === 'story' || card.schedulerSpineStep === true) beats += 1;
+    }
+    assert.equal(beats, expectedBeats, `${callbackId} delivery timing moved in seed ${seed}`);
+    const after = ids.slice(callbackIndex + 1);
+    assert.ok(
+      after.some((id) => engine.cardById(deck, id).arc),
+      `the run did not resume the arc pool after ${callbackId} in seed ${seed}`,
+    );
+  });
+});
+
 test('10,000 production runs lose no continuing callback and preserve every protected lock', () => {
   const packageCounts = [];
   const nonLegacyCounts = [];
@@ -366,7 +412,17 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   for (let seed = 1; seed <= 10000; seed += 1) {
     const rng = seeded(seed);
     let state = engine.startRun(deck, { seed });
+    // Watch the delay queue itself rather than guessing when a slot existed: the
+    // scheduler force-delivers a due payoff as soon as the arc pool is empty, which
+    // happens well before three story beats, so any beat-count heuristic misreads it.
+    // Delivery splices the entry out of state.delayed; finishOutcome clears the queue
+    // wholesale. So the last snapshot taken while the run is still alive tells us
+    // whether a missing payoff was still legitimately owed at the ending.
+    const owedAtEnd = {};
     for (let safety = 0; !state.gameOver && safety < 60; safety += 1) {
+      NEW_PAIRS.forEach(([seedId, , callbackId]) => {
+        owedAtEnd[seedId] = (state.delayed || []).some((entry) => entry.card === callbackId);
+      });
       state = state.activeCrisisId
         ? engine.resolveCrisis(deck, state, 'rescue', { rng }).state
         : engine.resolveChoice(deck, state, rng() < 0.5 ? 'left' : 'right', { rng }).state;
@@ -401,17 +457,10 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       if (state.history[seedIndex].side !== delaySide) return;
       stat.scheduled += 1;
       if (ids.includes(callbackId)) return;
-      // advanceStoryDelays only ticks on story beats, and a due payoff can only be
-      // delivered on a later decision. So the payoff had a slot iff three story
-      // beats passed AND the run resolved at least one more card after that.
-      let beats = 0;
-      let dueIndex = -1;
-      for (let i = seedIndex + 1; i < ids.length; i += 1) {
-        if (engine.cardById(deck, ids[i]).kind === 'story') beats += 1;
-        if (beats >= 3) { dueIndex = i; break; }
-      }
-      if (dueIndex >= 0 && ids.length > dueIndex + 1) stat.leaked += 1;
-      else stat.preempted += 1;
+      // Still queued when the run ended -> the ending preempted it, which no gating
+      // can prevent. Gone from the queue but never shown -> the engine dropped it.
+      if (owedAtEnd[seedId]) stat.preempted += 1;
+      else stat.leaked += 1;
     });
     const lead = ids.indexOf('AGENT_04_LEAD');
     const protectedSpine = ['AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL'];
