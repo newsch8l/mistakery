@@ -87,9 +87,9 @@
 **E1 — завязка.** Мама нашла term sheet, приняла за секту, вызвала полицию проверить тебя. Без бизнес-лексики.
 
 > **@i_love_cats72** · *typing…*
-> `Baby, your "startup" is a CULT!! They make you work all night for no money and sign your life away. I sent the police to pull you out — they're at your door now ❤️`
+> `Baby, I found the papers for your "company." You're signing your whole life over to them!! It's a cult. I sent the police to your door — they're there now ❤️`
 
-*Рус:* «Малыш, твой «стартап» — это СЕКТА!! Они заставляют тебя работать ночами без денег и подписать всю жизнь. Я вызвала полицию тебя вытащить — они уже у двери ❤️»
+*Рус:* «Малыш, я нашла документы на твою «компанию». Ты же им всю свою жизнь подписываешь!! Это секта. Я вызвала полицию к твоей двери — они уже там ❤️»
 
 - 🟦 **Let them in** (Впустить) → Founder↓, Customers↓ (сорван важный созвон). *(немедленно)*
 - 🟥 **Send them away** (Выпроводить) → Founder↑, ставит флаг `mom_worried`.
