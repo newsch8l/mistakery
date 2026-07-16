@@ -77,8 +77,8 @@
 
 *Рус:* «МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!! ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!»
 
-- 🟦 **Apologize** (Извиниться) → Founder↓, сделка спасена.
-- 🟥 **Ask which site** (Спросить, а на каком сайте — намекнуть, что его приятель там и был) → Cash↓↓ (инвестор в ярости выходит), Founder↑ (мелкая победа).
+- 🟦 **Call it a mistake** (Сказать, что это ошибка, уберём) → сделка спасена, но Founder↓ (не контролируешь свою же компанию), Team↓ (сдал маркетолога).
+- 🟥 **Defend the traffic** (Настоять: это хайп, смотри трафик) → Founder↑ (стоишь на своём), Cash↓↓ (инвестор не оценил, выходит).
 
 ---
 
@@ -87,9 +87,9 @@
 **E1 — завязка.** Мама нашла term sheet, приняла за секту, вызвала полицию проверить тебя. Без бизнес-лексики.
 
 > **@i_love_cats72** · *typing…*
-> `Baby, I found that contract where you sign your whole life away!! This is a cult. I sent the police to check you're still alive. They're at your door right now ❤️`
+> `Baby, your "startup" is a CULT!! They make you work all night for no money and sign your life away. I sent the police to pull you out — they're at your door now ❤️`
 
-*Рус:* «Малыш, я нашла тот контракт, где ты подписываешь всю свою жизнь!! Это секта. Я вызвала полицию — проверить, что ты жив. Они уже у двери ❤️»
+*Рус:* «Малыш, твой «стартап» — это СЕКТА!! Они заставляют тебя работать ночами без денег и подписать всю жизнь. Я вызвала полицию тебя вытащить — они уже у двери ❤️»
 
 - 🟦 **Let them in** (Впустить) → Founder↓, Customers↓ (сорван важный созвон). *(немедленно)*
 - 🟥 **Send them away** (Выпроводить) → Founder↑, ставит флаг `mom_worried`.
