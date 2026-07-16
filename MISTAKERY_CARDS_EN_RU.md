@@ -829,7 +829,7 @@
 > НАСТОЯЩИЕ ФАУНДЕРЫ ВЫРАВНИВАЮТ ЧАКРЫ РАНЬШЕ, ЧЕМ МАСШТАБИРУЮТСЯ.
 
 - **Send the team — Отправить команду**: Team -3, Founder -2; возврат к основной ветке.
-- **Keep them coding — Оставить пилить код**: Cash -3, Team +2, Founder +2; возврат к основной ветке.
+- **Keep them coding — Оставить пилить код**: Cash -2, Team +2, Founder +2; возврат к основной ветке.
 
 ## AMBIENT_DOMAIN_RANSOM — Cofounder @hustler
 
@@ -845,7 +845,7 @@
 > какой-то тип его перехватил — теперь там реклама от облысения с ТВОИМ лицом.  
 > я разрулю
 
-- **Buy it back — Выкупить**: Cash -4, Team -2, Founder +2; возврат к основной ветке.
+- **Buy it back — Выкупить**: Cash -2, Team -2, Founder +2; возврат к основной ветке.
 - **Threaten him — Напугать подделкой**: Founder +2; возврат к основной ветке.
 
 ## AMBIENT_PROMO_XXX — Marketer @hype_queen

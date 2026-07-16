@@ -568,13 +568,13 @@
     },
     {
       "id": "AMBIENT_CHAKRA_RETREAT", "kind": "pressure", "source": "@unicorn_hunter", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "resourceRange": { "cash": { "max": 45 } },
+      "resourceRange": { "cash": { "min": 22, "max": 45 } },
       "text": "MY GURU RUNS A SILENT CHAKRA RETREAT THIS WEEKEND.\nSEND THE WHOLE TEAM OR I FREEZE THE MONEY.\nREAL FOUNDERS ALIGN THEIR CHAKRAS BEFORE THEY SCALE.",
       "actor_action": "The investor demands the team attend his guru's retreat and threatens the tranche.",
       "player_decision": "Send the team to the retreat or keep them working.",
       "choices": {
         "left": { "label": "Send the team", "lowLabel": "Send them off", "highLabel": "Ship them off", "effects": { "team": -3, "founder": -2 }, "effect_reason": { "team": "A stolen weekend with a guru burns the team out.", "founder": "Obeying the retreat order stings." } },
-        "right": { "label": "Keep them coding", "lowLabel": "Refuse the retreat", "highLabel": "Keep coding anyway", "effects": { "cash": -3, "team": 2, "founder": 2 }, "effect_reason": { "cash": "The investor cuts the tranche in retaliation.", "team": "The team keeps working instead of chanting.", "founder": "Holding the line restores some backbone." } }
+        "right": { "label": "Keep them coding", "lowLabel": "Refuse the retreat", "highLabel": "Keep coding anyway", "effects": { "cash": -2, "team": 2, "founder": 2 }, "effect_reason": { "cash": "The investor cuts the tranche in retaliation.", "team": "The team keeps working instead of chanting.", "founder": "Holding the line restores some backbone." } }
       }
     },
     {
@@ -584,7 +584,7 @@
       "actor_action": "The cofounder reveals he let the domain lapse and a squatter turned it into an embarrassing ad.",
       "player_decision": "Buy the domain back or scare the squatter with a fake threat.",
       "choices": {
-        "left": { "label": "Buy it back", "lowLabel": "Pay the ransom", "highLabel": "Just buy it back", "effects": { "cash": -4, "team": -2, "founder": 2 }, "effect_reason": { "cash": "Ransoming the domain drains money meant for payroll.", "team": "The team notices payroll cash going to a squatter.", "founder": "Getting the domain back restores a little control." } },
+        "left": { "label": "Buy it back", "lowLabel": "Pay the ransom", "highLabel": "Just buy it back", "effects": { "cash": -2, "team": -2, "founder": 2 }, "effect_reason": { "cash": "Ransoming the domain drains money meant for payroll.", "team": "The team notices payroll cash going to a squatter.", "founder": "Getting the domain back restores a little control." } },
         "right": { "label": "Threaten him", "lowLabel": "Bluff the feds", "highLabel": "Send a fake threat", "effects": { "founder": 2 }, "effect_reason": { "founder": "Bluffing the squatter feels like taking charge." }, "setFlags": ["domain_forged"], "delay": { "card": "AMBIENT_DOMAIN_LAWSUIT", "storyDecisions": 3 } }
       }
     },

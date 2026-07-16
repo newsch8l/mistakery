@@ -246,7 +246,9 @@ test('uses resource ranges only on ambient premises or named scheduler eligibili
     PRESS_FONT: { cash: { max: 35 } },
     PRESS_FIGHT: { founder: { min: 55 } },
     PRESS_RIVAL: { founder: { max: 70 } },
-    AMBIENT_CHAKRA_RETREAT: { cash: { max: 45 } },
+    // Lower bound is deliberate: the card targets a squeezed run and then costs Cash,
+    // so without a floor it kicks runs that are already dying.
+    AMBIENT_CHAKRA_RETREAT: { cash: { max: 45, min: 22 } },
   });
   Object.keys(ranged).forEach((id) => {
     const card = engine.cardById(deck, id);

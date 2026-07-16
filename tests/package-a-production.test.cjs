@@ -351,9 +351,12 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   let directAgents = 0;
   let zeroPackageA = 0;
   let callbackLoss = 0;
-  let lateNewSeed = 0;
-  let newCallbackScheduled = 0;
-  let newCallbackLoss = 0;
+  // Per pair, never aggregated: one pair going unreachable must not hide behind
+  // the other two. `leaked` is a real engine fault; `preempted` is the run ending
+  // before the payoff could ever land, which no gating can prevent.
+  const pairStats = Object.fromEntries(NEW_PAIRS.map(([seedId]) => [seedId, {
+    scheduled: 0, late: 0, leaked: 0, preempted: 0,
+  }]));
   // Anti-dilution guard: Batch 1 must not crowd the pre-existing side stories out
   // of the ambient pool. Rates are measured over direct-Agents runs only.
   const legacyRate = { [IDS.payrollSeed]: 0, [IDS.devSeed]: 0, B3_SALES_PRESSURE_SEED: 0 };
@@ -390,13 +393,25 @@ test('10,000 production runs lose no continuing callback and preserve every prot
     NEW_PAIRS.forEach(([seedId, delaySide, callbackId]) => {
       const seedIndex = ids.indexOf(seedId);
       if (seedIndex < 0) return;
+      const stat = pairStats[seedId];
       // A seed drawn past the protected spine can never pay off: only the ending
       // remains, and finishOutcome clears state.delayed.
       const leadIndex = ids.indexOf('AGENT_04_LEAD');
-      if (leadIndex >= 0 && seedIndex > leadIndex) lateNewSeed += 1;
+      if (leadIndex >= 0 && seedIndex > leadIndex) stat.late += 1;
       if (state.history[seedIndex].side !== delaySide) return;
-      newCallbackScheduled += 1;
-      if (!ids.includes(callbackId)) newCallbackLoss += 1;
+      stat.scheduled += 1;
+      if (ids.includes(callbackId)) return;
+      // advanceStoryDelays only ticks on story beats, and a due payoff can only be
+      // delivered on a later decision. So the payoff had a slot iff three story
+      // beats passed AND the run resolved at least one more card after that.
+      let beats = 0;
+      let dueIndex = -1;
+      for (let i = seedIndex + 1; i < ids.length; i += 1) {
+        if (engine.cardById(deck, ids[i]).kind === 'story') beats += 1;
+        if (beats >= 3) { dueIndex = i; break; }
+      }
+      if (dueIndex >= 0 && ids.length > dueIndex + 1) stat.leaked += 1;
+      else stat.preempted += 1;
     });
     const lead = ids.indexOf('AGENT_04_LEAD');
     const protectedSpine = ['AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL'];
@@ -413,16 +428,15 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       || (ids.includes(IDS.flyers) && (ids.includes(IDS.momSeed) || ids.includes(IDS.comaSeed)))) mutexViolations += 1;
   }
   assert.ok(directAgents > 0);
-  // Phase 3 Batch 1 payoffs. `excludes` keeps every seed out of the late window,
-  // so a scheduled payoff is always structurally reachable: measured 0.
-  assert.equal(lateNewSeed, 0, 'a Batch 1 seed was drawn past AGENT_04_LEAD, where its payoff can never be delivered');
-  assert.ok(newCallbackScheduled > 0, 'no Batch 1 payoff was ever scheduled — the pairs are unreachable');
-  // Residual loss is runs that reach an ending or crisis before the 3-decision
-  // delay elapses, which no gating can prevent. Measured 5.3%; guard the trend.
-  assert.ok(
-    newCallbackLoss / newCallbackScheduled < 0.08,
-    `Batch 1 payoffs are being lost too often: ${newCallbackLoss}/${newCallbackScheduled}`,
-  );
+  // Phase 3 Batch 1 payoffs, asserted per pair. No percentage bound: a loose
+  // threshold would license a future engine leak, and terminal preemption is a
+  // separate, legitimate outcome rather than an allowance to spend.
+  NEW_PAIRS.forEach(([seedId]) => {
+    const stat = pairStats[seedId];
+    assert.ok(stat.scheduled > 0, `${seedId} never scheduled its payoff — the pair is unreachable`);
+    assert.equal(stat.late, 0, `${seedId} was drawn past AGENT_04_LEAD, where its payoff can never be delivered`);
+    assert.equal(stat.leaked, 0, `${seedId} lost a payoff in a run that kept playing — that is an engine leak, not an ending`);
+  });
   // New pool-weighted model: calmer than the old guaranteed boundary insertion,
   // but every direct-Agents run still gets at least one side story (measured
   // zero-rate 0), median 2.
@@ -433,11 +447,16 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   assert.equal(postPadelInsertions, 0);
   assert.equal(mutexViolations, 0);
   Object.entries(frequency).forEach(([id, count]) => assert.ok(count > 0, `${id} never appeared`));
-  // Pre-Batch-1 baseline over direct-Agents runs: payroll 33.6%, dev 33.4%, b3 16.9%.
-  // Batch 1 first regressed these to 26.6/27.1/13.9 (~-20% relative) by competing for
-  // the same ambient slots; narrow `excludes` windows restored them. These floors sit
-  // just under the baseline so any future ambient card that crowds them out fails here.
-  const legacyFloor = { [IDS.payrollSeed]: 0.31, [IDS.devSeed]: 0.31, B3_SALES_PRESSURE_SEED: 0.155 };
+  // ACCEPTED REGRESSION, not the baseline. Over direct-Agents runs the pre-Batch-1
+  // rates were payroll 38.71%, dev 38.07%, b3 19.33%; Batch 1 leaves them at roughly
+  // 32.2/32.7/16.7, i.e. ~13-17% relative dilution. That is arithmetic, not a bug:
+  // a run offers ~5.8 ambient slots and Batch 1 grew the pool competing for them from
+  // ~13 cards to ~22. The author accepted it (16 Jul 2026) because the Phase 4 pivot
+  // shrinks the story rail and frees slots, which is the real fix; squeezing the new
+  // cards back to invisibility would only trade one loss for another.
+  // These floors therefore hold the line against FURTHER dilution — they do not
+  // encode the baseline. Restore them toward the numbers above in Phase 4.
+  const legacyFloor = { [IDS.payrollSeed]: 0.31, [IDS.devSeed]: 0.31, B3_SALES_PRESSURE_SEED: 0.16 };
   Object.entries(legacyFloor).forEach(([id, floor]) => {
     const rate = legacyRate[id] / directAgents;
     assert.ok(rate >= floor, `${id} was diluted out of the ambient pool: ${(100 * rate).toFixed(1)}% < ${100 * floor}%`);
