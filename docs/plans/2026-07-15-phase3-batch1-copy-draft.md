@@ -63,9 +63,9 @@
 **D1 — завязка.** Маркетолог залила питч-деку на порносайт как «партизанский маркетинг».
 
 > **@hype_queen** · *typing…*
-> `ok don't be mad. put our pitch deck on an adult site as guerrilla marketing 😌 tech investors browse there too. we're getting SO much traffic`
+> `ok this is my best idea yet. put our pitch deck on a porn site — tech investors browse there too 😌 the traffic is INSANE. you're welcome`
 
-*Рус:* «окей не злись. закинула нашу деку на порносайт как партизанский маркетинг 😌 техноинвесторы туда тоже заходят. трафик ОГРОМНЫЙ»
+*Рус:* «так, это моя лучшая идея. закинула нашу деку на порносайт — техноинвесторы туда тоже заходят 😌 трафик БЕЗУМНЫЙ. не благодари»
 
 - 🟦 **Leave it up** (Оставить ради трафика) → Customers↑, Founder↓, флаг `deck_on_xxx`.
 - 🟥 **Take it down** (Удалить) → Team↓ (маркетолог в обиде), Founder↑, Customers↓.
@@ -73,12 +73,12 @@
 **D2 — возвращение** (только если `deck_on_xxx`). Инвестор натыкается на профиль.
 
 > **@unicorn_hunter** · *typing…*
-> `I was NOT looking for your deck on a porn site. This is not how I invest. The offer is frozen until you explain yourself.`
+> `My golf buddy just sent me your pitch deck. He found it on a porn site. Now he thinks I browse there. Explain. NOW.`
 
-*Рус:* «Я НЕ искал вашу деку на порносайте. Я так не инвестирую. Предложение заморожено, пока не объяснишься.»
+*Рус:* «Мой приятель по гольфу скинул мне вашу питч-деку. Нашёл на порносайте. Теперь думает, что я сам туда захожу. Объясни. СЕЙЧАС.»
 
 - 🟦 **Apologize** (Извиниться) → Founder↓, сделка спасена.
-- 🟥 **Defend it** (Отстаивать хайп) → Cash↓↓ (инвестор ушёл), Founder↑.
+- 🟥 **Ask which site** (Спросить, на каком сайте — намекнуть, что и он там был) → Cash↓↓ (инвестор в ярости выходит), Founder↑ (мелкая победа).
 
 ---
 
@@ -87,22 +87,22 @@
 **E1 — завязка.** Мама нашла term sheet, приняла за секту, вызвала полицию проверить тебя. Без бизнес-лексики.
 
 > **@i_love_cats72** · *typing…*
-> `baby i found that paper where you sign your whole life away to that man!! it's a cult. i sent the police to check you're alive. they're at your door NOW ❤️`
+> `Baby, I found that paper where you sign your whole life away to that man!! It's a cult. I sent the police to check you're still alive. They're at your door right now ❤️`
 
-*Рус:* «малыш, я нашла ту бумагу, где ты подписываешь всю жизнь тому мужчине!! это секта. я вызвала полицию проверить, что ты жив. они уже у двери ❤️»
+*Рус:* «Малыш, я нашла ту бумагу, где ты подписываешь всю жизнь тому мужчине!! Это секта. Я вызвала полицию — проверить, что ты жив. Они уже у двери ❤️»
 
 - 🟦 **Let them in** (Впустить) → Founder↓, Customers↓ (сорван важный созвон). *(немедленно)*
 - 🟥 **Send them away** (Выпроводить) → Founder↑, ставит флаг `mom_worried`.
 
-**E2 — возвращение** (только если `mom_worried`). Мама эскалирует.
+**E2 — возвращение** (только если `mom_worried`). Мама эскалирует до родни.
 
 > **@i_love_cats72** · *typing…*
-> `since you wouldn't let the police help, i told the whole family you're in a cult. your aunt is driving over right now. we love you ❤️❤️`
+> `Since you wouldn't open the door, I told the whole family you're in a cult. Your aunt is driving three hours to save you. Please just talk to her ❤️❤️`
 
-*Рус:* «раз ты не впустил полицию, я сказала всей родне, что ты в секте. тётя уже едет к тебе. мы тебя любим ❤️❤️»
+*Рус:* «Раз ты не открыл дверь, я сказала всей родне, что ты в секте. Тётя едет к тебе три часа, спасать. Пожалуйста, просто поговори с ней ❤️❤️»
 
-- 🟦 **Come clean** (Признаться родне) → Founder↓, Team↑ (перестал врать).
-- 🟥 **Keep hiding** (Продолжать скрывать) → Founder↓↓.
+- 🟦 **Let her come** (Впустить тётю, пережить «спасение») → Founder↓ (унижение), но родня успокаивается.
+- 🟥 **Prove you're fine** (Доказывать родне, что ты в порядке) → Founder↓↓ (правда — что ты просто на мели — ещё жальче секты).
 
 ---
 
