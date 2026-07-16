@@ -731,3 +731,71 @@
 - **Ask for an intro — Попросить познакомить**: Customers +4, Founder -5; возврат к основной ветке.
 - **Mute him — Заглушить его**: Founder +4; возврат к основной ветке.
 
+## AMBIENT_THERAPY_LEAK — AI Assistant @b2buddy_bot
+
+**EN**
+
+> Great news! I published your therapy sessions for transparency 😊  
+> Vulnerable founders earn 3x more trust.  
+> The team already read what you said about them.
+
+**RU**
+
+> Отличные новости! Я выложил твои сессии с психотерапевтом ради прозрачности 😊  
+> Уязвимые фаундеры получают в 3 раза больше доверия.  
+> Команда уже прочла, что ты про них говорил.
+
+- **Own it — Назвать честностью**: Customers +2, Team -3, Founder -2; возврат к основной ветке.
+- **Take it down — Заставить удалить**: Founder +2, Customers -2; возврат к основной ветке.
+
+## AMBIENT_BLACK_SQUARE — Designer @pixel_perfect
+
+**EN**
+
+> I redesigned the site. It is now a single black square.  
+> Buttons were bourgeois noise. This is Malevich, not a bug.  
+> You're welcome.
+
+**RU**
+
+> Я переделал сайт. Теперь это один чёрный квадрат.  
+> Кнопки были буржуазным шумом. Это Малевич, а не баг.  
+> Не благодари.
+
+- **Keep the void — Оставить пустоту**: Customers -3, Founder +2; возврат к основной ветке.
+- **Restore buttons — Вернуть кнопки**: Team -2, Customers +2; возврат к основной ветке.
+
+## AMBIENT_CHAKRA_RETREAT — Investor @unicorn_hunter
+
+**EN**
+
+> MY GURU RUNS A SILENT CHAKRA RETREAT THIS WEEKEND.  
+> SEND THE WHOLE TEAM OR I FREEZE THE MONEY.  
+> REAL FOUNDERS ALIGN THEIR CHAKRAS BEFORE THEY SCALE.
+
+**RU**
+
+> МОЙ ГУРУ ВЕДЁТ МОЛЧАЛИВЫЙ РЕТРИТ ПО ЧАКРАМ В ЭТИ ВЫХОДНЫЕ.  
+> ВСЯ КОМАНДА ЕДЕТ — ИЛИ Я МОРОЖУ ДЕНЬГИ.  
+> НАСТОЯЩИЕ ФАУНДЕРЫ ВЫРАВНИВАЮТ ЧАКРЫ РАНЬШЕ, ЧЕМ МАСШТАБИРУЮТСЯ.
+
+- **Send the team — Отправить команду**: Team -3, Founder -2; возврат к основной ветке.
+- **Keep them coding — Оставить пилить код**: Cash -3, Team +2, Founder +2; возврат к основной ветке.
+
+## AMBIENT_CHAIR_STANDOFF — Dev @error404
+
+**EN**
+
+> not working till i get a real chair. mine squeaks.  
+> i need the $900 ergonomic one.  
+> i have a spine. the company does not, apparently
+
+**RU**
+
+> не работаю, пока не будет нормального кресла. моё скрипит.  
+> нужно то анатомическое за $900.  
+> у меня есть позвоночник. у компании, видимо, нет
+
+- **Buy the chair — Купить кресло**: Cash -4, Founder -2; возврат к основной ветке.
+- **Send a cushion — Прислать подушку**: Founder +2, Team -3; возврат к основной ветке.
+

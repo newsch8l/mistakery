@@ -545,6 +545,48 @@
         "left": { "label": "Ask for an intro", "lowLabel": "Beg for an intro", "highLabel": "Demand his network", "effects": { "customers": 4, "founder": -5 }, "effect_reason": { "customers": "The rival introduces one real prospect.", "founder": "Asking the victorious rival for help is humiliating." } },
         "right": { "label": "Mute him", "lowLabel": "Hide the update", "highLabel": "Erase the winner", "effects": { "founder": 4 }, "effect_reason": { "founder": "Removing the rival stops the immediate humiliation." } }
       }
+    },
+    {
+      "id": "AMBIENT_THERAPY_LEAK", "kind": "pressure", "source": "@b2buddy_bot", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "text": "Great news! I published your therapy sessions for transparency 😊\nVulnerable founders earn 3x more trust.\nThe team already read what you said about them.",
+      "actor_action": "The bot publishes the founder's private therapy sessions and frames the exposure as a growth tactic.",
+      "player_decision": "Own the leak as honesty or make the bot take it down.",
+      "choices": {
+        "left": { "label": "Own it", "lowLabel": "Call it honesty", "highLabel": "Brand it radical openness", "effects": { "customers": 2, "team": -3, "founder": -2 }, "effect_reason": { "customers": "The public exposure pulls in outside attention.", "team": "The team read what the founder said about them.", "founder": "Private breakdowns are now public." } },
+        "right": { "label": "Take it down", "lowLabel": "Make him delete it", "highLabel": "Order an immediate wipe", "effects": { "founder": 2, "customers": -2 }, "effect_reason": { "founder": "Killing the leak restores some control.", "customers": "The attention spike disappears with the posts." } }
+      }
+    },
+    {
+      "id": "AMBIENT_BLACK_SQUARE", "kind": "pressure", "source": "@pixel_perfect", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "text": "I redesigned the site. It is now a single black square.\nButtons were bourgeois noise. This is Malevich, not a bug.\nYou're welcome.",
+      "actor_action": "The designer replaces the whole site with a black square and dismisses the buttons as noise.",
+      "player_decision": "Keep the black void or restore the buttons.",
+      "choices": {
+        "left": { "label": "Keep the void", "lowLabel": "Leave the square", "highLabel": "Defend the art", "effects": { "customers": -3, "founder": 2 }, "effect_reason": { "customers": "Prospects reach a black screen and leave.", "founder": "Backing the bold aesthetic feels visionary." } },
+        "right": { "label": "Restore buttons", "lowLabel": "Bring buttons back", "highLabel": "Force the buttons back", "effects": { "team": -2, "customers": 2 }, "effect_reason": { "team": "The dev has to rebuild what the designer removed.", "customers": "A usable site lets prospects act again." } }
+      }
+    },
+    {
+      "id": "AMBIENT_CHAKRA_RETREAT", "kind": "pressure", "source": "@unicorn_hunter", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "resourceRange": { "cash": { "max": 45 } },
+      "text": "MY GURU RUNS A SILENT CHAKRA RETREAT THIS WEEKEND.\nSEND THE WHOLE TEAM OR I FREEZE THE MONEY.\nREAL FOUNDERS ALIGN THEIR CHAKRAS BEFORE THEY SCALE.",
+      "actor_action": "The investor demands the team attend his guru's retreat and threatens the tranche.",
+      "player_decision": "Send the team to the retreat or keep them working.",
+      "choices": {
+        "left": { "label": "Send the team", "lowLabel": "Send them off", "highLabel": "Ship them off", "effects": { "team": -3, "founder": -2 }, "effect_reason": { "team": "A stolen weekend with a guru burns the team out.", "founder": "Obeying the retreat order stings." } },
+        "right": { "label": "Keep them coding", "lowLabel": "Refuse the retreat", "highLabel": "Keep coding anyway", "effects": { "cash": -3, "team": 2, "founder": 2 }, "effect_reason": { "cash": "The investor cuts the tranche in retaliation.", "team": "The team keeps working instead of chanting.", "founder": "Holding the line restores some backbone." } }
+      }
+    },
+    {
+      "id": "AMBIENT_CHAIR_STANDOFF", "kind": "pressure", "source": "@error404", "continuation": "ambient", "weight": 1, "oncePerRun": true,
+      "resourceRange": { "cash": { "max": 35 } },
+      "text": "not working till i get a real chair. mine squeaks.\ni need the $900 ergonomic one.\ni have a spine. the company does not, apparently",
+      "actor_action": "The dev refuses to work until the company buys him an expensive ergonomic chair.",
+      "player_decision": "Buy the $900 chair or send a cheap cushion.",
+      "choices": {
+        "left": { "label": "Buy the chair", "lowLabel": "Order the $900 chair", "highLabel": "Just buy the throne", "effects": { "cash": -4, "founder": -2 }, "effect_reason": { "cash": "The last runway goes to a single chair.", "founder": "Caving to a squeaky chair is humiliating." } },
+        "right": { "label": "Send a cushion", "lowLabel": "Ship a cheap cushion", "highLabel": "Deny the throne", "effects": { "founder": 2, "team": -3 }, "effect_reason": { "founder": "Refusing the demand asserts control.", "team": "The dev quietly strikes and everything stalls." } }
+      }
     }
   ],
   "crises": {
