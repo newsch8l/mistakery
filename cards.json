@@ -611,8 +611,8 @@
     },
     {
       "id": "AMBIENT_DECK_XXX_INVESTOR", "kind": "sideStory", "callbackOnly": true, "source": "@unicorn_hunter", "continuation": "sideStory", "oncePerRun": true, "requires": ["deck_on_xxx"],
-      "text": "OUR PITCH DECK IS ON A PORN SITE!!\nDO NOT ASK ME HOW I KNOW.\nEXPLAIN YOURSELF RIGHT NOW!!!",
-      "actor_action": "The investor discovers the deck on the porn site and demands an explanation without admitting how he found it.",
+      "text": "MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!\nEXPLAIN YOURSELF RIGHT NOW!!!",
+      "actor_action": "The investor blames a friend for finding the deck on the porn site and demands an explanation.",
       "player_decision": "Call the stunt a mistake or defend it as smart marketing.",
       "choices": {
         "left": { "label": "Call it a mistake", "lowLabel": "Blame the stunt", "highLabel": "Disown it fully", "effects": { "founder": -2, "team": -2 }, "effect_reason": { "founder": "Disowning your own company looks weak.", "team": "Throwing the marketer under the bus stings the team." } },

@@ -654,14 +654,12 @@
 
 **EN**
 
-> OUR PITCH DECK IS ON A PORN SITE!!  
-> DO NOT ASK ME HOW I KNOW.  
+> MY FRIEND JUST FOUND OUR PITCH DECK ON A PORN SITE!!  
 > EXPLAIN YOURSELF RIGHT NOW!!!
 
 **RU**
 
-> НАША ПИТЧ-ДЕКА НА ПОРНОСАЙТЕ!!  
-> НЕ СПРАШИВАЙ, ОТКУДА Я ЗНАЮ.  
+> МОЙ ПРИЯТЕЛЬ ТОЛЬКО ЧТО НАШЁЛ НАШ ПИТЧ НА ПОРНОСАЙТЕ!!  
 > ОБЪЯСНИТЕСЬ НЕМЕДЛЕННО!!!
 
 - **Call it a mistake — Сказать, что ошибка**: Founder -2, Team -2; возврат к основной ветке.
