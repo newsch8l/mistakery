@@ -37,11 +37,25 @@ test('bilingual catalog keeps the approved AGENT_01 Russian copy', () => {
   assert.ok(catalog.includes('ВСТАВЬ ДУШУ В B2BUYERSPYER ИЛИ ПРОСИ ДЕНЬГИ У МАМЫ.'));
 });
 
-test('bilingual catalog marks unapproved SADBOT translations as exact English', () => {
+test('bilingual catalog contains Russian copy for every SADBOT card', () => {
   const catalog = fs.readFileSync(catalogPath, 'utf8');
-  assert.match(catalog, /## SADBOT_01_SEED\b/);
-  const entry = catalog.slice(catalog.indexOf('## SADBOT_01_SEED'));
-  assert.ok(entry.includes('перевод не утверждён'), 'SADBOT entries must not present unapproved Russian as approved');
+  const ids = [
+    'SADBOT_01_SEED', 'SADBOT_02_EVIDENCE', 'SADBOT_03_VIRAL',
+    'SADBOT_INVESTOR_CLAIM', 'SADBOT_04_LEAD', 'SADBOT_05_ORDER_CALL',
+    'SADBOT_05_ORDER_REPLY', 'SADBOT_05B_THEATER', 'SADBOT_FRIDAY',
+    'SADBOT_06_LEGAL', 'SADBOT_07_INVOICE', 'SADBOT_07_INVOICE_CUT',
+    'SADBOT_07_LOGO',
+  ];
+  for (const id of ids) {
+    const start = catalog.indexOf(`## ${id} `);
+    assert.notEqual(start, -1, `missing catalog entry ${id}`);
+    const next = catalog.indexOf('\n## ', start + 1);
+    const entry = catalog.slice(start, next === -1 ? catalog.length : next);
+    assert.match(entry, /\*\*RU\*\*/);
+    assert.doesNotMatch(entry, /перевод не утверждён/);
+    const russian = entry.slice(entry.indexOf('**RU**'));
+    assert.match(russian, /[А-Яа-яЁё]/, `${id} has no Russian copy`);
+  }
 });
 
 test('uses a neutral typing status instead of the obsolete aggressive status', () => {

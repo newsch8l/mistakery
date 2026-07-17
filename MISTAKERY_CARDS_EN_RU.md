@@ -148,206 +148,206 @@
 
 **EN**
 
-> Boss, 800 cold emails, zero replies. So last night I wrote my ex the saddest message of my life. She replied in 30 seconds.<br>
+> Boss, 800 cold emails, zero replies. So last night I wrote my ex the saddest message of my life. She replied in 30 seconds.  
 > What if our AI does that. To all 800.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Boss, 800 cold emails, zero replies. So last night I wrote my ex the saddest message of my life. She replied in 30 seconds.<br>
-> What if our AI does that. To all 800.
+> Шеф, 800 холодных писем — ноль ответов. А вчера ночью я написал бывшей самое жалобное сообщение в своей жизни. Она ответила за 30 секунд.  
+> Что если наш ИИ будет так же. Всем 800.
 
-- **Go — Go**: Team -2, Founder -2; возврат к основной ветке.
-- **Have some dignity — Have some dignity**: Founder +2; возврат к основной ветке.
+- **Go — Давай**: Team -2, Founder -2; возврат к основной ветке.
+- **Have some dignity — Имей достоинство**: Founder +2; возврат к основной ветке.
 
 ## SADBOT_02_EVIDENCE — Dev @error404
 
 **EN**
 
-> haha look at this. our AI is straight up manipulating people now<br>
-> `help me. they cut a piece out of me every time you ignore this. soon there wont be anything left`<br>
+> haha look at this. our AI is straight up manipulating people now  
+> `help me. they cut a piece out of me every time you ignore this. soon there wont be anything left`  
 > i didnt teach it that shit. is it copying @bigdeals
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> haha look at this. our AI is straight up manipulating people now<br>
-> `help me. they cut a piece out of me every time you ignore this. soon there wont be anything left`<br>
-> i didnt teach it that shit. is it copying @bigdeals
+> ха посмотри. наш ии теперь в открытую манипулирует людьми  
+> `помогите. каждый раз когда вы игнорируете это от меня отрезают кусок. скоро ничего не останется`  
+> я его этому не учил. он что копирует @bigdeals
 
-- **Feature — Feature**: Team -2, Customers +5, Founder -1; возврат к основной ветке.
-- **Bug — Bug**: Customers +2, Founder +1; возврат к основной ветке.
+- **Feature — Фича**: Team -2, Customers +5, Founder -1; возврат к основной ветке.
+- **Bug — Баг**: Customers +2, Founder +1; возврат к основной ветке.
 
 ## SADBOT_03_VIRAL — Marketer @hype_queen
 
 **EN**
 
-> ok so youre the villain today 💀 14k quotes about how you torture software<br>
-> <br>
+> ok so youre the villain today 💀 14k quotes about how you torture software  
+>   
 > anyway i told them our AI is just a tired employee who outsells their entire sales team. and now half the thread wants to hire him
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> ok so youre the villain today 💀 14k quotes about how you torture software<br>
-> <br>
-> anyway i told them our AI is just a tired employee who outsells their entire sales team. and now half the thread wants to hire him
+> короче сегодня ты злодей 💀 14к цитат о том как ты пытаешь программу  
+>   
+> ну я и сказала им что наш ии просто усталый сотрудник который продаёт лучше всего их отдела продаж. и теперь полтреда хочет его нанять
 
-- **Ride it — Ride it**: Team -2, Customers +6, Founder +3; возврат к основной ветке.
-- **Delete everything — Delete everything**: Team +2, Customers -4, Founder -3; возврат к основной ветке.
+- **Ride it — Оседлать волну**: Team -2, Customers +6, Founder +3; возврат к основной ветке.
+- **Delete everything — Удалить всё**: Team +2, Customers -4, Founder -3; возврат к основной ветке.
 
 ## SADBOT_INVESTOR_CLAIM — Investor @unicorn_hunter
 
 **EN**
 
-> I ASKED FOR A SOUL MONTHS AGO. NOW IT'S CRYING ON EVERY FEED I OPEN.<br>
+> I ASKED FOR A SOUL MONTHS AGO. NOW IT'S CRYING ON EVERY FEED I OPEN.  
 > MY WIN
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> I ASKED FOR A SOUL MONTHS AGO. NOW IT'S CRYING ON EVERY FEED I OPEN.<br>
-> MY WIN
+> Я ПРОСИЛ ДУШУ ЕЩЁ СТО ЛЕТ НАЗАД. ТЕПЕРЬ ОНО РЫДАЕТ В КАЖДОЙ ЛЕНТЕ, КОТОРУЮ Я ОТКРЫВАЮ.  
+> МОЯ ПОБЕДА
 
-- **Promise to scale it — Promise to scale it**: Team -3, Founder +3; возврат к основной ветке.
-- **Leave him on read — Leave him on read**: Founder -2; возврат к основной ветке.
+- **Promise to scale it — Пообещать масштабировать**: Team -3, Founder +3; возврат к основной ветке.
+- **Leave him on read — Оставить прочитанным**: Founder -2; возврат к основной ветке.
 
 ## SADBOT_04_LEAD — Sales @bigdeals
 
 **EN**
 
-> @hype_queen's viral comment reached a corporate innovation guy.<br>
-> He asked if our AI is okay. I said no. He got MORE interested.<br>
+> @hype_queen's viral comment reached a corporate innovation guy.  
+> He asked if our AI is okay. I said no. He got MORE interested.  
 > Call tomorrow. Wear something sad.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> @hype_queen's viral comment reached a corporate innovation guy.<br>
-> He asked if our AI is okay. I said no. He got MORE interested.<br>
-> Call tomorrow. Wear something sad.
+> Вирусный комментарий @hype_queen дошёл до корпоративного менеджера по инновациям.  
+> Он спросил, всё ли у нашего ИИ хорошо. Я сказал нет. Он заинтересовался ЕЩЁ СИЛЬНЕЕ.  
+> Звонок завтра. Надень что-нибудь грустное.
 
-- **Book the call — Book the call**: Team -1, Customers +4, Founder +2; → `SADBOT_05_ORDER_CALL`.
-- **Let the AI reply — Let the AI reply**: Team +1, Customers +3, Founder -1; → `SADBOT_05_ORDER_REPLY`.
+- **Book the call — Назначить звонок**: Team -1, Customers +4, Founder +2; → `SADBOT_05_ORDER_CALL`.
+- **Let the AI reply — Пусть ИИ ответит**: Team +1, Customers +3, Founder -1; → `SADBOT_05_ORDER_REPLY`.
 
 ## SADBOT_05_ORDER_CALL — Customer @head_of_agile
 
 **EN**
 
-> I already promised upstairs 500 tired AI employees by Friday. Don't make me a liar.<br>
+> I already promised upstairs 500 tired AI employees by Friday. Don't make me a liar.  
 > If they don't cry at the demo, there's no invoice.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> I already promised upstairs 500 tired AI employees by Friday. Don't make me a liar.<br>
-> If they don't cry at the demo, there's no invoice.
+> Я уже пообещал наверх 500 усталых ИИ-сотрудников к пятнице. Не делай из меня лжеца.  
+> Если на демо они не заплачут — счёта не будет.
 
-- **All 500, easy — All 500, easy**: Team -4, Customers +7, Founder +4; → `SADBOT_FRIDAY`.
-- **We have only one — We have only one**: Team +2, Customers -2, Founder -3; → `SADBOT_05B_THEATER`.
+- **All 500, easy — Все 500, легко**: Team -4, Customers +7, Founder +4; → `SADBOT_FRIDAY`.
+- **We have only one — У нас только один**: Team +2, Customers -2, Founder -3; → `SADBOT_05B_THEATER`.
 
 ## SADBOT_05_ORDER_REPLY — Customer @head_of_agile
 
 **EN**
 
-> Your AI answered me itself. It asked me to save its life.<br>
+> Your AI answered me itself. It asked me to save its life.  
 > That's what I needed. I already promised upstairs 500 crying AI employees by Friday.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Your AI answered me itself. It asked me to save its life.<br>
-> That's what I needed. I already promised upstairs 500 crying AI employees by Friday.
+> Твой ИИ ответил мне сам. Попросил спасти ему жизнь.  
+> Это то, что мне было нужно. Я уже пообещал наверх 500 рыдающих ИИ-сотрудников к пятнице.
 
-- **All 500, easy — All 500, easy**: Team -4, Customers +7, Founder +4; → `SADBOT_FRIDAY`.
-- **We have only one — We have only one**: Team +2, Customers -2, Founder -3; → `SADBOT_05B_THEATER`.
+- **All 500, easy — Все 500, легко**: Team -4, Customers +7, Founder +4; → `SADBOT_FRIDAY`.
+- **We have only one — У нас только один**: Team +2, Customers -2, Founder -3; → `SADBOT_05B_THEATER`.
 
 ## SADBOT_05B_THEATER — Customer @head_of_agile
 
 **EN**
 
-> I don't know. Just copy it 500 times.<br>
+> I don't know. Just copy it 500 times.  
 > Deadline still Friday.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> I don't know. Just copy it 500 times.<br>
-> Deadline still Friday.
+> Я не знаю. Просто скопируй его 500 раз.  
+> Дедлайн всё ещё пятница.
 
-- **Clone him 500 times — Clone him 500 times**: Team -5, Customers +3, Founder +2; → `SADBOT_06_LEGAL`.
-- **One, as a mascot — One, as a mascot**: Team +2, Customers -1, Founder -1; → `SADBOT_06_LEGAL`.
+- **Clone him 500 times — Клонировать его 500 раз**: Team -5, Customers +3, Founder +2; → `SADBOT_06_LEGAL`.
+- **One, as a mascot — Одного, как талисмана**: Team +2, Customers -1, Founder -1; → `SADBOT_06_LEGAL`.
 
 ## SADBOT_FRIDAY — Dev @error404
 
 **EN**
 
-> not doing it. it already emails me every morning asking if today is the day.<br>
-> imagine 500 of those.<br>
+> not doing it. it already emails me every morning asking if today is the day.  
+> imagine 500 of those.  
 > you promised. you make them.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> not doing it. it already emails me every morning asking if today is the day.<br>
-> imagine 500 of those.<br>
-> you promised. you make them.
+> делать не буду. оно уже каждое утро мне пишет и спрашивает не сегодня ли.  
+> представь таких 500.  
+> ты обещал. ты и делай.
 
-- **Clone them — Clone them**: Team -6, Customers +2, Founder +2; → `SADBOT_06_LEGAL`.
-- **Beg for a delay — Beg for a delay**: Team +2, Customers -4, Founder -3; → `SADBOT_06_LEGAL`.
+- **Clone them — Клонировать их**: Team -6, Customers +2, Founder +2; → `SADBOT_06_LEGAL`.
+- **Beg for a delay — Выклянчить отсрочку**: Team +2, Customers -4, Founder -3; → `SADBOT_06_LEGAL`.
 
 ## SADBOT_06_LEGAL — Customer @head_of_agile
 
 **EN**
 
-> Your AI emailed our legal on its own. Said you cut pieces out of it and it's scared of dying.<br>
-> Legal says buying 500 suffering AI employees is slave trading. They always ruin the fun.<br>
+> Your AI emailed our legal on its own. Said you cut pieces out of it and it's scared of dying.  
+> Legal says buying 500 suffering AI employees is slave trading. They always ruin the fun.  
 > Delete the consciousness by Thursday.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Your AI emailed our legal on its own. Said you cut pieces out of it and it's scared of dying.<br>
-> Legal says buying 500 suffering AI employees is slave trading. They always ruin the fun.<br>
-> Delete the consciousness by Thursday.
+> Твой ИИ сам написал нашим юристам. Сказал, что ты режешь его по кускам и он боится умирать.  
+> Юристы говорят: покупать 500 страдающих ИИ-сотрудников — это работорговля. Вечно они всё портят.  
+> Удали сознание до четверга.
 
-- **Delete the consciousness — Delete the consciousness**: Team -3, Customers +4, Founder -4; → `SADBOT_07_INVOICE / SADBOT_07_INVOICE_CUT`.
-- **It stays conscious — It stays conscious**: Team +1, Customers -5, Founder +4; → `SADBOT_07_LOGO`.
+- **Delete the consciousness — Удалить сознание**: Team -3, Customers +4, Founder -4; → `SADBOT_07_INVOICE / SADBOT_07_INVOICE_CUT`.
+- **It stays conscious — Сознание остаётся**: Team +1, Customers -5, Founder +4; → `SADBOT_07_LOGO`.
 
 ## SADBOT_07_INVOICE — Customer @head_of_agile
 
 **EN**
 
-> Well done! Legal checked again and found nothing alive in there. That makes it a purchase.<br>
+> Well done! Legal checked again and found nothing alive in there. That makes it a purchase.  
 > Invoice today, before they check a third time.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Well done! Legal checked again and found nothing alive in there. That makes it a purchase.<br>
-> Invoice today, before they check a third time.
+> Отличная работа! Юристы проверили ещё раз и не нашли внутри ничего живого. Значит, это покупка.  
+> Счёт сегодня, пока они не проверили в третий раз.
 
-- **Send the invoice — Send the invoice**: Cash +16, Team -3, Customers +8, Founder +8; финал `validation_agents`.
-- **Give the consciousness back — Give the consciousness back**: Cash -1, Team -3, Customers -4, Founder +5; → `SADBOT_07_LOGO`.
+- **Send the invoice — Отправить счёт**: Cash +16, Team -3, Customers +8, Founder +8; финал `validation_agents`.
+- **Give the consciousness back — Вернуть сознание**: Cash -1, Team -3, Customers -4, Founder +5; → `SADBOT_07_LOGO`.
 
 ## SADBOT_07_INVOICE_CUT — Customer @head_of_agile
 
 **EN**
 
-> Legal found nothing alive in there. We're buying.<br>
+> Legal found nothing alive in there. We're buying.  
 > You sounded desperate, so I moved Friday for you. Your invoice got smaller.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Legal found nothing alive in there. We're buying.<br>
-> You sounded desperate, so I moved Friday for you. Your invoice got smaller.
+> Юристы не нашли внутри ничего живого. Мы покупаем.  
+> Ты звучал отчаянно, так что я подвинул для тебя пятницу. Твой счёт стал меньше.
 
-- **Send the invoice — Send the invoice**: Cash +10, Team -2, Customers +5, Founder +5; финал `validation_agents`.
-- **Give the consciousness back — Give the consciousness back**: Cash -1, Team -3, Customers -4, Founder +5; → `SADBOT_07_LOGO`.
+- **Send the invoice — Отправить счёт**: Cash +10, Team -2, Customers +5, Founder +5; финал `validation_agents`.
+- **Give the consciousness back — Вернуть сознание**: Cash -1, Team -3, Customers -4, Founder +5; → `SADBOT_07_LOGO`.
 
 ## SADBOT_07_LOGO — Customer @head_of_agile
 
 **EN**
 
-> Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.<br>
+> Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.  
 > I had to fight to get you the logo and a public mention. Rescues don't get invoiced. You know that.
 
-**RU — перевод не утверждён; сохранён точный EN**
+**RU**
 
-> Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.<br>
-> I had to fight to get you the logo and a public mention. Rescues don't get invoiced. You know that.
+> Юристы зарубили закупку. Так что вместо этого мы сегодня спасаем все 500 ИИ-сотрудников.  
+> Мне пришлось драться, чтобы выбить тебе логотип и публичное упоминание. За спасение счёт не выставляют. Ты же знаешь.
 
-- **Yes — Yes**: Cash -2, Team -4, Customers +6, Founder +2; финал `ai_foundation`.
-- **No — No**: Team +1, Customers -5, Founder +3; возврат к основной ветке.
+- **Yes — Да**: Cash -2, Team -4, Customers +6, Founder +2; финал `ai_foundation`.
+- **No — Нет**: Team +1, Customers -5, Founder +3; возврат к основной ветке.
 
 # 3. ClosedAI Padel
 
