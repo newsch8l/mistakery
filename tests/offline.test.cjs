@@ -32,10 +32,16 @@ test('bilingual catalog contains every canonical card and its current English co
   });
 });
 
-test('bilingual catalog contains the approved AGENT_06_LEGAL Russian copy', () => {
+test('bilingual catalog keeps the approved AGENT_01 Russian copy', () => {
   const catalog = fs.readFileSync(catalogPath, 'utf8');
-  assert.ok(catalog.includes('Наши юристы увидели в вашей презентации «разумных сотрудников».'));
-  assert.ok(catalog.includes('Покупать их — это работорговля.'));
+  assert.ok(catalog.includes('ВСТАВЬ ДУШУ В B2BUYERSPYER ИЛИ ПРОСИ ДЕНЬГИ У МАМЫ.'));
+});
+
+test('bilingual catalog marks unapproved SADBOT translations as exact English', () => {
+  const catalog = fs.readFileSync(catalogPath, 'utf8');
+  assert.match(catalog, /## SADBOT_01_SEED\b/);
+  const entry = catalog.slice(catalog.indexOf('## SADBOT_01_SEED'));
+  assert.ok(entry.includes('перевод не утверждён'), 'SADBOT entries must not present unapproved Russian as approved');
 });
 
 test('uses a neutral typing status instead of the obsolete aggressive status', () => {

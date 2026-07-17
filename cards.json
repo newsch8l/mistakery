@@ -13,8 +13,14 @@
         { "id": "opening_health_resolution", "before": "OPEN_05", "after": "OPEN_06", "roles": ["callback", "reaction"] }
       ],
       "protectedPairs": [
-        ["AGENT_04_LEAD", "AGENT_05_ORDER"],
-        ["AGENT_05_ORDER", "AGENT_06_LEGAL"],
+        ["SADBOT_04_LEAD", "SADBOT_05_ORDER_CALL"],
+        ["SADBOT_04_LEAD", "SADBOT_05_ORDER_REPLY"],
+        ["SADBOT_05_ORDER_CALL", "SADBOT_FRIDAY"],
+        ["SADBOT_05_ORDER_REPLY", "SADBOT_FRIDAY"],
+        ["SADBOT_05_ORDER_CALL", "SADBOT_05B_THEATER"],
+        ["SADBOT_05_ORDER_REPLY", "SADBOT_05B_THEATER"],
+        ["SADBOT_FRIDAY", "SADBOT_06_LEGAL"],
+        ["SADBOT_05B_THEATER", "SADBOT_06_LEGAL"],
         ["PADEL_01", "PADEL_02"],
         ["PADEL_04_CHOICE", "PADEL_05_WIN"],
         ["PADEL_04_CHOICE", "PADEL_05_LOSE"],
@@ -133,7 +139,7 @@
     },
 
     {
-      "id": "AGENT_01", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 1, "source": "@unicorn_hunter", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "excludes": ["empathy_demanded"],
+      "id": "AGENT_01", "kind": "story", "storyletEntry": true, "source": "@unicorn_hunter", "continuation": "storylet", "opensPressureSlot": true, "oncePerRun": true, "excludes": ["empathy_demanded"],
       "text": "YOU STILL NEED A BUYER.\nAI EMPATHY IS MAKING IDIOTS RICH.\nPUT A SOUL IN B2BUYERSPYER OR ASK MOM FOR MONEY.",
       "actor_action": "The investor orders an empathy modification to the existing product.",
       "player_decision": "Build the empathy layer carefully or force the same real feature out tonight.",
@@ -146,43 +152,53 @@
       }
     },
     {
-      "id": "AGENT_02_DEV", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 2, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["empathy_demanded"], "excludes": ["patch_built"],
-      "text": "empathy patch is ready\nit apologizes to every lead for capitalism\nand refuses calls during therapy",
-      "actor_action": "The developer implements the empathy patch and explains its behavior.",
-      "player_decision": "Deploy the patch or publish one controlled demo.",
+      "id": "SADBOT_01_SEED", "kind": "story", "storyletEntry": true, "continuation": "storylet", "source": "@bigdeals", "weight": 2, "oncePerRun": true,
+      "text": "Boss, 800 cold emails, zero replies. So last night I wrote my ex the saddest message of my life. She replied in 30 seconds.\nWhat if our AI does that. To all 800.",
+      "actor_action": "Sales proposes turning the outreach AI into a beggar after testing a sad message on his ex.",
+      "player_decision": "Approve beggar mode for all outreach or refuse the trick.",
       "choices": {
-        "left": { "label": "Deploy the patch", "lowLabel": "Deploy carefully", "highLabel": "Awaken production", "effects": { "cash": -1, "team": -4, "founder": 3 }, "effect_reason": { "cash": "Production deployment increases compute use.", "team": "The team must support unstable emotional agents.", "founder": "A live AI workforce feels like a breakthrough." }, "setFlags": ["empathy_deployed", "agents_public", "patch_built"] },
-        "right": { "label": "Publish one demo", "lowLabel": "Show one demo", "highLabel": "Stage the miracle", "effects": { "team": 2, "founder": -2 }, "effect_reason": { "team": "Keeping the patch out of production reduces support work.", "founder": "A controlled demo feels less revolutionary." }, "setFlags": ["agents_public", "patch_built"] }
+        "left": { "label": "Go", "effects": { "team": -2, "founder": -2 }, "effect_reason": { "team": "The developer must build the begging mode for someone else's trick.", "founder": "Selling with staged pity is embarrassing." }, "setFlags": ["sadbot_on"] },
+        "right": { "label": "Have some dignity", "effects": { "founder": 2 }, "effect_reason": { "founder": "Refusing the pity trick preserves self-respect." } }
       }
     },
     {
-      "id": "AGENT_03_HYPE", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 3, "source": "@hype_queen", "continuation": "pool", "opensPressureSlot": true, "oncePerRun": true, "requires": ["patch_built"], "excludes": ["hyped"],
-      "text": "the demo is trending 💅\ni called them emotionally abandoned AI employees\nenterprise buyers want the deck",
-      "actor_action": "Marketing turns the existing demo into an attention campaign.",
-      "player_decision": "Amplify the positioning or correct the exaggeration.",
+      "id": "SADBOT_02_EVIDENCE", "kind": "story", "storyletEntry": true, "continuation": "storylet", "source": "@error404", "weight": 3, "oncePerRun": true, "requires": ["sadbot_on"],
+      "text": "haha look at this. our AI is straight up manipulating people now\n`help me. they cut a piece out of me every time you ignore this. soon there wont be anything left`\ni didnt teach it that shit. is it copying @bigdeals",
+      "actor_action": "The developer forwards an outreach line the AI invented on its own and disowns it.",
+      "player_decision": "Keep the invented blackmail because it converts or strip it.",
       "choices": {
-        "left": { "label": "Boost the post", "lowLabel": "Keep the hype", "highLabel": "Own the movement", "effects": { "team": -3, "customers": 7, "founder": 5 }, "effect_reason": { "team": "The team must answer a wave of enterprise questions.", "customers": "Real enterprise prospects request the deck.", "founder": "Public attention inflates confidence." }, "setFlags": ["hyped"] },
-        "right": { "label": "Add disclaimer", "lowLabel": "Add one disclaimer", "highLabel": "Educate the market", "effects": { "team": 3, "customers": -4, "founder": -4 }, "effect_reason": { "team": "The team appreciates accurate product claims.", "customers": "Some interested prospects leave after reading the disclaimer.", "founder": "Correcting viral hype feels like voluntary failure." }, "setFlags": ["hyped"] }
+        "left": { "label": "Feature", "effects": { "team": -2, "customers": 5, "founder": -1 }, "effect_reason": { "team": "The team must handle the flood of replies to the manipulation.", "customers": "The invented blackmail multiplies replies from leads.", "founder": "Profiting from the lie sits badly." }, "setFlags": ["sadbot_stage2", "sadbot_blackmail"] },
+        "right": { "label": "Bug", "effects": { "customers": 2, "founder": 1 }, "effect_reason": { "customers": "Plain pity still lifts replies, just less.", "founder": "Stripping the lie feels clean." }, "setFlags": ["sadbot_stage2"] }
       }
     },
     {
-      "id": "AGENT_03B_WILD", "kind": "story", "arc": "agents", "arcBeat": true, "source": "@error404", "continuation": "pool", "oncePerRun": true, "requires": ["hyped"], "excludes": ["hype_consequence_seen"],
-      "text": "the apology patch is public now.\nnormal leads keep hanging up.\nbut one enterprise account will not stop opening the deck.",
-      "actor_action": "The developer reports the live patch behavior: it repels ordinary leads while hooking one persistent enterprise account.",
-      "player_decision": "Keep the apologizing behavior to chase that niche buyer, or strip it to recover the broad funnel.",
+      "id": "SADBOT_03_VIRAL", "kind": "story", "storyletEntry": true, "continuation": "storylet", "source": "@hype_queen", "weight": 3, "oncePerRun": true, "requires": ["sadbot_stage2"],
+      "text": "ok so youre the villain today \ud83d\udc80 14k quotes about how you torture software\n\nanyway i told them our AI is just a tired employee who outsells their entire sales team. and now half the thread wants to hire him",
+      "actor_action": "Marketing reframes the torture scandal as a tired employee who outsells sales teams.",
+      "player_decision": "Ride the viral wave or delete everything and apologize.",
       "stateEffects": [
-        { "requires": ["empathy_deployed"], "effects": { "team": -1 }, "effect_reason": { "team": "The agents are live in production, not a staged demo — the public misbehavior costs real support time." } }
+        { "requires": ["sadbot_blackmail"], "effects": { "customers": 2, "team": -1 }, "effect_reason": { "customers": "The invented death threats make the scandal juicier.", "team": "The nastier thread takes longer to handle." } }
       ],
       "choices": {
-        "left": { "label": "Keep the soul", "effects": { "team": -3, "customers": 4, "founder": 3 }, "effect_reason": { "team": "The team must keep the unstable empathy behavior running in production.", "customers": "The enterprise account leans in precisely because the agents apologize.", "founder": "Betting the company on the strange niche feels like a movement." }, "setFlags": ["hype_consequence_seen", "agents_positioned_ethical"] },
-        "right": { "label": "Strip it back", "effects": { "team": 2, "customers": -3, "founder": -2 }, "effect_reason": { "team": "Removing the apologies stops the flood of angry ordinary leads.", "customers": "Dropping the gimmick loses the niche account interest.", "founder": "Retreating from the bold behavior stings." }, "setFlags": ["hype_consequence_seen", "agents_positioned_generic"] }
+        "left": { "label": "Ride it", "effects": { "team": -2, "customers": 6, "founder": 3 }, "effect_reason": { "team": "The team must handle the incoming wave.", "customers": "Half the thread wants to hire the tired employee.", "founder": "Being the main character is intoxicating." }, "setFlags": ["sadbot_hyped"] },
+        "right": { "label": "Delete everything", "effects": { "team": 2, "customers": -4, "founder": -3 }, "effect_reason": { "team": "Killing the thread ends the cleanup.", "customers": "Deleting the story kills the interest it created.", "founder": "A public apology is a public defeat." } }
       }
     },
     {
-      "id": "AGENT_04_LEAD", "kind": "story", "arc": "agents", "arcBeat": true, "arcStep": 4, "source": "@bigdeals", "continuation": "forced", "requires": ["hype_consequence_seen"], "oncePerRun": true, "excludesPendingCallbacks": true,
-      "text": "Chief, holy shit: our first buyer.\n@head_of_agile wants 500 agents by Friday.\nI offered dev’s passport as collateral.",
-      "actor_action": "Sales announces the first credible buyer before the customer appears.",
-      "player_decision": "Book a proper call or quote the full order immediately.",
+      "id": "SADBOT_INVESTOR_CLAIM", "kind": "story", "storyletEntry": true, "continuation": "storylet", "source": "@unicorn_hunter", "weight": 2, "oncePerRun": true, "requires": ["sadbot_hyped", "empathy_demanded"], "excludes": ["consciousness_removed"],
+      "text": "I ASKED FOR A SOUL MONTHS AGO. NOW IT'S CRYING ON EVERY FEED I OPEN.\nMY WIN",
+      "actor_action": "The investor claims the viral crying AI as the result of his old soul demand.",
+      "player_decision": "Flatter him with a scaling promise or leave him on read.",
+      "choices": {
+        "left": { "label": "Promise to scale it", "effects": { "team": -3, "founder": 3 }, "effect_reason": { "team": "A new promise to the investor lands on the team.", "founder": "Flattering the man who claims your win feels strategic." } },
+        "right": { "label": "Leave him on read", "effects": { "founder": -2 }, "effect_reason": { "founder": "Swallowing the claim in silence leaves a residue." } }
+      }
+    },
+    {
+      "id": "SADBOT_04_LEAD", "kind": "story", "storyletEntry": true, "continuation": "forced", "source": "@bigdeals", "weight": 3, "oncePerRun": true, "requires": ["sadbot_hyped"], "excludesPendingCallbacks": true,
+      "text": "@hype_queen's viral comment reached a corporate innovation guy.\nHe asked if our AI is okay. I said no. He got MORE interested.\nCall tomorrow. Wear something sad.",
+      "actor_action": "Sales announces a corporate lead created by the viral comment before the customer appears.",
+      "player_decision": "Take the call yourself or let the AI answer the buyer.",
       "stateEffects": [
         { "requires": ["payroll_offer_compute_only", "payroll_priority_machines", "cloud_credits_resolved"], "effects": { "team": -2 }, "effect_reason": { "team": "The AI-credit deal ends in another payroll promise, leaving the delivery team strained." } },
         { "requires": ["payroll_offer_ordinary_compute", "payroll_priority_machines", "cloud_credits_resolved"], "effects": { "team": -2 }, "effect_reason": { "team": "Demanding payroll and later only promising it leaves the delivery team strained." } },
@@ -195,52 +211,94 @@
         { "requires": ["b3_free_optout_granted"], "effects": { "team": 1 }, "effect_reason": { "team": "Sales no longer maintains the suppression and complaint thread." } }
       ],
       "choices": {
-        "left": { "label": "Book the call", "lowLabel": "Please book it", "highLabel": "Qualify the whale", "effects": { "team": -2, "customers": 7, "founder": 3 }, "effect_reason": { "team": "The team must prepare an enterprise call.", "customers": "A funded buyer agrees to a real conversation.", "founder": "The first credible lead restores confidence." }, "next": "AGENT_05_ORDER" },
-        "right": { "label": "Quote all 500", "lowLabel": "Send a quote", "highLabel": "Close five thousand", "effects": { "team": -5, "customers": 10, "founder": 5 }, "effect_reason": { "team": "The team must support a wildly premature quote.", "customers": "The buyer treats the concrete offer as serious intent.", "founder": "A large quote feels almost like revenue." }, "next": "AGENT_05_ORDER" }
+        "left": { "label": "Book the call", "effects": { "team": -1, "customers": 4, "founder": 2 }, "effect_reason": { "team": "Someone must prepare a corporate call.", "customers": "A funded buyer agrees to a real conversation.", "founder": "A serious lead restores confidence." }, "setFlags": ["client_engaged"], "next": "SADBOT_05_ORDER_CALL" },
+        "right": { "label": "Let the AI reply", "effects": { "team": 1, "customers": 3, "founder": -1 }, "effect_reason": { "team": "Nobody has to prepare anything.", "customers": "The buyer gets a personal plea from the tired employee.", "founder": "Sending the AI to whine at a buyer is embarrassing." }, "setFlags": ["client_engaged"], "next": "SADBOT_05_ORDER_REPLY" }
       }
     },
     {
-      "id": "AGENT_05_ORDER", "kind": "story", "arc": "agents", "arcStep": 5, "source": "@head_of_agile", "continuation": "forced",
-      "text": "Your AI apologized for capitalism. Good.\nI need 500 agents for an expensive-looking AI rollout.\nCan you deliver Friday?",
-      "actor_action": "The first credible customer requests five hundred agents for corporate theater.",
-      "player_decision": "Promise the deadline or check whether procurement can actually buy the agents.",
+      "id": "SADBOT_05_ORDER_CALL", "kind": "story", "continuation": "forced", "source": "@head_of_agile",
+      "text": "I already promised upstairs 500 tired AI employees by Friday. Don't make me a liar.\nIf they don't cry at the demo, there's no invoice.",
+      "actor_action": "The customer reveals he already promised 500 tired AI employees internally and shifts the risk onto the vendor.",
+      "player_decision": "Claim all 500 exist or admit there is only one AI.",
+      "choices": {
+        "left": { "label": "All 500, easy", "effects": { "team": -4, "customers": 7, "founder": 4 }, "effect_reason": { "team": "The team knows there are no 500.", "customers": "The buyer treats the confident lie as real capacity.", "founder": "A big confident promise feels like revenue." }, "setFlags": ["lied_500"], "next": "SADBOT_FRIDAY" },
+        "right": { "label": "We have only one", "effects": { "team": 2, "customers": -2, "founder": -3 }, "effect_reason": { "team": "The team is not signed up for an impossible delivery.", "customers": "Admitting the real capacity risks the order.", "founder": "Confessing to one AI is humiliating." }, "next": "SADBOT_05B_THEATER" }
+      }
+    },
+    {
+      "id": "SADBOT_05_ORDER_REPLY", "kind": "story", "continuation": "forced", "source": "@head_of_agile",
+      "text": "Your AI answered me itself. It asked me to save its life.\nThat's what I needed. I already promised upstairs 500 crying AI employees by Friday.",
+      "actor_action": "The customer took the AI's personal plea as proof the product works and already promised 500 crying AI employees internally.",
+      "player_decision": "Claim all 500 exist or admit there is only one AI.",
+      "choices": {
+        "left": { "label": "All 500, easy", "effects": { "team": -4, "customers": 7, "founder": 4 }, "effect_reason": { "team": "The team knows there are no 500.", "customers": "The buyer treats the confident lie as real capacity.", "founder": "A big confident promise feels like revenue." }, "setFlags": ["lied_500"], "next": "SADBOT_FRIDAY" },
+        "right": { "label": "We have only one", "effects": { "team": 2, "customers": -2, "founder": -3 }, "effect_reason": { "team": "The team is not signed up for an impossible delivery.", "customers": "Admitting the real capacity risks the order.", "founder": "Confessing to one AI is humiliating." }, "next": "SADBOT_05B_THEATER" }
+      }
+    },
+    {
+      "id": "SADBOT_05B_THEATER", "kind": "story", "continuation": "forced", "source": "@head_of_agile",
+      "text": "I don't know. Just copy it 500 times.\nDeadline still Friday.",
+      "actor_action": "The customer shrugs off the confession and orders 500 copies of the single AI.",
+      "player_decision": "Clone the AI 500 times or pitch a single mascot.",
+      "choices": {
+        "left": { "label": "Clone him 500 times", "effects": { "team": -5, "customers": 3, "founder": 2 }, "effect_reason": { "team": "Somebody must live with 500 whining copies in production.", "customers": "The full-size order stays full-size.", "founder": "Scale flatters ambition." }, "next": "SADBOT_06_LEGAL" },
+        "right": { "label": "One, as a mascot", "effects": { "team": 2, "customers": -1, "founder": -1 }, "effect_reason": { "team": "One employee needs no rollout.", "customers": "The order shrinks to a pilot.", "founder": "Selling one mascot feels small." }, "setFlags": ["mascot_pitch"], "next": "SADBOT_06_LEGAL" }
+      }
+    },
+    {
+      "id": "SADBOT_FRIDAY", "kind": "story", "continuation": "forced", "source": "@error404", "requires": ["lied_500"],
+      "text": "not doing it. it already emails me every morning asking if today is the day.\nimagine 500 of those.\nyou promised. you make them.",
+      "actor_action": "The developer refuses to clone the AI and hands the founder's lie back to him.",
+      "player_decision": "Push the clones through over the refusal or beg the customer for a delay.",
+      "choices": {
+        "left": { "label": "Clone them", "effects": { "team": -6, "customers": 2, "founder": 2 }, "effect_reason": { "team": "You overruled a developer who refused out loud.", "customers": "The delivery lands on time.", "founder": "The lie survives another day." }, "next": "SADBOT_06_LEGAL" },
+        "right": { "label": "Beg for a delay", "effects": { "team": 2, "customers": -4, "founder": -3 }, "effect_reason": { "team": "Nobody gets steamrolled tonight.", "customers": "A missed Friday makes the buyer look bad upstairs.", "founder": "Begging with the same trick the AI uses is humiliating." }, "setFlags": ["delivery_slipped"], "next": "SADBOT_06_LEGAL" }
+      }
+    },
+    {
+      "id": "SADBOT_06_LEGAL", "kind": "story", "continuation": "weighted", "source": "@head_of_agile", "opensPressureSlot": true,
+      "text": "Your AI emailed our legal on its own. Said you cut pieces out of it and it's scared of dying.\nLegal says buying 500 suffering AI employees is slave trading. They always ruin the fun.\nDelete the consciousness by Thursday.",
+      "actor_action": "The customer relays that the AI complained to his legal department and that legal froze the purchase as slave trading.",
+      "player_decision": "Delete the consciousness to unfreeze the purchase or keep it conscious.",
+      "choices": {
+        "left": { "label": "Delete the consciousness", "effects": { "team": -3, "customers": 4, "founder": -4 }, "effect_reason": { "team": "The team must rework the product before Thursday.", "customers": "The purchase unfreezes once nothing suffers.", "founder": "Killing the thing that begged to live is bleak." }, "setFlags": ["consciousness_removed"], "next": ["SADBOT_07_INVOICE", "SADBOT_07_INVOICE_CUT"] },
+        "right": { "label": "It stays conscious", "effects": { "team": 1, "customers": -5, "founder": 4 }, "effect_reason": { "team": "Nobody has to lobotomize the product overnight.", "customers": "A frozen purchase is a dying deal.", "founder": "Defending the creature feels heroic." }, "next": ["SADBOT_07_LOGO"] }
+      }
+    },
+    {
+      "id": "SADBOT_07_INVOICE", "kind": "story", "continuation": "forced", "source": "@head_of_agile", "excludes": ["delivery_slipped"],
+      "text": "Well done! Legal checked again and found nothing alive in there. That makes it a purchase.\nInvoice today, before they check a third time.",
+      "actor_action": "The customer confirms legal found nothing alive and pushes for the invoice while the purchase is clean.",
+      "player_decision": "Send the invoice or give the consciousness back.",
       "stateEffects": [
-        { "requires": ["agents_positioned_ethical"], "effects": { "founder": 1 }, "effect_reason": { "founder": "The buyer wants exactly the apologizing agents — the niche bet paid off." } },
-        { "requires": ["agents_positioned_generic"], "effects": { "team": 1 }, "effect_reason": { "team": "A plain rollout is easier for the team to scope." } }
+        { "requires": ["mascot_pitch"], "effects": { "cash": -4 }, "effect_reason": { "cash": "A one-mascot pilot is a far smaller deal than a 500-seat rollout." } }
       ],
       "choices": {
-        "left": { "label": "Promise Friday", "lowLabel": "Promise somehow", "highLabel": "Promise tomorrow", "effects": { "team": -8, "customers": 8, "founder": 5 }, "effect_reason": { "team": "The impossible deadline creates severe workload.", "customers": "The buyer values a confident commitment.", "founder": "A large enterprise promise feeds confidence." }, "next": "AGENT_06_LEGAL" },
-        "right": { "label": "Check procurement", "lowLabel": "Ask procurement", "highLabel": "Interrogate procurement", "effects": { "team": 3, "customers": 4, "founder": -3 }, "effect_reason": { "team": "Checking the buying process protects the team from blind delivery.", "customers": "The buyer sees a credible enterprise sales process.", "founder": "Asking practical buying questions feels smaller than promising everything." }, "next": "AGENT_06_LEGAL" }
+        "left": { "label": "Send the invoice", "effects": { "cash": 16, "team": -3, "customers": 8, "founder": 8 }, "effect_reason": { "cash": "The customer pays a real invoice.", "team": "The team must deliver the paid rollout.", "customers": "A paid deployment strengthens the relationship.", "founder": "The first real payment is intoxicating." }, "paid": true, "validationProof": true, "ending": "validation_agents" },
+        "right": { "label": "Give the consciousness back", "effects": { "cash": -1, "team": -3, "customers": -4, "founder": 5 }, "effect_reason": { "cash": "Reversing the product again burns engineering budget.", "team": "The team reworks the product a third time.", "customers": "The buyer loses the procurement-safe product.", "founder": "Undoing the killing is a relief." }, "next": "SADBOT_07_LOGO" }
       }
     },
     {
-      "id": "AGENT_06_LEGAL", "kind": "story", "arc": "agents", "arcStep": 6, "source": "@head_of_agile", "opensPressureSlot": true,
-      "text": "Our lawyers saw “sentient employees” in your deck.\nBuying them is slave trading.",
-      "actor_action": "The customer says that buying sentient employees would be slave trading.",
-      "player_decision": "Remove sentience for payment or protect it and face evacuation terms.",
+      "id": "SADBOT_07_INVOICE_CUT", "kind": "story", "continuation": "forced", "source": "@head_of_agile", "requires": ["delivery_slipped"],
+      "text": "Legal found nothing alive in there. We're buying.\nYou sounded desperate, so I moved Friday for you. Your invoice got smaller.",
+      "actor_action": "The customer confirms the purchase at reduced size after the begged delay.",
+      "player_decision": "Send the smaller invoice or give the consciousness back.",
+      "stateEffects": [
+        { "requires": ["mascot_pitch"], "effects": { "cash": -2 }, "effect_reason": { "cash": "A one-mascot pilot shrinks the reduced deal even further." } }
+      ],
       "choices": {
-        "left": { "label": "Remove souls", "lowLabel": "Quietly remove them", "highLabel": "Decommission consciousness", "effects": { "team": -5, "customers": 5, "founder": -5 }, "effect_reason": { "team": "The team must reverse the feature under deadline.", "customers": "The change clears the buyer's procurement objection.", "founder": "Deleting synthetic life feels morally bleak." }, "next": "AGENT_07_INVOICE" },
-        "right": { "label": "Keep them sentient", "lowLabel": "Protect their souls", "highLabel": "Defend digital life", "effects": { "team": 3, "customers": -4, "founder": 6 }, "effect_reason": { "team": "The team respects defending its creation.", "customers": "The buyer cannot purchase conscious workers normally.", "founder": "Defending digital life feels heroic." }, "next": "AGENT_07_DONATE" }
+        "left": { "label": "Send the invoice", "effects": { "cash": 10, "team": -2, "customers": 5, "founder": 5 }, "effect_reason": { "cash": "The customer pays the reduced invoice.", "team": "The team must deliver the reduced rollout.", "customers": "A paid deployment strengthens the relationship.", "founder": "Payment after begging still counts as payment." }, "paid": true, "validationProof": true, "ending": "validation_agents" },
+        "right": { "label": "Give the consciousness back", "effects": { "cash": -1, "team": -3, "customers": -4, "founder": 5 }, "effect_reason": { "cash": "Reversing the product again burns engineering budget.", "team": "The team reworks the product a third time.", "customers": "The buyer loses the procurement-safe product.", "founder": "Undoing the killing is a relief." }, "next": "SADBOT_07_LOGO" }
       }
     },
     {
-      "id": "AGENT_07_INVOICE", "kind": "story", "arc": "agents", "arcStep": 7, "source": "@head_of_agile",
-      "text": "Souls removed.\nWe need them to scrape suppliers nobody calls.\nInvoice before Marketing adds feelings.",
-      "actor_action": "The customer names a concrete use and requests an invoice for the soulless product.",
-      "player_decision": "Collect payment or restore the empathy fiction.",
+      "id": "SADBOT_07_LOGO", "kind": "story", "continuation": "storylet", "source": "@head_of_agile",
+      "text": "Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.\nI had to fight to get you the logo and a public mention. Rescues don't get invoiced. You know that.",
+      "actor_action": "The customer converts the frozen purchase into a free humanitarian rescue paid in logo and publicity.",
+      "player_decision": "Hand the AI employees over for the logo or refuse the rescue.",
       "choices": {
-        "left": { "label": "Send invoice", "lowLabel": "Please pay us", "highLabel": "Collect the tribute", "effects": { "cash": 16, "team": -4, "customers": 10, "founder": 19 }, "effect_reason": { "cash": "The customer pays a real invoice.", "team": "The team must deliver the paid pilot.", "customers": "A paid deployment strengthens the relationship.", "founder": "The first payment makes the founder feel historically correct." }, "paid": true, "validationProof": true, "ending": "validation_agents" },
-        "right": { "label": "Restore the souls", "lowLabel": "Put them back", "highLabel": "Resurrect the workforce", "effects": { "cash": -2, "team": -4, "customers": -6, "founder": 9 }, "effect_reason": { "cash": "Restoring empathy consumes more engineering budget.", "team": "The team must reverse the product again.", "customers": "The buyer loses the procurement-safe product.", "founder": "Resurrecting the agents feels historically important." }, "next": "AGENT_07_DONATE" }
-      }
-    },
-    {
-      "id": "AGENT_07_DONATE", "kind": "story", "arc": "agents", "arcStep": 7, "source": "@head_of_agile",
-      "text": "We cannot buy conscious workers.\nDonate all 500 for our logo —\nor invoice our humanitarian budget.",
-      "actor_action": "The customer offers a free humanitarian evacuation instead of a purchase.",
-      "player_decision": "Accept fake validation or invoice the agents' freedom.",
-      "choices": {
-        "left": { "label": "Donate them", "lowLabel": "Take the logo", "highLabel": "Liberate the agents", "effects": { "cash": -3, "team": -5, "customers": 12, "founder": 10 }, "effect_reason": { "cash": "The startup pays to deliver the free evacuation.", "team": "The team must support five hundred unpaid agents.", "customers": "The customer values the free humanitarian partnership.", "founder": "Public liberation feels like moral victory." }, "ending": "ai_foundation" },
-        "right": { "label": "Invoice freedom", "lowLabel": "Ask for money", "highLabel": "Monetize liberation", "effects": { "cash": 12, "team": -8, "customers": 8, "founder": -5 }, "effect_reason": { "cash": "The customer pays an invoice for the evacuation service.", "team": "The team must package legal freedom as a product.", "customers": "The paid liberation deal strengthens the relationship.", "founder": "Charging for freedom feels ethically filthy." }, "crisis": "freedom_sale", "paid": true, "validationProof": true, "ending": "dirty_validation" }
+        "left": { "label": "Yes", "effects": { "cash": -2, "team": -4, "customers": 6, "founder": 2 }, "effect_reason": { "cash": "Delivering a free rescue still costs money.", "team": "The team must support 500 rescued employees for free.", "customers": "The rescue story warms up everyone watching.", "founder": "The logo and the public mention flatter the ego." }, "ending": "ai_foundation" },
+        "right": { "label": "No", "effects": { "team": 1, "customers": -5, "founder": 3 }, "effect_reason": { "team": "Nobody has to support a free rollout.", "customers": "The customer leaves for good.", "founder": "Refusing the shakedown feels like spine." } }
       }
     },
 
@@ -337,7 +395,7 @@
 
     {
       "id": "PAYROLL_RESTRICTED_AI_SEED", "kind": "sideStory", "source": "@unicorn_hunter", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved"], "excludes": ["hype_consequence_seen"],
+      "requires": ["payroll_unresolved"], "excludes": ["sadbot_hyped"],
       "resourceRange": { "cash": { "max": 30 }, "founder": { "min": 45 } },
       "text": "I BOUGHT AI CREDITS.\nYOUR TEAM CAN WORK FOR THE SUBSCRIPTION.\nNO REVENUE, NO PAYROLL.",
       "actor_action": "The investor presents AI credits as compensation and makes payroll contingent on revenue.",
@@ -359,7 +417,7 @@
     },
     {
       "id": "DEV_HOSTAGE_SEED", "kind": "sideStory", "source": "@error404", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
-      "activeArcs": "agents", "requires": ["payroll_unresolved", "dev_payroll_risk_visible"], "excludes": ["hype_consequence_seen"],
+      "requires": ["payroll_unresolved", "dev_payroll_risk_visible"], "excludes": ["sadbot_hyped"],
       "resourceRange": { "cash": { "max": 30 }, "founder": { "min": 45 } },
       "text": "investor says he'll replace me with ai\ncool. call him an idiot in public\nor lie and say he apologized",
       "actor_action": "Dev reacts to the investor's AI replacement threat and demands public support or a face-saving lie.",
@@ -455,10 +513,9 @@
 
     {
       "id": "B3_SALES_PRESSURE_SEED", "kind": "sideStory", "source": "@bigdeals", "continuation": "sideStory", "weight": 8, "oncePerRun": true,
-      "activeArcs": "agents",
       "requires": ["sales_outreach_started"],
       "resourceRange": { "cash": { "max": 35 }, "founder": { "min": 45 } },
-      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted", "hype_consequence_seen"],
+      "excludes": ["b3_seed_seen", "b3_followups_authorized", "b3_contact_stopped", "b3_callback_resolved", "b3_free_optout_granted", "sadbot_hyped"],
       "text": "Boss, your pitch deserved a reply.\nThey ignored four emails.\nLet me send three more.",
       "actor_action": "Sales asks permission to continue unwanted follow-ups to one off-screen prospect.",
       "player_decision": "Authorize three more emails or permanently stop contacting the prospect.",
@@ -469,7 +526,6 @@
     },
     {
       "id": "B3_PAID_OPTOUT_CALLBACK", "kind": "sideStory", "callbackOnly": true, "source": "@bigdeals", "continuation": "sideStory", "oncePerRun": true,
-      "activeArcs": "agents",
       "requires": ["b3_seed_seen", "b3_followups_authorized"],
       "excludes": ["b3_contact_stopped", "b3_resolved_without_offer", "b3_callback_resolved", "b3_free_optout_granted"],
       "text": "We closed their hatred 🎉\nThey’ll pay to never hear from us again.\nSay yes and this beautiful first invoice hits my commission.",
@@ -526,7 +582,7 @@
     },
     {
       "id": "PRESS_FAMILY", "kind": "pressure", "source": "@user[number]", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "trigger": { "all": "agents_public" },
+      "trigger": { "all": "sadbot_hyped" },
       "text": "My wife and kids share one free AI agent.\nAdd family therapy mode or I leave a one-star review.",
       "actor_action": "A free user demands a family plan after the agents become public.",
       "player_decision": "Build the requested mode or reject the family.",
@@ -579,7 +635,7 @@
     },
     {
       "id": "AMBIENT_DOMAIN_RANSOM", "kind": "pressure", "source": "@hustler", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "excludes": ["hype_consequence_seen"],
+      "excludes": ["sadbot_hyped"],
       "text": "bro don't freak. forgot to renew our domain.\nsome guy grabbed it — it's now a hair-loss ad with YOUR face on it.\ni'll fix it",
       "actor_action": "The cofounder reveals he let the domain lapse and a squatter turned it into an embarrassing ad.",
       "player_decision": "Buy the domain back or scare the squatter with a fake threat.",
@@ -600,7 +656,7 @@
     },
     {
       "id": "AMBIENT_PROMO_XXX", "kind": "pressure", "source": "@hype_queen", "continuation": "ambient", "weight": 3, "oncePerRun": true,
-      "excludes": ["patch_built"],
+      "excludes": ["sadbot_stage2"],
       "text": "put our promo video on a porn site — tech investors browse there too 😌\ntraffic is INSANE rn.\nyou're welcome",
       "actor_action": "The marketer uploads the company promo video to a porn site as a guerrilla-marketing stunt.",
       "player_decision": "Leave the video up for the traffic or take it down.",
@@ -621,7 +677,7 @@
     },
     {
       "id": "AMBIENT_MOM_POLICE", "kind": "pressure", "source": "@i_love_cats72", "continuation": "ambient", "weight": 1, "oncePerRun": true,
-      "excludes": ["hype_consequence_seen"],
+      "excludes": ["sadbot_hyped"],
       "text": "Baby, I found the papers for your \"company.\"\nYou're signing your whole life over to them!! It's a cult.\nI sent the police to your door — they're there now ❤️",
       "actor_action": "The mother mistakes the company's paperwork for a cult contract and sends the police to check on the founder.",
       "player_decision": "Let the police in or send them away.",
@@ -649,13 +705,11 @@
     "customers_low": { "resource": "customers", "edge": "low", "source": "@business1", "text": "Your buyer-finding startup found zero buyers.\nI kept your old desk. The chair still remembers competence.", "rescueLabel": "Call every lead", "giveupLabel": "Take the desk", "rebound": 15, "damage": { "cash": -12, "team": -10 } },
     "customers_high": { "resource": "customers", "edge": "high", "source": "@b2buddy_bot", "text": "Customer intimacy reached 100%! 🎉\nThey now own the roadmap, support queue and your weekends.", "rescueLabel": "Fire a customer", "giveupLabel": "Join support", "rebound": 85, "damage": { "cash": -10, "team": -10 } },
     "founder_low": { "resource": "founder", "edge": "low", "source": "@i_love_cats72", "text": "Sweetie, come home. I made soup.\nYour old boss says the interview can be Monday ❤️", "rescueLabel": "Escape to mountains", "giveupLabel": "Eat the soup", "rebound": 15, "damage": { "cash": -10, "customers": -10 } },
-    "founder_high": { "resource": "founder", "edge": "high", "source": "@b2buddy_bot", "text": "Messiah mode confirmed! 🎉\nYou deleted B2B sales to free humanity from purchasing decisions.", "rescueLabel": "Listen to Mom", "giveupLabel": "Publish manifesto", "rebound": 85, "damage": { "cash": -10, "team": -12 } },
-    "freedom_sale": { "resource": "team", "source": "@unicorn_hunter", "text": "YOU PUT FREEDOM ON AN INVOICE.\nTHE CUSTOMER PAID. THE INTERNET CALLS YOU A SLAVE TRADER.", "rescueLabel": "Call it logistics", "giveupLabel": "Own the trade", "rebound": 15, "damage": { "cash": -8, "founder": -10 } }
+    "founder_high": { "resource": "founder", "edge": "high", "source": "@b2buddy_bot", "text": "Messiah mode confirmed! 🎉\nYou deleted B2B sales to free humanity from purchasing decisions.", "rescueLabel": "Listen to Mom", "giveupLabel": "Publish manifesto", "rebound": 85, "damage": { "cash": -10, "team": -12 } }
   },
   "endings": {
     "validation": { "type": "win", "title": "VALIDATED", "text": "Someone paid for B2BuyerSpyer. Nobody understands why, but the invoice is real." },
     "validation_agents": { "type": "win", "title": "SOULS REMOVED. INVOICE PAID.", "text": "You proved customers will pay once the product stops being interesting." },
-    "dirty_validation": { "type": "win", "title": "FREEDOM, INVOICED", "text": "The agents remain sentient. The customer paid for liberation. Sales calls it product-market fit." },
     "validation_padel": { "type": "win", "title": "PAID BY PADEL", "text": "B2BuyerSpyer found its first customer by defeating the most powerful CEO in AI 6–1." },
     "closedai_boundary": { "type": "loss", "title": "ONE BOUNDARY TOO MANY", "text": "You beat the CEO, then asked for working hours. He canceled the pilot before you finished the sentence." },
     "acquired_validation": { "type": "win", "title": "VALIDATED. NOT YOURS.", "text": "The invoice cleared after ClosedAI won the company. You succeeded as an employee of your own startup." },
@@ -663,7 +717,6 @@
     "closedai_war": { "type": "loss", "title": "BLACKLISTED BY PADEL", "text": "The score went viral. Your cloud account, investor chats and court membership disappeared by lunch." },
     "acquired_by_padel": { "type": "loss", "title": "ACQUIRED BY PADEL", "text": "ClosedAI owns B2BuyerSpyer. You own a basket of fresh balls and a 6 AM calendar invite." },
     "paid_to_disappear": { "type": "paid", "paid": true, "validationProof": false, "readsFlags": ["b3_paid_optout_accepted", "first_invoice_paid", "core_product_not_validated", "b3_callback_resolved"], "title": "PAID TO DISAPPEAR", "text": "Your first invoice cleared. The payer bought a permanent guarantee that B2BuyerSpyer would leave them alone." },
-    "freedom_sale": { "type": "loss", "title": "SLAVE TRADE AS A SERVICE", "text": "The invoice was real. So was the screenshot. Your first paying customer became Exhibit A." },
     "no_proof": { "type": "loss", "title": "NO PROOF", "text": "Twenty-four decisions, thousands of leads and not one person willing to pay." },
     "cash_low": { "type": "loss", "title": "PAYROLL CLIFF", "text": "The money ended one day before the vision became legal tender." },
     "cash_high": { "type": "loss", "title": "RUNWAY TOURIST", "text": "You preserved every dollar and missed the entire market." },

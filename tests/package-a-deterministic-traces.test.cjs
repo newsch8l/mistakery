@@ -22,18 +22,20 @@ function traceAgents(seedId, seedSide, callbackId, callbackSide, flags) {
   // branch applies its own flags. (Full-route delivery is covered by the 10,000
   // production runs and the agents-flag-gating invariants.)
   let state = stateAt(seedId, {
-    activeArc: 'agents', flags,
+    flags,
     resources: { cash: 15, team: 50, founder: 65 },
   });
-  state.queuedCardId = 'AGENT_01';
-  state.queuedCardIds = ['AGENT_01'];
+  // Side stories now interleave the storylet pool, not the retired agents arc.
+  state.queuedCardId = 'SADBOT_01_SEED';
+  state.queuedCardIds = ['SADBOT_01_SEED'];
   state.queuedPool = true;
+  state.queuedPoolMode = 'storylet';
   state = choose(state, seedSide);
   assert.ok(state.delayed.some((entry) => entry.card === callbackId), `${seedId} ${seedSide} schedules ${callbackId}`);
   const seededFlag = seedId === 'PAYROLL_RESTRICTED_AI_SEED' ? 'payroll_seeded' : 'dev_hostage_seeded';
   assert.ok(state.flags.includes(seededFlag), `${seedId} sets ${seededFlag}`);
 
-  const after = choose(stateAt(callbackId, { activeArc: 'agents', flags: [seededFlag] }), callbackSide);
+  const after = choose(stateAt(callbackId, { flags: [seededFlag] }), callbackSide);
   const expected = [engine.cardById(deck, callbackId).choices[callbackSide].setFlags].flat();
   expected.forEach((flag) => assert.ok(after.flags.includes(flag), `${callbackId} ${callbackSide} applies ${flag}`));
 }
@@ -95,7 +97,7 @@ test('deterministic traces cover both Mom Flyers outcomes', () => {
 });
 
 test('a terminal outcome clears a pending delayed callback and cannot show it afterward', () => {
-  let state = stateAt('AGENT_07_INVOICE', { activeArc: 'agents', flags: ['payroll_seeded'] });
+  let state = stateAt('SADBOT_07_INVOICE', { flags: ['payroll_seeded'] });
   // New model: a pending typed callback lives in state.delayed, not reservations.
   state.delayed = [{ card: 'PAYROLL_RESTRICTED_AI_CALLBACK', remainingStoryDecisions: 0 }];
   state = choose(state, 'left'); // Send invoice -> terminal validation_agents

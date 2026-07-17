@@ -21,7 +21,7 @@ function flagsFrom(value) {
 
 test('ships one valid canonical deck for a full run', () => {
   assert.deepEqual(engine.validateDeck(deck), []);
-  assert.equal(deck.cards.length, 52);
+  assert.equal(deck.cards.length, 57);
   assert.equal(deck.resources.customers.label, 'Customers');
   assert.equal('demand' in deck.resources, false);
 });
@@ -31,9 +31,14 @@ test('uses only the approved closed-world cast', () => {
   deck.cards.forEach((card) => assert.ok(CLOSED_CAST.has(card.source), `Unexpected source on ${card.id}`));
 });
 
+// Три карты SADBOT длиннее общего лимита; их тексты утверждены автором
+// построчно 17.07 (см. docs/plans/2026-07-17-sadbot-branch-handoff.md).
+const APPROVED_LONG_TEXTS = { SADBOT_02_EVIDENCE: 46, SADBOT_03_VIRAL: 46, SADBOT_06_LEGAL: 46 };
+
 test('keeps messages and replies compact enough for the messenger card', () => {
   deck.cards.forEach((card) => {
-    assert.ok(wordCount(card.text) <= 38, `${card.id} has ${wordCount(card.text)} words`);
+    const wordLimit = APPROVED_LONG_TEXTS[card.id] || 38;
+    assert.ok(wordCount(card.text) <= wordLimit, `${card.id} has ${wordCount(card.text)} words`);
     const lineLimit = ['OPEN_03_AUDIT', 'OPEN_06'].includes(card.id) ? 4 : 3;
     assert.ok(card.text.split('\n').length <= lineLimit, `${card.id} exceeds ${lineLimit} lines`);
     ['left', 'right'].forEach((side) => {
@@ -133,40 +138,55 @@ test('does not award Customers for auditing a list or money for a fake invoice',
   assert.doesNotMatch(invoice.text, /@unicorn_hunter|WHERE IS THE FUCKING REVENUE/i);
 });
 
-test('builds the agent story through dev, hype, an announced lead and the slave-trading problem', () => {
-  assert.equal(deck.cards.filter((card) => card.arc === 'agents').length, 9);
-  assert.equal(engine.cardById(deck, 'AGENT_02_DEV').source, '@error404');
-  assert.equal(engine.cardById(deck, 'AGENT_03_HYPE').source, '@hype_queen');
-  assert.equal(engine.cardById(deck, 'AGENT_04_LEAD').source, '@bigdeals');
-  assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text.toLowerCase(), /first|actual budget|serious buyer/);
-  assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text.toLowerCase(), /first buyer/);
-  assert.match(engine.cardById(deck, 'AGENT_04_LEAD').text, /@head_of_agile/);
-  assert.equal(
-    engine.cardById(deck, 'AGENT_06_LEGAL').text,
-    'Our lawyers saw “sentient employees” in your deck.\nBuying them is slave trading.',
-  );
-  assert.match(engine.cardById(deck, 'AGENT_07_INVOICE').text.toLowerCase(), /suppliers/);
-  assert.equal(engine.cardById(deck, 'AGENT_01').choices.left.label, 'Build it properly');
-  assert.equal(engine.cardById(deck, 'AGENT_01').choices.right.label, 'Ship it tonight');
-  assert.equal(engine.cardById(deck, 'AGENT_05_ORDER').choices.left.label, 'Promise Friday');
-  assert.equal(engine.cardById(deck, 'AGENT_05_ORDER').choices.right.label, 'Check procurement');
-  assert.equal(engine.cardById(deck, 'AGENT_07_INVOICE').choices.right.next, 'AGENT_07_DONATE');
-  assert.equal(engine.cardById(deck, 'AGENT_07_INVOICE').choices.right.ending, undefined);
-  assert.match(engine.cardById(deck, 'AGENT_07_DONATE').text, /humanitarian budget/i);
-  assert.equal(engine.cardById(deck, 'AGENT_07_DONATE').choices.right.crisis, 'freedom_sale');
-  assert.match(deck.crises.freedom_sale.text, /freedom|slave/i);
+test('builds the SADBOT client story from seed to invoice with the approved beats', () => {
+  assert.equal(deck.cards.filter((card) => card.id.startsWith('SADBOT')).length, 13);
+  assert.equal(engine.cardById(deck, 'SADBOT_01_SEED').source, '@bigdeals');
+  assert.equal(engine.cardById(deck, 'SADBOT_02_EVIDENCE').source, '@error404');
+  assert.equal(engine.cardById(deck, 'SADBOT_03_VIRAL').source, '@hype_queen');
+  assert.equal(engine.cardById(deck, 'SADBOT_04_LEAD').source, '@bigdeals');
+  // клиент пишет сам только после представления сейлзом (правило №11)
+  ['SADBOT_05_ORDER_CALL', 'SADBOT_05_ORDER_REPLY', 'SADBOT_05B_THEATER', 'SADBOT_06_LEGAL',
+    'SADBOT_07_INVOICE', 'SADBOT_07_INVOICE_CUT', 'SADBOT_07_LOGO'].forEach((id) => {
+    assert.equal(engine.cardById(deck, id).source, '@head_of_agile', id);
+  });
+  // работорговля сохранена — обязательное требование State Bible
+  assert.match(engine.cardById(deck, 'SADBOT_06_LEGAL').text, /slave trading/);
+  // враньё закладывает пятницу, признание ведёт в театр
+  ['SADBOT_05_ORDER_CALL', 'SADBOT_05_ORDER_REPLY'].forEach((id) => {
+    assert.equal(engine.cardById(deck, id).choices.left.next, 'SADBOT_FRIDAY');
+    assert.equal(engine.cardById(deck, id).choices.right.next, 'SADBOT_05B_THEATER');
+  });
+  // урезанный счёт существует только после сорванной пятницы
+  assert.deepEqual(engine.cardById(deck, 'SADBOT_07_INVOICE').excludes, ['delivery_slipped']);
+  assert.deepEqual(engine.cardById(deck, 'SADBOT_07_INVOICE_CUT').requires, ['delivery_slipped']);
+  // платят только на счёте; логотип и донат — без денег
+  assert.equal(engine.cardById(deck, 'SADBOT_07_INVOICE').choices.left.paid, true);
+  assert.equal(engine.cardById(deck, 'SADBOT_07_INVOICE_CUT').choices.left.paid, true);
+  assert.equal(engine.cardById(deck, 'SADBOT_07_LOGO').choices.left.paid, undefined);
+  assert.equal(engine.cardById(deck, 'SADBOT_07_LOGO').choices.left.ending, 'ai_foundation');
 });
 
-test('dev publishes both deploy and demo routes, both flag-gating the shared Hype beat', () => {
-  const dev = engine.cardById(deck, 'AGENT_02_DEV');
-  const hype = engine.cardById(deck, 'AGENT_03_HYPE');
-  assert.equal(dev.choices.right.label, 'Publish one demo');
-  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(dev.choices[side].setFlags).includes('agents_public')));
-  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(dev.choices[side].setFlags).includes('patch_built')));
-  // pool beats have no hardcoded next; hype is reached by its patch_built gate
-  ['left', 'right'].forEach((side) => assert.equal(dev.choices[side].next, undefined));
-  assert.ok(flagsFrom(hype.requires).includes('patch_built'));
-  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(hype.choices[side].setFlags).includes('hyped')));
+test('the SADBOT chain is gated seed -> evidence -> viral -> lead and can be declined', () => {
+  const seed = engine.cardById(deck, 'SADBOT_01_SEED');
+  assert.equal(seed.storyletEntry, true);
+  assert.ok(flagsFrom(seed.choices.left.setFlags).includes('sadbot_on'));
+  assert.equal(seed.choices.right.setFlags, undefined, 'declining must simply close the branch');
+  const evidence = engine.cardById(deck, 'SADBOT_02_EVIDENCE');
+  assert.deepEqual(evidence.requires, ['sadbot_on']);
+  ['left', 'right'].forEach((side) => assert.ok(flagsFrom(evidence.choices[side].setFlags).includes('sadbot_stage2')));
+  assert.ok(flagsFrom(evidence.choices.left.setFlags).includes('sadbot_blackmail'));
+  const viral = engine.cardById(deck, 'SADBOT_03_VIRAL');
+  assert.deepEqual(viral.requires, ['sadbot_stage2']);
+  assert.ok(flagsFrom(viral.choices.left.setFlags).includes('sadbot_hyped'));
+  assert.equal(viral.choices.right.setFlags, undefined, 'deleting the virus must simply close the branch');
+  assert.deepEqual(viral.stateEffects[0].requires, ['sadbot_blackmail']);
+  const lead = engine.cardById(deck, 'SADBOT_04_LEAD');
+  assert.deepEqual(lead.requires, ['sadbot_hyped']);
+  assert.equal(lead.excludesPendingCallbacks, true, 'the lead must wait for pending side-story callbacks');
+  // окно инвестора: после вируса, требует его старый приказ, умирает после лоботомии
+  const claim = engine.cardById(deck, 'SADBOT_INVESTOR_CLAIM');
+  assert.deepEqual(claim.requires, ['sadbot_hyped', 'empathy_demanded']);
+  assert.deepEqual(claim.excludes, ['consciousness_removed']);
 });
 
 test('introduces the ClosedAI CEO before a deterministic throw-or-win padel choice', () => {
@@ -208,20 +228,24 @@ test('introduces the ClosedAI CEO before a deterministic throw-or-win padel choi
 test('uses explicit pressure breaks instead of interrupting immediate story consequences', () => {
   assert.deepEqual(deck.meta.pressureAfterArcSteps, []);
   const slots = deck.cards.filter((card) => card.opensPressureSlot).map((card) => card.id).sort();
-  assert.deepEqual(slots, ['AGENT_01', 'AGENT_03_HYPE', 'AGENT_06_LEGAL'].sort());
+  assert.deepEqual(slots, ['AGENT_01', 'SADBOT_06_LEGAL'].sort());
   ['OPEN_05', 'PADEL_01', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
     assert.notEqual(engine.cardById(deck, id).opensPressureSlot, true, `${id} should continue immediately`);
   });
 });
 
-test('declares forced, pool and ambient scheduler modes without changing the story copy', () => {
-  const pool = deck.cards.filter((card) => card.continuation === 'pool').map((card) => card.id).sort();
-  assert.deepEqual(pool, ['AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD'].sort());
+test('declares forced, storylet, weighted and ambient scheduler modes', () => {
+  const storylet = deck.cards.filter((card) => card.continuation === 'storylet').map((card) => card.id).sort();
+  assert.deepEqual(storylet, ['AGENT_01', 'SADBOT_01_SEED', 'SADBOT_02_EVIDENCE', 'SADBOT_03_VIRAL', 'SADBOT_INVESTOR_CLAIM', 'SADBOT_07_LOGO'].sort());
 
-  ['OPEN_06', 'AGENT_04_LEAD', 'AGENT_05_ORDER', 'PADEL_01', 'PADEL_03_TEAM', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
+  ['OPEN_06', 'SADBOT_04_LEAD', 'SADBOT_05_ORDER_CALL', 'SADBOT_05_ORDER_REPLY', 'SADBOT_05B_THEATER',
+    'SADBOT_FRIDAY', 'SADBOT_07_INVOICE', 'SADBOT_07_INVOICE_CUT',
+    'PADEL_01', 'PADEL_03_TEAM', 'PADEL_04_CHOICE', 'PADEL_05_WIN', 'PADEL_05_LOSE'].forEach((id) => {
     assert.equal(engine.cardById(deck, id).continuation, 'forced', `${id} must continue immediately`);
   });
-  assert.equal(engine.cardById(deck, 'AGENT_06_LEGAL').opensPressureSlot, true);
+  // юристы выбирают счёт/урезанный счёт по флагу — это weighted с условными целями
+  assert.equal(engine.cardById(deck, 'SADBOT_06_LEGAL').continuation, 'weighted');
+  assert.equal(engine.cardById(deck, 'SADBOT_06_LEGAL').opensPressureSlot, true);
 
   deck.cards.filter((card) => card.kind === 'pressure').forEach((card) => {
     assert.equal(card.continuation, 'ambient', `${card.id} must be ambient`);
@@ -271,7 +295,7 @@ test('keeps sales inside the agent arc and gates conditional pressure cards', ()
   assert.equal(pressure.some((card) => card.id === 'PRESS_SALES'), false);
   assert.equal(engine.cardById(deck, 'PRESS_CAPITALISM'), null, 'PRESS_CAPITALISM was promoted into the AGENT_03B_WILD beat');
   const family = engine.cardById(deck, 'PRESS_FAMILY');
-  assert.ok(flagsFrom(family.trigger.all).includes('agents_public'));
+  assert.ok(flagsFrom(family.trigger.all).includes('sadbot_hyped'));
 });
 
 test('pressure jokes establish their own premise before asking for a decision', () => {
@@ -318,7 +342,9 @@ test('does not keep dead story flags', () => {
     });
   });
   Object.values(deck.endings).forEach((ending) => flagsFrom(ending.readsFlags).forEach((flag) => consumedFlags.add(flag)));
-  assert.deepEqual([...setFlags].filter((flag) => !consumedFlags.has(flag)), []);
+  // client_engaged — осознанный задел: его будут читать будущие клиенты-сторилеты
+  // (взаимоисключение, п.4 плана Фазы 4). Единственный разрешённый нечитаемый флаг.
+  assert.deepEqual([...setFlags].filter((flag) => !consumedFlags.has(flag) && flag !== 'client_engaged'), []);
 });
 
 test('important callbacks return two to five decisions after their cause', () => {

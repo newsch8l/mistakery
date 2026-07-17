@@ -190,9 +190,9 @@ test('Restricted AI Payroll never creates Cash or Customers and both saved value
     [['payroll_offer_compute_only', 'payroll_priority_people', 'cloud_credits_resolved'], { team: 2, founder: -1 }],
     [['payroll_offer_ordinary_compute', 'payroll_priority_people', 'cloud_credits_resolved'], { team: 2, founder: -1 }],
   ];
-  const baseLead = resolveAt('AGENT_04_LEAD', 'left', { activeArc: 'agents' }).history[0].deltas;
+  const baseLead = resolveAt('SADBOT_04_LEAD', 'left', {}).history[0].deltas;
   cases.forEach(([flags, expected]) => {
-    const actual = resolveAt('AGENT_04_LEAD', 'left', { activeArc: 'agents', flags }).history[0].deltas;
+    const actual = resolveAt('SADBOT_04_LEAD', 'left', { flags }).history[0].deltas;
     const extra = effectDifference(actual, baseLead);
     assert.equal(extra.team, expected.team, flags.join(','));
     assert.equal(extra.founder, expected.founder, flags.join(','));
@@ -212,9 +212,9 @@ test('both Dev Hostage decisions survive its callback and produce all four Lead 
     [['dev_conflict_bypassed', 'dev_access_protected', 'dev_updates_restored'], { team: 0, founder: -2 }],
     [['dev_conflict_bypassed', 'dev_access_contested', 'dev_updates_restored'], { team: -4, founder: 1 }],
   ];
-  const baseline = resolveAt('AGENT_04_LEAD', 'right', { activeArc: 'agents' }).history[0].deltas;
+  const baseline = resolveAt('SADBOT_04_LEAD', 'right', {}).history[0].deltas;
   cases.forEach(([flags, expected]) => {
-    const actual = resolveAt('AGENT_04_LEAD', 'right', { activeArc: 'agents', flags }).history[0].deltas;
+    const actual = resolveAt('SADBOT_04_LEAD', 'right', { flags }).history[0].deltas;
     const extra = effectDifference(actual, baseline);
     assert.equal(extra.team, expected.team, flags.join(','));
     assert.equal(extra.founder, expected.founder, flags.join(','));
@@ -276,17 +276,18 @@ test('deterministic traces cover every Package A branch pair through its existin
   ];
   agentModules.forEach(([seedId, callbackId, seedFlags, callbackFlags, seededFlag]) => {
     ['left', 'right'].forEach((seedSide, seedIndex) => {
-      let state = stateAt(seedId, { activeArc: 'agents', flags: ['payroll_unresolved', 'dev_payroll_risk_visible'] });
-      state.queuedCardId = 'AGENT_01';
-      state.queuedCardIds = ['AGENT_01'];
+      let state = stateAt(seedId, { flags: ['payroll_unresolved', 'dev_payroll_risk_visible'] });
+      state.queuedCardId = 'SADBOT_01_SEED';
+      state.queuedCardIds = ['SADBOT_01_SEED'];
       state.queuedPool = true;
+      state.queuedPoolMode = 'storylet';
       state = engine.resolveChoice(deck, state, seedSide, { rng: () => 0 }).state;
       assert.ok(state.flags.includes(seedFlags[seedIndex]), `${seedId} ${seedSide}`);
       assert.ok(state.flags.includes(seededFlag), `${seedId} sets shared seed flag`);
       assert.ok(state.delayed.some((entry) => entry.card === callbackId), `${seedId} schedules ${callbackId}`);
     });
     ['left', 'right'].forEach((callbackSide, callbackIndex) => {
-      const state = stateAt(callbackId, { activeArc: 'agents', flags: [seededFlag] });
+      const state = stateAt(callbackId, { flags: [seededFlag] });
       const after = engine.resolveChoice(deck, state, callbackSide, { rng: () => 0 }).state;
       assert.ok(after.flags.includes(callbackFlags[callbackIndex]), `${callbackId} ${callbackSide}`);
     });
@@ -350,14 +351,16 @@ test('the scheduler force-delivers a Batch 1 payoff as soon as the arc pool empt
   // spine beat is blocked, so delivery legitimately lands after 1 or 2 beats too.
   // Any "a slot only existed after 3 beats" heuristic would misclassify a lost
   // early payoff as an acceptable ending. These seeds pin the real behaviour.
+  // Seeds re-anchored 17 Jul 2026 on the SADBOT deck (the old rail seeds died
+  // with the rail). Early force-delivery (1 beat) is rarer in the storylet
+  // economy because the pool seldom runs dry mid-story; 2 and 3 beats pin both
+  // sides of the behaviour.
   const cases = [
-    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 1, 13],
-    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 2, 32],
-    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 3, 21],
-    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 1, 55],
-    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 2, 42],
-    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 3, 17],
-    ['AMBIENT_PROMO_XXX', 'AMBIENT_PROMO_XXX_INVESTOR', 3, 4],
+    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 2, 384],
+    ['AMBIENT_DOMAIN_RANSOM', 'AMBIENT_DOMAIN_LAWSUIT', 3, 99],
+    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 2, 135],
+    ['AMBIENT_MOM_POLICE', 'AMBIENT_MOM_FAMILY', 3, 31],
+    ['AMBIENT_PROMO_XXX', 'AMBIENT_PROMO_XXX_INVESTOR', 3, 10],
   ];
   cases.forEach(([seedId, callbackId, expectedBeats, seed]) => {
     const rng = seeded(seed);
@@ -384,8 +387,8 @@ test('the scheduler force-delivers a Batch 1 payoff as soon as the arc pool empt
     assert.equal(beats, expectedBeats, `${callbackId} delivery timing moved in seed ${seed}`);
     const after = ids.slice(callbackIndex + 1);
     assert.ok(
-      after.some((id) => engine.cardById(deck, id).arc),
-      `the run did not resume the arc pool after ${callbackId} in seed ${seed}`,
+      after.some((id) => engine.cardById(deck, id).kind === 'story'),
+      `the run did not resume the story after ${callbackId} in seed ${seed}`,
     );
   });
 });
@@ -443,7 +446,7 @@ test('10,000 production runs lose no continuing callback and preserve every prot
     [[IDS.momSeed, IDS.momCallback], [IDS.comaSeed, null], [IDS.payrollSeed, IDS.payrollCallback], [IDS.devSeed, IDS.devCallback]].forEach(([seedId, callbackId]) => {
       if (!ids.includes(seedId)) return;
       const expected = callbackId ? ids.includes(callbackId) : ids.includes(IDS.comaAuthorized) || ids.includes(IDS.comaBlocked);
-      const reachedReader = ids.includes(seedId === IDS.payrollSeed || seedId === IDS.devSeed ? 'AGENT_04_LEAD' : 'OPEN_06');
+      const reachedReader = ids.includes(seedId === IDS.payrollSeed || seedId === IDS.devSeed ? 'SADBOT_04_LEAD' : 'OPEN_06');
       if (reachedReader && !expected) callbackLoss += 1;
     });
     NEW_PAIRS.forEach(([seedId, delaySide, callbackId]) => {
@@ -452,20 +455,25 @@ test('10,000 production runs lose no continuing callback and preserve every prot
       const stat = pairStats[seedId];
       // A seed drawn past the protected spine can never pay off: only the ending
       // remains, and finishOutcome clears state.delayed.
-      const leadIndex = ids.indexOf('AGENT_04_LEAD');
+      const leadIndex = ids.indexOf('SADBOT_04_LEAD');
       if (leadIndex >= 0 && seedIndex > leadIndex) stat.late += 1;
       if (state.history[seedIndex].side !== delaySide) return;
       stat.scheduled += 1;
       if (ids.includes(callbackId)) return;
       // Still queued when the run ended -> the ending preempted it, which no gating
-      // can prevent. Gone from the queue but never shown -> the engine dropped it.
-      if (owedAtEnd[seedId]) stat.preempted += 1;
+      // can prevent. A seed resolved on the very last turn schedules a payoff the
+      // ending immediately clears — the pre-move snapshot never saw it owed, so
+      // it must count as preemption too (common now that filler tails reach
+      // maxTurns). Gone from the queue in any other way -> the engine dropped it.
+      if (owedAtEnd[seedId] || ids[ids.length - 1] === seedId) stat.preempted += 1;
       else stat.leaked += 1;
     });
-    const lead = ids.indexOf('AGENT_04_LEAD');
-    const protectedSpine = ['AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL'];
-    const observedSpine = lead >= 0 ? ids.slice(lead, lead + protectedSpine.length) : [];
-    if (lead >= 0 && observedSpine.some((id, index) => id !== protectedSpine[index])) protectedPairViolations += 1;
+    // Corridor invariant: from the lead to the legal beat the history may
+    // contain only SADBOT cards — nothing interleaves the deal corridor.
+    const lead = ids.indexOf('SADBOT_04_LEAD');
+    const legal = ids.indexOf('SADBOT_06_LEGAL');
+    if (lead >= 0 && legal > lead
+      && ids.slice(lead, legal + 1).some((id) => !id.startsWith('SADBOT_'))) protectedPairViolations += 1;
     const padel = ids.indexOf('PADEL_01');
     const acceptedPadel = state.history.find((entry) => entry.cardId === 'PADEL_01')?.side === 'left'
       && !ids.includes('AGENT_01');
@@ -483,7 +491,7 @@ test('10,000 production runs lose no continuing callback and preserve every prot
   NEW_PAIRS.forEach(([seedId]) => {
     const stat = pairStats[seedId];
     assert.ok(stat.scheduled > 0, `${seedId} never scheduled its payoff — the pair is unreachable`);
-    assert.equal(stat.late, 0, `${seedId} was drawn past AGENT_04_LEAD, where its payoff can never be delivered`);
+    assert.equal(stat.late, 0, `${seedId} was drawn past SADBOT_04_LEAD, where its payoff can never be delivered`);
     assert.equal(stat.leaked, 0, `${seedId} lost a payoff in a run that kept playing — that is an engine leak, not an ending`);
   });
   // New pool-weighted model: calmer than the old guaranteed boundary insertion,

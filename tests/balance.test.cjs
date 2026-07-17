@@ -53,11 +53,13 @@ function playScript(picks) {
   return state;
 }
 
-test('both final onboarding choices enter and complete their selected arc', () => {
+test('both final onboarding choices enter and complete their selected route', () => {
   const enterprise = playScript({
-    OPEN_06: 'left', AGENT_01: 'right', AGENT_02_DEV: 'right',
-    AGENT_03_HYPE: 'left', AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right',
-    AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+    OPEN_05: 'left', OPEN_06: 'left', AGENT_01: 'right',
+    SADBOT_01_SEED: 'left', SADBOT_02_EVIDENCE: 'left', SADBOT_03_VIRAL: 'left',
+    SADBOT_INVESTOR_CLAIM: 'right', SADBOT_04_LEAD: 'left',
+    SADBOT_05_ORDER_CALL: 'right', SADBOT_05B_THEATER: 'left',
+    SADBOT_06_LEGAL: 'left', SADBOT_07_INVOICE: 'left',
   });
   const whale = playScript({
     OPEN_06: 'right', PADEL_01: 'left', PADEL_02: 'left',
@@ -66,8 +68,9 @@ test('both final onboarding choices enter and complete their selected arc', () =
   });
   assert.equal(enterprise.endingId, 'validation_agents');
   assert.equal(enterprise.win, true);
-  assert.equal(enterprise.activeArc, 'agents');
   assert.ok(enterprise.history.some((entry) => entry.cardId === 'AGENT_01'));
+  assert.ok(enterprise.history.some((entry) => entry.cardId === 'SADBOT_01_SEED'));
+  assert.ok(enterprise.history.some((entry) => entry.cardId === 'SADBOT_06_LEGAL'));
   assert.equal(whale.endingId, 'validation_padel');
   assert.equal(whale.win, true);
   assert.equal(whale.activeArc, 'padel');
@@ -99,13 +102,15 @@ test('padel never inserts background cards inside its immediate causal pairs', (
   assert.equal(adjacent('PADEL_05_WIN', 'PADEL_06_PILOT'), true);
 });
 
-test('accepting Padel suppresses later variable callbacks even after leaving for agents', () => {
+test('refusing Padel re-enters the general pool and can still reach the SADBOT client', () => {
   const state = playStory('PADEL_01', 'padel', {
     PADEL_01: 'left', PADEL_02: 'right', AGENT_01: 'right',
-    AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left', AGENT_04_LEAD: 'left',
-    AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'right',
+    SADBOT_01_SEED: 'left', SADBOT_02_EVIDENCE: 'left', SADBOT_03_VIRAL: 'left',
+    SADBOT_INVESTOR_CLAIM: 'right', SADBOT_04_LEAD: 'left',
+    SADBOT_05_ORDER_CALL: 'right', SADBOT_05B_THEATER: 'left',
+    SADBOT_06_LEGAL: 'left', SADBOT_07_INVOICE: 'left',
   });
-  assert.equal(state.history.some((entry) => entry.cardId === 'PRESS_CAPITALISM'), false);
+  assert.ok(state.history.some((entry) => entry.cardId === 'SADBOT_01_SEED'), 'seed unreachable after refusing padel');
   assert.ok(state.pressureCount <= deck.meta.maxPressureCards);
 });
 
@@ -116,10 +121,15 @@ test('production runs never repeat or stack pressure cards', () => {
       .filter((entry) => engine.cardById(deck, entry.cardId)?.kind === 'pressure')
       .map((entry) => entry.cardId);
     assert.equal(new Set(pressureIds).size, pressureIds.length, `Repeated pressure in seed ${seed}`);
+    // Хвост-филлеры (после закрытия всех сторилетов) — единственное место,
+    // где две фоновые подряд легальны: перемежать их больше нечем.
+    const fillers = new Set(state.fillerCards || []);
     for (let index = 1; index < state.history.length; index += 1) {
       const before = engine.cardById(deck, state.history[index - 1].cardId);
       const current = engine.cardById(deck, state.history[index].cardId);
-      assert.equal(before.kind === 'pressure' && current.kind === 'pressure', false, `Consecutive pressure in seed ${seed}`);
+      const bothPressure = before.kind === 'pressure' && current.kind === 'pressure';
+      const inFillerTail = fillers.has(current.id);
+      assert.equal(bothPressure && !inFillerTail, false, `Consecutive pressure in seed ${seed}`);
     }
   }
 });

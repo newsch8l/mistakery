@@ -105,17 +105,22 @@ test('B3 cards keep the exact approved copy and once-per-run behavior', () => {
   assert.equal(callback.oncePerRun, true);
 });
 
-test('B3 seed is Agents-only and windowed early; Padel refusal switches to Agents', () => {
+test('B3 seed lives in the general pool, windowed before the virus; padel stays sealed structurally', () => {
   const seed = card('B3_SALES_PRESSURE_SEED');
-  assert.equal([seed.activeArcs].flat().includes('agents'), true);
-  assert.ok([seed.excludes].flat().includes('hype_consequence_seen'), 'windowed to the early phase');
-  // eligible in an Agents opening state, not while active arc is padel
-  const agentsState = b3EntryState();
-  agentsState.activeArc = 'agents';
-  assert.equal(engine.buildEligiblePool(deck, agentsState, { ids: [seed.id], modes: ['sideStory'] }).length, 1);
-  const padel = b3EntryState('OPEN_06');
-  padel.activeArc = 'padel';
-  assert.equal(engine.buildEligiblePool(deck, padel, { ids: [seed.id], modes: ['sideStory'] }).length, 0);
+  assert.equal(seed.activeArcs, undefined, 'no longer tied to the retired agents arc');
+  assert.ok([seed.excludes].flat().includes('sadbot_hyped'), 'windowed to the pre-virus phase');
+  const entry = b3EntryState();
+  assert.equal(engine.buildEligiblePool(deck, entry, { ids: [seed.id], modes: ['sideStory'] }).length, 1);
+  const late = b3EntryState();
+  late.flags.push('sadbot_hyped');
+  assert.equal(engine.buildEligiblePool(deck, late, { ids: [seed.id], modes: ['sideStory'] }).length, 0);
+  // Mutual exclusion with padel is structural: every padel card continues by a
+  // forced arrow (or ends the run), so no pool transition ever opens inside it.
+  deck.cards.filter((c) => c.arc === 'padel').forEach((c) => {
+    const forced = c.continuation === 'forced';
+    const terminal = ['left', 'right'].every((side) => c.choices[side].ending || c.choices[side].next);
+    assert.ok(forced || terminal, `${c.id} would open a pool transition inside padel`);
+  });
 });
 
 test('B3 stop branch schedules no callback and leaves no pending flag', () => {
@@ -132,11 +137,12 @@ test('B3 authorized follow-up schedules the typed callback three story decisions
   assert.equal(seed.choices.left.delay.card, 'B3_PAID_OPTOUT_CALLBACK');
   assert.equal(seed.choices.left.delay.storyDecisions, 3);
   // resolving the follow-up branch (with a queued story to resume to) schedules the delayed callback
-  const state = stateAt(seed.id);
-  state.flags = ['sales_outreach_started'];
-  state.queuedCardId = 'AGENT_02_DEV';
-  state.queuedCardIds = ['AGENT_02_DEV'];
+  const state = stateAt(seed.id, null);
+  state.flags = ['sales_outreach_started', 'sadbot_on'];
+  state.queuedCardId = 'SADBOT_02_EVIDENCE';
+  state.queuedCardIds = ['SADBOT_02_EVIDENCE'];
   state.queuedPool = true;
+  state.queuedPoolMode = 'storylet';
   const result = choose(state, 'left');
   const pending = result.delayed.find((entry) => entry.card === 'B3_PAID_OPTOUT_CALLBACK');
   assert.equal(pending.remainingStoryDecisions, 3);
@@ -147,13 +153,13 @@ test('B3 free opt-out restores the exact queued story without Cash or Customers'
   const callback = card('B3_PAID_OPTOUT_CALLBACK');
   assert.equal(callback.choices.right.effects.cash, undefined);
   assert.equal(callback.choices.right.effects.customers, undefined);
-  const state = stateAt(callback.id);
-  state.flags = ['b3_seed_seen', 'b3_followups_authorized', 'empathy_deployed'];
-  state.queuedCardId = 'AGENT_06_LEGAL';
-  state.queuedCardIds = ['AGENT_06_LEGAL'];
+  const state = stateAt(callback.id, null);
+  state.flags = ['b3_seed_seen', 'b3_followups_authorized'];
+  state.queuedCardId = 'SADBOT_06_LEGAL';
+  state.queuedCardIds = ['SADBOT_06_LEGAL'];
   const customers = state.resources.customers;
   const result = choose(state, 'right');
-  assert.equal(result.currentCardId, 'AGENT_06_LEGAL');
+  assert.equal(result.currentCardId, 'SADBOT_06_LEGAL');
   assert.equal(result.resources.customers, customers);
 });
 
@@ -184,28 +190,45 @@ function playDeterministic(startId, activeArc, picks) {
   return state;
 }
 
-const AGENTS_BEAT_ORDER = [
-  'AGENT_01', 'AGENT_02_DEV', 'AGENT_03_HYPE', 'AGENT_03B_WILD',
-  'AGENT_04_LEAD', 'AGENT_05_ORDER', 'AGENT_06_LEGAL', 'AGENT_07_INVOICE',
+const SADBOT_BEAT_ORDER = [
+  'SADBOT_01_SEED', 'SADBOT_02_EVIDENCE', 'SADBOT_03_VIRAL', 'SADBOT_INVESTOR_CLAIM',
+  'SADBOT_04_LEAD', 'SADBOT_05_ORDER_CALL', 'SADBOT_05B_THEATER', 'SADBOT_06_LEGAL', 'SADBOT_07_INVOICE',
 ];
 
-test('deterministic trace: Agents deploy route reaches validation through the 8 beats', () => {
-  const state = playDeterministic('AGENT_01', 'agents', {
-    AGENT_01: 'left', AGENT_02_DEV: 'left', AGENT_03_HYPE: 'left', AGENT_03B_WILD: 'left',
-    AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+test('deterministic trace: SADBOT blackmail route reaches validation through the beats', () => {
+  const state = playDeterministic('AGENT_01', null, {
+    AGENT_01: 'left', SADBOT_01_SEED: 'left', SADBOT_02_EVIDENCE: 'left', SADBOT_03_VIRAL: 'left',
+    SADBOT_INVESTOR_CLAIM: 'right', SADBOT_04_LEAD: 'left', SADBOT_05_ORDER_CALL: 'right',
+    SADBOT_05B_THEATER: 'left', SADBOT_06_LEGAL: 'left', SADBOT_07_INVOICE: 'left',
   });
-  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('AGENT_'));
-  assert.deepEqual(beats, AGENTS_BEAT_ORDER);
+  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('SADBOT_'));
+  assert.deepEqual(beats, SADBOT_BEAT_ORDER);
   assert.equal(state.endingId, 'validation_agents');
 });
 
-test('deterministic trace: Agents demo route reaches validation through the 8 beats', () => {
-  const state = playDeterministic('AGENT_01', 'agents', {
-    AGENT_01: 'left', AGENT_02_DEV: 'right', AGENT_03_HYPE: 'left', AGENT_03B_WILD: 'right',
-    AGENT_04_LEAD: 'left', AGENT_05_ORDER: 'right', AGENT_06_LEGAL: 'left', AGENT_07_INVOICE: 'left',
+test('deterministic trace: the lie route pays through Friday and the full invoice', () => {
+  const state = playDeterministic('AGENT_01', null, {
+    AGENT_01: 'left', SADBOT_01_SEED: 'left', SADBOT_02_EVIDENCE: 'right', SADBOT_03_VIRAL: 'left',
+    SADBOT_INVESTOR_CLAIM: 'right', SADBOT_04_LEAD: 'left', SADBOT_05_ORDER_CALL: 'left',
+    SADBOT_FRIDAY: 'left', SADBOT_06_LEGAL: 'left', SADBOT_07_INVOICE: 'left',
   });
-  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('AGENT_'));
-  assert.deepEqual(beats, AGENTS_BEAT_ORDER);
+  const beats = state.history.map((entry) => entry.cardId).filter((id) => id.startsWith('SADBOT_'));
+  assert.deepEqual(beats, [
+    'SADBOT_01_SEED', 'SADBOT_02_EVIDENCE', 'SADBOT_03_VIRAL', 'SADBOT_INVESTOR_CLAIM',
+    'SADBOT_04_LEAD', 'SADBOT_05_ORDER_CALL', 'SADBOT_FRIDAY', 'SADBOT_06_LEGAL', 'SADBOT_07_INVOICE',
+  ]);
+  assert.equal(state.endingId, 'validation_agents');
+});
+
+test('deterministic trace: a begged delay routes to the reduced invoice twin', () => {
+  const state = playDeterministic('AGENT_01', null, {
+    AGENT_01: 'left', SADBOT_01_SEED: 'left', SADBOT_02_EVIDENCE: 'right', SADBOT_03_VIRAL: 'left',
+    SADBOT_INVESTOR_CLAIM: 'right', SADBOT_04_LEAD: 'left', SADBOT_05_ORDER_CALL: 'left',
+    SADBOT_FRIDAY: 'right', SADBOT_06_LEGAL: 'left', SADBOT_07_INVOICE_CUT: 'left',
+  });
+  const ids = state.history.map((entry) => entry.cardId);
+  assert.ok(ids.includes('SADBOT_07_INVOICE_CUT'), 'reduced invoice twin must be the target');
+  assert.ok(!ids.includes('SADBOT_07_INVOICE'), 'full invoice must be ineligible after the slip');
   assert.equal(state.endingId, 'validation_agents');
 });
 
