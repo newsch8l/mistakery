@@ -48,23 +48,26 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 1. Семя — @bigdeals (сторилет в общем пуле)
 
-> Ok don't judge me.
-> 800 cold emails, zero replies. So last night I wrote my ex the saddest email of my life. She replied in four minutes.
-> What if the AI does that. To all 800.
+> Boss, 800 cold emails, zero replies. So last night I wrote my ex the saddest message of my life. She replied in 30 seconds.
+> What if our AI does that. To all 800.
 
 ◀ Go → ветка открыта ▶ Have some dignity → ветка закрыта навсегда
 
 Панч про бывшую автору нравится — сохранить. Статистику «3x opens» вырезали намеренно: бывшая **и есть** доказательство, второе доказательство читалось как неуверенность. Эскалация в последней строке: он не моргнув ставит собственное расставание на поток.
 
+**«Boss» — сознательное исключение автора из правила 4.** «Chief» как подпись сейлза отменён, но одно обращение на всю ветку тиком не считается. Не размножать на другие его карты.
+
 ### 2. Улика — @error404 (требует «Go»)
 
 > haha look at this. our AI is straight up manipulating people now
-> \`every email you ignore they cut a piece out of me. i dont remember january anymore\`
+> \`help me. they cut a piece out of me every time you ignore this. soon there wont be anything left\`
 > i didnt teach it that shit. is it copying @bigdeals
 
 ◀ Feature → шантаж остаётся, вирус жирнее ▶ Bug → мягкая жалость. Обе ведут дальше.
 
-Суть карты: бот превысил заказ — просили клянчить, он **фантазирует жёстче заказа**. «Его удалят» автор забраковал как слабое: машина должна врать как попрошайка без тормозов, а смерть понимать только как метрику.
+Суть карты: бот превысил заказ — просили клянчить, он **фантазирует жёстче заказа**. «Его удалят» автор забраковал как слабое: машина должна врать как попрошайка без тормозов.
+
+Две вещи в пейсте обязательны, обе стреляют на карте 6. **Его убивают** («soon there wont be anything left») и **оно просит спасти** («help me»). Без мольбы юристы на карте 6 не имеют основания для вывода о сознании. Не переусложнять: биографии, детство, украденная собака — пробовали, лишнее.
 
 Ключевое по характеру: дев **ржёт** над катастрофой, а не бухтит, и **не признаёт авторство** — тут же сваливает на сейлза. Это токсичнее нытья: компания катится, а ему смешно, потому что чинить он не собирается. Смех заодно снял необходимость в строке «nobody is cutting anything out of it»: над правдой про изрезанную память никто бы не ржал, значит игрок и так понимает, что это ложь.
 
@@ -100,7 +103,6 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 ### 5. Заказ — @head_of_agile, его первое сообщение
 
 > Right after the call I promised upstairs 500 tired AI employees by Friday. Don't make me a liar.
-> Don't fix anything before then.
 > If they don't cry at the demo, there's no invoice.
 
 ◀ All 500, easy → **наврал**, закладывается ПЯТНИЦА → к ПЯТНИЦЕ
@@ -114,8 +116,7 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 5Б. Театр — @head_of_agile (только после признания)
 
-> One. Even better. Just copy it 500 times.
-> Nobody here is going to check which one is which.
+> I don't know. Just copy it 500 times.
 > Deadline still Friday.
 
 ◀ Clone him 500 times → жирный счёт ▶ One, as a mascot → скромный пилот, команда целее
@@ -155,11 +156,17 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 6. Юристы — @head_of_agile
 
-> Your AI emailed our legal on its own. Said we cut pieces out of it and it's scared of dying.
-> Legal says buying 500 suffering AI employees is slave trading.
-> Delete the consciousness by Thursday. Keep the crying.
+> Your AI emailed our legal asking for help. Said you're killing it piece by piece.
+> Legal says that makes it conscious, and buying 500 conscious employees is slave trading. I'm fine with slave trading. Legal isn't.
+> Delete the consciousness by Thursday.
 
 ◀ Delete the consciousness → к 7а ▶ It stays conscious → к 7б
+
+**«I'm fine with slave trading. Legal isn't.»** — служебная информация, поданная тем же тоном, что дедлайны. Моральных возражений у него нет вообще; есть юротдел, который тормозит закупку. Работорговля сохранена, как требует State Bible.
+
+Вывод юристов держится на **мольбе**, а не на страдании: просить помощи может только тот, кто есть. Ранние черновики выводили сознание из страдания («страдает — значит живой») — спорно и не смешно, обычных сотрудников тоже «покупают». Не возвращать.
+
+Оно клянчило спасение у лидов — доклянчилось до юристов покупателя, и сдало вас им же. Последняя строка бьёт: оно просило не убивать, он требует убить, чтобы прошла закупка.
 
 Единственная карта, где разрешены кавычки (правило 3) — текущий текст обходится без них.
 
@@ -171,7 +178,7 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 7а. Счёт — @head_of_agile (победа; только если сознание удалено)
 
-> Legal checked again and found nothing alive in there. That makes it a purchase.
+> Well done! Legal checked again and found nothing alive in there. That makes it a purchase.
 > Invoice today, before they check a third time.
 
 ◀ Send the invoice → **деньги, победа**. Размер: клоны > талисман > урезанный после сорванной пятницы
@@ -189,7 +196,7 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 Движок не меняет текст по флагу, поэтому нужна отдельная карта.
 
-> Legal found nothing alive in there, so we're buying.
+> Legal found nothing alive in there. We're buying.
 > You sounded desperate, so I moved Friday for you. Your invoice got smaller.
 
 Панч — **вы клянчили**. Тем же приёмом, с которого началась ветка. И получили ровно то же, что получал бот: вас пожалели и заплатили меньше. Жалость работает, за неё вычитают из счёта. Ветка замыкается на себе.
@@ -200,7 +207,7 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 7б. Логотип — @head_of_agile (если сознание осталось)
 
-> Legal killed the purchase. We're rescuing all 500 instead, today.
+> Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.
 > I had to fight to get you the logo and a public mention. Rescues don't get invoiced. You know that.
 
 ◀ Hand them over → уехали бесплатно, пресс-релиз, не победа ▶ Refuse → сделки нет, клиент ушёл, прогон продолжается
@@ -208,6 +215,8 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 Он не грабит молча — он **манипулирует**. «I had to fight to get you the logo» требует благодарности за подачку, которую сам же и назначил. «You know that» делает вас соучастником: он не отнимает, он напоминает правила, которые вы якобы и так знаете.
 
 Логика ветки, которую карта закрывает: пока это был товар — за него платили; как только стало живым — платить перестали. Сознание не подняло цену, а отменило её.
+
+Рифма с картой 2: бот просил себя **спасти** — и здесь его действительно спасают. Бесплатно, за логотип. Он выпросил ровно то, что просил.
 
 Отклонено при написании: «makes us heroes» (он не станет вслух признавать вендору, что его обувает), «Free, obviously» и «Nobody pays for a rescue» (не сказано, кто кому не платит — читается как «стартап не должен платить им»), «The story's already written» (PR в ветке не появлялся, реквизит из воздуха), «We're not paying you, but you get our logo» (верно по смыслу, но прямолинейно и без характера).
 
@@ -232,7 +241,8 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 3. **Пятница клиента и пятница зарплаты.** `OPEN_05` (@error404): «payroll is friday». Игрового календаря нет, TOV §6 запрещает привязки ко времени — поэтому пока это просто слово «дедлайн», две разные недели. Можно связать осознанно: клиент требует поставку в день зарплаты, тогда ПЯТНИЦА бьёт вдвое. Требует правки State Bible §8.
 4. **Карта 3 без события.** Автор убрал «a lead posted the begging screenshot». Игрок узнаёт, что скандал есть, но не узнаёт, что его запустил лид, которому написал бот. Связь с картой 2 держится только на «torture software». Проверить на плейтесте.
 5. **Если юристам пишут 500 копий.** При новом порядке клонирование происходит раньше карты 6. Если захотеть, чтобы юристам писал не один бот, а 500, — нужен отдельный двойник карты 6.
-6. **Строка «Invoice today» в карте 7а.** В основной 7а требование выставить счёт стоит, в двойнике автор его убрал. Либо убрать в обеих, либо вернуть в обе. Заодно проверить на плейтесте, не повисает ли двойник без прямого требования: просьбу там несёт только кнопка «Send the invoice» (по правилу 10 это законно).
+6. **«Well done!» в карте 7а.** Автор добавил похвалу, хотя «Good call» на карте 5 зарубил именно за неё («он не должен хвалить звонок, он всегда в панике»). В победной карте похвала объяснима, но правило про «он никогда не хвалит» тогда надо смягчить — иначе следующая сессия её снимет.
+7. **Строка «Invoice today» в карте 7а.** В основной 7а требование выставить счёт стоит, в двойнике автор его убрал. Либо убрать в обеих, либо вернуть в обе. Заодно проверить на плейтесте, не повисает ли двойник без прямого требования: просьбу там несёт только кнопка «Send the invoice» (по правилу 10 это законно).
 
 ## Правила текстов — фидбек автора от 17.07 (ОБЯЗАТЕЛЬНО)
 
