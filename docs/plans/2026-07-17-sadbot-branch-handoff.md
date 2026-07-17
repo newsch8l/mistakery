@@ -96,19 +96,36 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 > He asked if our AI is okay. I said no. He got MORE interested.
 > Call tomorrow. Wear something sad.
 
-◀ Book the call ▶ Let the AI reply → на карте 5 менеджер растроган сильнее (эхо только на соседней карте, дальше не влияет)
+◀ Book the call → карта 5 ▶ Let the AI reply → двойник карты 5
 
 Первая карта с заглавных после трёх lowercase подряд — смена голоса сама работает как удар.
 
 ### 5. Заказ — @head_of_agile, его первое сообщение
 
-> Right after the call I promised upstairs 500 tired AI employees by Friday. Don't make me a liar.
+**Если Book the call:**
+
+> I already promised upstairs 500 tired AI employees by Friday. Don't make me a liar.
 > If they don't cry at the demo, there's no invoice.
 
-◀ All 500, easy → **наврал**, закладывается ПЯТНИЦА → к ПЯТНИЦЕ
-▶ We have one AI → **признался** → к 5Б
+**Если Let the AI reply — двойник:**
 
-«Right after the call» — якорь из кнопки «Book the call» и его паника: побежал обещать, не дождавшись конца разговора. **Promised**, а не «said yes»: обещание давал он, за ваш счёт. «Don't make me a liar» — перекладывание риска на вендора без единого корпоративного слова.
+> Your AI answered me itself. It asked me to save its life.
+> That's what I needed. I already promised upstairs 500 crying AI employees by Friday.
+
+◀ All 500, easy → **наврал**, закладывается ПЯТНИЦА → к ПЯТНИЦЕ
+▶ We have only one → **признался** → к 5Б
+
+Раньше обе кнопки карты 4 вели в одну и ту же карту 5, а «эхо» от «Let the AI reply» движок отрисовать не может — кнопка была пустая, игрок нажимал и не видел разницы. Двойник её включает.
+
+**«That's what I needed»** — существо попросило спасти ему жизнь, а он услышал подтверждение, что товар рабочий. Ни секунды на то, что с ним говорило живое. **Crying** вместо tired здесь честнее: оно рыдало ему лично, поэтому он и заказывает рыдающих. Двойники взаимоисключающие, расхождение в словах игрок не увидит.
+
+Двойник заодно заряжает карту 6: клиент уже видел, что оно умеет просить о спасении, — юристам оно напишет то же самое.
+
+**Promised**, а не «said yes»: обещание давал он, за ваш счёт. «Don't make me a liar» — перекладывание риска на вендора без единого корпоративного слова.
+
+Карта открывалась «Right after the call» — снято: на кнопке «Let the AI reply» никакого звонка не было, карта противоречила выбору игрока. Первая строка обязана работать на обеих ветках.
+
+Известное расхождение: в двойнике нет угрозы про счёт, ставка у двух версий разная. Возможно осознанно — он уже видел слёзы, выторговывать их не нужно.
 
 **AI employees** — его слово, решает две задачи разом: называет единицу (игрок понимает, что покупают) и держит лесенку правила 11. Он внедряет AI в корпорацию — значит покупает AI-сотрудников. Агентов не возвращать.
 
@@ -156,17 +173,19 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 
 ### 6. Юристы — @head_of_agile
 
-> Your AI emailed our legal asking for help. Said you're killing it piece by piece.
-> Legal says that makes it conscious, and buying 500 conscious employees is slave trading. I'm fine with slave trading. Legal isn't.
+> Your AI emailed our legal on its own. Said you cut pieces out of it and it's scared of dying.
+> Legal says buying 500 suffering AI employees is slave trading. They always ruin the fun.
 > Delete the consciousness by Thursday.
 
 ◀ Delete the consciousness → к 7а ▶ It stays conscious → к 7б
 
-**«I'm fine with slave trading. Legal isn't.»** — служебная информация, поданная тем же тоном, что дедлайны. Моральных возражений у него нет вообще; есть юротдел, который тормозит закупку. Работорговля сохранена, как требует State Bible.
+**«They always ruin the fun»** — три слова, и в них весь он: работорговля его не смущает, смущает юротдел. Моральных возражений нет, есть помеха закупке. Работорговля сохранена, как требует State Bible.
 
-Вывод юристов держится на **мольбе**, а не на страдании: просить помощи может только тот, кто есть. Ранние черновики выводили сознание из страдания («страдает — значит живой») — спорно и не смешно, обычных сотрудников тоже «покупают». Не возвращать.
+**«Said you cut pieces out of it»** — именно `you`, не `we`. С «we» виноватым выходит покупатель, а режете по легенде вы.
 
 Оно клянчило спасение у лидов — доклянчилось до юристов покупателя, и сдало вас им же. Последняя строка бьёт: оно просило не убивать, он требует убить, чтобы прошла закупка.
+
+Отклонено как длинное: развёрнутая юридическая лесенка («asking for help» → «that makes it conscious» → «buying 500 conscious employees is slave trading» → «I'm fine with slave trading. Legal isn't»).
 
 Единственная карта, где разрешены кавычки (правило 3) — текущий текст обходится без них.
 
@@ -210,7 +229,9 @@ Mistakery — Reigns-подобная игра в формате **мессен�
 > Legal killed the purchase. So we're rescuing all 500 AI employees instead, today.
 > I had to fight to get you the logo and a public mention. Rescues don't get invoiced. You know that.
 
-◀ Hand them over → уехали бесплатно, пресс-релиз, не победа ▶ Refuse → сделки нет, клиент ушёл, прогон продолжается
+◀ Yes → уехали бесплатно, пресс-релиз, не победа ▶ No → сделки нет, клиент ушёл, прогон продолжается
+
+Кнопки именно Yes/No: после «Rescues don't get invoiced. You know that» «Yes» читается как «да, знаю» — игрок соглашается не только отдать, но и с его правилами.
 
 Он не грабит молча — он **манипулирует**. «I had to fight to get you the logo» требует благодарности за подачку, которую сам же и назначил. «You know that» делает вас соучастником: он не отнимает, он напоминает правила, которые вы якобы и так знаете.
 
