@@ -88,6 +88,7 @@
       win: false,
       endingId: null,
       history: [],
+      fillerCards: [],
       seed: options.seed || null,
     };
   }
@@ -109,6 +110,7 @@
         : null,
       postCrisisOutcome: state.postCrisisOutcome ? { ...state.postCrisisOutcome } : null,
       history: state.history.map((entry) => ({ ...entry, deltas: { ...entry.deltas } })),
+      fillerCards: [...(state.fillerCards || [])],
     };
   }
 
@@ -267,7 +269,8 @@
       .filter((card) => !modes || modes.has(continuationMode(card)))
       .filter((card) => options.includeScheduled === true || !schedulerRole(card))
       .filter((card) => cardIsEligible(deck, card, state))
-      .filter((card) => !(previousWasAmbient && continuationMode(card) === 'ambient'))
+      .filter((card) => options.allowConsecutiveAmbient === true
+        || !(previousWasAmbient && continuationMode(card) === 'ambient'))
       .map((card) => ({
         card,
         weight: Number(card.weight || 1)
@@ -472,6 +475,17 @@
       .filter((entry) => entry.card.storyletEntry === true);
   }
 
+  // When a pool-like continuation has no eligible story left (the storylet was
+  // declined or exhausted), the run keeps living on background cards until
+  // maxTurns instead of ending on the spot. Fillers bypass the pressure budget
+  // and the no-two-ambient rule: there is no story pacing left to protect,
+  // only the tail of the run to fill.
+  function pickBackgroundFiller(deck, state, rng) {
+    const pool = buildEligiblePool(deck, state, { modes: ['ambient', 'sideStory'], allowConsecutiveAmbient: true })
+      .filter((entry) => entry.card.callbackOnly !== true);
+    return weightedPoolPick(pool, rng);
+  }
+
   function poolForMode(deck, state, transition, nextIds) {
     if (transition.mode === 'pool') return eligibleArcBeatPool(deck, state);
     if (transition.mode === 'storylet') return eligibleStoryletPool(deck, state);
@@ -553,9 +567,18 @@
         }
         const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
         if (stalled) {
-          state.queuedPool = true;
+          // Keep the pool mode: a callback delivered out of a storylet stall
+          // must resume the storylet pool, not the (empty) arc pool.
+          markQueuedPool(state, transition.poolMode === 'storylet' ? 'storylet' : 'pool');
           state.currentCardId = stalled.id;
           if (stalled.kind === 'pressure') state.pressureCount += 1;
+          return;
+        }
+        const filler = pickBackgroundFiller(deck, state, rng);
+        if (filler) {
+          markQueuedPool(state, transition.poolMode === 'storylet' ? 'storylet' : 'pool');
+          (state.fillerCards = state.fillerCards || []).push(filler.id);
+          state.currentCardId = filler.id;
           return;
         }
         endWithoutProof(state);
@@ -585,9 +608,18 @@
         if (isPoolLikeMode(transition.mode)) {
           const stalled = takeDueCallback(deck, state) || takeEarliestPendingCallback(deck, state);
           if (stalled) {
-            state.queuedPool = true;
+            // Keep the pool mode so the post-callback resume rebuilds the same
+            // pool this transition was draining (storylet stall -> storylet).
+            markQueuedPool(state, transition.mode);
             state.currentCardId = stalled.id;
             if (stalled.kind === 'pressure') state.pressureCount += 1;
+            return;
+          }
+          const filler = pickBackgroundFiller(deck, state, rng);
+          if (filler) {
+            markQueuedPool(state, transition.mode);
+            (state.fillerCards = state.fillerCards || []).push(filler.id);
+            state.currentCardId = filler.id;
             return;
           }
         }
@@ -826,6 +858,7 @@
     buildEligiblePool,
     buildBoundaryPool,
     eligibleArcBeatPool,
+    eligibleStoryletPool,
     selectNextCard,
     resolveChoice,
     resolveCrisis,

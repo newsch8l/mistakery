@@ -188,6 +188,75 @@ test('resume after an ambient card re-reads current state instead of a stale sna
   );
 });
 
+// Background filler: an empty storylet pool must not kill the run while
+// background cards are still eligible. Declining the only storylet on turn N
+// should leave a quiet run, not an instant ending.
+
+function fillerDeck() {
+  const deck = storyletDeck();
+  deck.cards.forEach((card) => { delete card.storyletEntry; });
+  deck.cards.push({
+    id: 'ambient_a',
+    kind: 'pressure',
+    source: '@bot',
+    text: 'Ambient A.',
+    continuation: 'ambient',
+    actor_action: 'Fills.',
+    player_decision: 'Respond.',
+    choices: { left: choice('Left', { team: 1 }), right: choice('Right', { team: -1 }) },
+  });
+  deck.cards.push({
+    id: 'ambient_b',
+    kind: 'pressure',
+    source: '@bot',
+    text: 'Ambient B.',
+    continuation: 'ambient',
+    actor_action: 'Fills.',
+    player_decision: 'Respond.',
+    choices: { left: choice('Left', { team: 1 }), right: choice('Right', { team: -1 }) },
+  });
+  return deck;
+}
+
+test('empty storylet pool falls back to background instead of ending the run', () => {
+  const deck = fillerDeck();
+  const state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.1 }).state;
+  assert.equal(state.gameOver, false, 'run ended although background cards were eligible');
+  assert.ok(['ambient_a', 'ambient_b'].includes(state.currentCardId), `expected a filler, got ${state.currentCardId}`);
+  assert.equal(state.pressureCount, 0, 'filler consumed the pressure budget');
+});
+
+test('two background fillers may run back-to-back when no story is left', () => {
+  const deck = fillerDeck();
+  const first = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.1 }).state;
+  const second = engine.resolveChoice(deck, first, 'left', { rng: () => 0.1 }).state;
+  assert.equal(second.gameOver, false, 'run died after a single filler');
+  assert.ok(
+    ['ambient_a', 'ambient_b'].includes(second.currentCardId) && second.currentCardId !== first.currentCardId,
+    `expected the other filler, got ${second.currentCardId} after ${first.currentCardId}`,
+  );
+});
+
+test('a storylet unlocked during a filler is picked when the filler resolves', () => {
+  const deck = fillerDeck();
+  deck.cards.find((card) => card.id === 'gated_entry').storyletEntry = true;
+  deck.cards.find((card) => card.id === 'ambient_a').choices.left.setFlags = ['invited'];
+  deck.cards.find((card) => card.id === 'ambient_b').weight = 0.0001;
+
+  const atFiller = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.1 }).state;
+  assert.equal(atFiller.currentCardId, 'ambient_a');
+  const after = engine.resolveChoice(deck, atFiller, 'left', { rng: () => 0.1 }).state;
+  assert.equal(after.currentCardId, 'gated_entry', 'resume ignored the entry unlocked by the filler');
+});
+
+test('with no story and no background left the run still ends honestly', () => {
+  const deck = fillerDeck();
+  deck.cards = deck.cards.filter((card) => !card.id.startsWith('ambient_'));
+  const state = engine.resolveChoice(deck, engine.startRun(deck), 'left', { rng: () => 0.1 }).state;
+  assert.equal(state.gameOver, true);
+  assert.equal(state.endingId, 'no_proof');
+});
+
 test('the arc-scoped pool mode stays arc-scoped (storylet mode did not leak into it)', () => {
   const deck = storyletDeck();
   deck.cards.find((card) => card.id === 'start').continuation = 'forced';
