@@ -11,7 +11,7 @@ Treat a Reigns-like game as a state-driven narrative system, not as a pile of sh
 
 ## Start with the correct project context
 
-Read `MISTAKERY_START_HERE.md` first. Then load only the documents required by the task:
+Load only the documents required by the task:
 
 | Task | Required context |
 | --- | --- |
@@ -32,8 +32,8 @@ Do not substitute a checkpoint summary, job title, current card sample or rememb
 
 ## Workflow
 
-1. Establish the current **declared test scope** from `MISTAKERY_START_HERE.md`, `cards.json`, `game.js` and tests. Never treat an intentionally isolated onboarding test as evidence about the final production architecture.
-2. Run `node .agents/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json` before judging copy or changing structure.
+1. Establish the current **declared test scope** from the newest plan in `docs/plans/`, `cards.json`, `game.js` and tests. Never treat an intentionally isolated onboarding test as evidence about the final production architecture.
+2. Run `node .claude/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json` before judging copy or changing structure.
 3. Audit semantics before style: entity existence, funnel stage, sender knowledge, sender motive and causal link from the previous event.
 4. Audit character fidelity against Character Bible: personal desire, pressure behavior, knowledge, victim and why another character would not take the same action.
 5. Audit the two answers: distinct actions, legible risk, persistent difference and resource reasons.
@@ -62,7 +62,7 @@ Do not substitute a checkpoint summary, job title, current card sample or rememb
 Run it with:
 
 ```bash
-node .agents/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json
+node .claude/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json
 ```
 
 Treat its report as a starting point. Use the rubric and a human playthrough for semantic failures.
@@ -89,17 +89,3 @@ For a rewrite proposal, return the causal map and expected resource consequences
 - Calling an answer meaningful because its number changes, even though no future state reads the difference.
 - Replacing a causal beat with a pressure card because a slot is available.
 - Optimising a line's English before confirming what the line factually means.
-
-### assets/
-Files not intended to be loaded into context, but rather used within the output Codex produces.
-
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
-
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
-
----
-
-**Not every skill requires all three types of resources.**

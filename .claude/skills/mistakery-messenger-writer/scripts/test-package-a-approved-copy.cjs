@@ -11,9 +11,13 @@ const repoRoot = path.resolve(skillRoot, "../../..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 
 const audition = read("MISTAKERY_STAGE_2B_PACKAGE_A_COPY_AUDITION.md");
-const blueprint = read("MISTAKERY_STAGE_2B_ADAPTIVE_POOL_BLUEPRINT.md");
-const implementationPlan = read("MISTAKERY_STAGE_2B_PACKAGE_A_IMPLEMENTATION_PLAN.md");
-const skill = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+const blueprint = read("docs/archive/MISTAKERY_STAGE_2B_ADAPTIVE_POOL_BLUEPRINT.md");
+const implementationPlan = read("docs/archive/MISTAKERY_STAGE_2B_PACKAGE_A_IMPLEMENTATION_PLAN.md");
+const skill = [
+  fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8"),
+  fs.readFileSync(path.join(skillRoot, "references", "writer.md"), "utf8"),
+  fs.readFileSync(path.join(skillRoot, "references", "editor.md"), "utf8")
+].join("\n\n");
 const taste = fs.readFileSync(path.join(skillRoot, "references", "taste-memory.md"), "utf8");
 
 const approved = [

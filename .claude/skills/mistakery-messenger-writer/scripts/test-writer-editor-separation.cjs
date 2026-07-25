@@ -5,14 +5,16 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const skill = fs.readFileSync(path.resolve(__dirname, "../SKILL.md"), "utf8");
-const writerAt = skill.indexOf("## Writer");
-const editorAt = skill.indexOf("## Editor");
+const skillRoot = path.resolve(__dirname, "..");
+const skillFile = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+const writer = fs.readFileSync(path.join(skillRoot, "references", "writer.md"), "utf8");
+const editor = fs.readFileSync(path.join(skillRoot, "references", "editor.md"), "utf8");
+const skill = [skillFile, writer, editor].join("\n\n");
 
-assert.ok(writerAt >= 0, "skill must define a Writer mode");
+const writerAt = skillFile.indexOf("**Writer**");
+const editorAt = skillFile.indexOf("**Editor**");
+assert.ok(writerAt >= 0, "the pipeline must define a Writer mode");
 assert.ok(editorAt > writerAt, "Editor must run after Writer");
-const writer = skill.slice(writerAt, editorAt);
-const editor = skill.slice(editorAt);
 
 assert.match(writer, /full character name and handle/i, "Writer must see the full canonical name and handle");
 assert.match(writer, /emotional state/i, "Writer must receive current emotional state");

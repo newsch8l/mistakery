@@ -6,7 +6,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const skillRoot = path.resolve(__dirname, "..");
-const skill = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+const writer = fs.readFileSync(path.join(skillRoot, "references", "writer.md"), "utf8");
+const editor = fs.readFileSync(path.join(skillRoot, "references", "editor.md"), "utf8");
+const skill = [
+  fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8"),
+  writer,
+  editor
+].join("\n\n");
 const readingMap = fs.readFileSync(path.join(skillRoot, "references", "project-reading-map.md"), "utf8");
 const examplesPdf = path.resolve(skillRoot, "../../../docs/source/MISTAKERY_VALIDATION_CHARACTERS_WITH_EXAMPLES.pdf");
 
@@ -21,10 +27,6 @@ for (const text of [skill, readingMap]) {
   }
 }
 
-const writerAt = skill.indexOf("## Writer");
-const editorAt = skill.indexOf("## Editor");
-const writer = skill.slice(writerAt, editorAt);
-const editor = skill.slice(editorAt);
 assert.match(writer, /character-voice-engines\.md/, "Writer must read the current sender's voice engine");
 assert.doesNotMatch(writer, /read.*PDF|PDF.*before drafting/i, "Writer must not build candidates from the PDF");
 assert.match(editor, /reads? the current sender's PDF section|PDF section/i, "Editor must read the current sender's PDF section after selection");

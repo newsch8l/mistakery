@@ -95,7 +95,7 @@ for (const { sourceKey, handle, identity } of identities) {
 }
 
 assert.match(skill, /character-voice-engines\.md/, "Writer must read the character voice-engine reference");
-const writer = skill.slice(skill.indexOf("## Writer"), skill.indexOf("## Editor"));
+const writer = fs.readFileSync(path.join(skillRoot, "references", "writer.md"), "utf8");
 assert.match(writer, /read.*voice engine|voice engine.*before/i, "Writer must read the current sender's voice engine before drafting");
 assert.match(writer, /choose.*emotional state/i, "Writer must choose an emotional state for the current situation");
 assert.match(writer, /choose.*pressure/i, "Writer must choose a pressure mode for the current situation");

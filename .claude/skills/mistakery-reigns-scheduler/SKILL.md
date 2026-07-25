@@ -9,11 +9,11 @@ Treat a delayed story as a reservation with a named destination, not as a flag p
 
 ## Required context
 
-Read **Start Here**, the current Stage 2B Blueprint, **Reigns Rubric**, **Reigns Research**, `cards.json`, `game.js`, and relevant tests. Then run:
+Read `docs/archive/MISTAKERY_STAGE_2B_ADAPTIVE_POOL_BLUEPRINT.md`, `docs/design/REIGNS_RUBRIC.md`, `docs/research/REIGNS_RESEARCH.md`, `cards.json`, `game.js`, and relevant tests. Then run:
 
 ```bash
-node .agents/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json
-node .agents/skills/mistakery-reigns-scheduler/scripts/audit-callback-slots.cjs cards.json --json
+node .claude/skills/reigns-like-narrative-design/scripts/audit-deck.cjs cards.json --json
+node .claude/skills/mistakery-reigns-scheduler/scripts/audit-callback-slots.cjs cards.json --json
 ```
 
 `references/mistakery-slot-policy.json` defines protected pairs and locks. Change it only as an explicit, reviewed narrative-structure decision.

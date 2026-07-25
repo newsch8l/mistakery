@@ -77,7 +77,7 @@ test('G2-only engine and card-specific typography support are removed', () => {
 });
 
 test('approved checkpoint marks G2 rejected while keeping B3 approved', () => {
-  const checkpoint = fs.readFileSync(path.join(root, 'MISTAKERY_CHECKPOINT_5_3_APPROVED_COPY.md'), 'utf8');
+  const checkpoint = fs.readFileSync(path.join(root, 'docs', 'archive', 'MISTAKERY_CHECKPOINT_5_3_APPROVED_COPY.md'), 'utf8');
   assert.match(checkpoint, /G2 rejected after manual playtest/i);
   assert.match(checkpoint, /B3 remains approved/i);
 });

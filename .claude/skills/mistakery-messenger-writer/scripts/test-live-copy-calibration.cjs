@@ -7,7 +7,11 @@ const path = require("node:path");
 
 const skillRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(skillRoot, "../../..");
-const skill = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+const skill = [
+  fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8"),
+  fs.readFileSync(path.join(skillRoot, "references", "writer.md"), "utf8"),
+  fs.readFileSync(path.join(skillRoot, "references", "editor.md"), "utf8")
+].join("\n\n");
 const taste = fs.readFileSync(path.join(skillRoot, "references", "taste-memory.md"), "utf8");
 const engines = fs.readFileSync(path.join(skillRoot, "references", "character-voice-engines.md"), "utf8");
 const auditionPath = path.join(repoRoot, "MISTAKERY_MESSENGER_WRITER_FULL_CHARACTER_AUDITION.md");

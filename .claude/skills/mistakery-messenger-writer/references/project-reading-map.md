@@ -4,7 +4,7 @@ Read the canonical source before copy, in this order. For conflicting copy decis
 
 1. **State Bible:** `docs/core/STATE_BIBLE.md` for fact, stage, knowledge, resource truth, eligibility, and mechanics.
 2. **Character Bible and TOV Bible:** `docs/core/CHARACTER_BIBLE.md` and `docs/core/TOV_BIBLE.md` for current motive, pressure behaviour, readable voice, and anti-voice rules.
-3. **Voice engine:** `.agents/skills/mistakery-messenger-writer/references/character-voice-engines.md`. Before drafting, read the current sender's range of wants, relationship, pressure, emotion, rhythm, language, nearest neighbor, and anti-voice. Choose a situation-appropriate combination; never treat the lists as sentence templates.
+3. **Voice engine:** `.claude/skills/mistakery-messenger-writer/references/character-voice-engines.md`. Before drafting, read the current sender's range of wants, relationship, pressure, emotion, rhythm, language, nearest neighbor, and anti-voice. Choose a situation-appropriate combination; never treat the lists as sentence templates.
 4. **Current deck:** `cards.json` for whole-deck repetition; isolate the sender's cards and adjacent story cards before drafting.
 
 Read `MISTAKERY_START_HERE.md` for source-of-truth scope and `docs/core/REJECTED_PATTERNS.md` for known failures. State Bible wins fact conflicts; Character Bible and TOV Bible win current-character conflicts; the voice engine expands behavior without overriding either.
