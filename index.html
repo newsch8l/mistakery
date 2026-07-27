@@ -21,7 +21,32 @@
 
         <section class="resources" data-resources aria-label="Startup resources"></section>
 
-        <article class="messenger">
+        <section class="intro" data-intro hidden aria-label="Intro">
+          <article class="messenger">
+            <header class="threadbar">
+              <div class="avatar" aria-hidden="true">M</div>
+              <div class="threadbar__copy">
+                <strong>Mistakery</strong>
+                <span data-intro-status></span>
+              </div>
+              <span class="threadbar__menu" aria-hidden="true">•••</span>
+            </header>
+
+            <section class="conversation conversation--intro" data-intro-conversation aria-live="polite"></section>
+
+            <footer class="reply-dock">
+              <div class="composer">
+                <span>Choose a reply…</span>
+                <span aria-hidden="true">↑</span>
+              </div>
+              <div class="choices">
+                <button class="choice choice--restart" type="button" data-intro-next>Next</button>
+              </div>
+            </footer>
+          </article>
+        </section>
+
+        <article class="messenger" data-messenger>
           <header class="threadbar">
             <div class="avatar" data-avatar aria-hidden="true">B</div>
             <div class="threadbar__copy">
@@ -32,7 +57,7 @@
           </header>
 
           <section class="conversation" data-conversation aria-live="polite">
-            <div class="date-chip">Today</div>
+            <div class="date-chip" data-date-chip>Today</div>
             <div class="message-row">
               <div class="message-avatar" data-message-avatar aria-hidden="true">B</div>
               <div class="bubble">
@@ -40,7 +65,6 @@
                 <span class="stamp">15:54</span>
               </div>
             </div>
-            <span class="card-id" data-card-id></span>
           </section>
 
           <footer class="reply-dock" data-reply-dock>

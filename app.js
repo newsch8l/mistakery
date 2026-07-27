@@ -30,6 +30,91 @@
     }));
   }
 
+  // Typography: nothing shorter than three letters may hang at the end of a line.
+  // A short word is glued to the next one automatically; `~` glues any two words by hand.
+  const NBSP = '\u00A0';
+  const MAX_HANGING = 2;
+
+  function glueShortWords(text) {
+    const words = text.split(' ');
+    if (words.length < 2) return text;
+    let out = words[0];
+    for (let i = 1; i < words.length; i += 1) {
+      const previous = words[i - 1].replace(/[^0-9A-Za-z’']/g, '');
+      out += (previous && previous.length <= MAX_HANGING ? NBSP : ' ') + words[i];
+    }
+    return out;
+  }
+
+  function typography(text) {
+    return String(text)
+      .replace(/~/g, NBSP)
+      .split(/(<[^>]*>)/)
+      .map((part) => (part.startsWith('<') ? part : glueShortWords(part)))
+      .join('');
+  }
+
+  const INTRO_TEXTS = [
+    'Congratulations! You successfully escaped the corporate grind to build your own empire. No more working for "the man" — from now on, you are the man.',
+    'Fast forward 5 months: you have your own AI startup, a dream team of 5 people, and a bag of investor cash. Or what’s left of it.',
+    'Does the world actually need your product? Duh. It’s AI. Of course they do.\n\nAre there any paying customers? Hey, one step at a time. We’ll figure that out on the fly.',
+  ];
+  const INTRO_BUTTONS = [
+    'So long, corporate jail!',
+    'Trust the process',
+    'Open the Masterplan',
+  ];
+  const INTRO_TYPING_MS = 620;
+
+  function startIntro() {
+    let shown = 0;
+    let busy = false;
+    const phone = document.querySelector('.phone');
+    const screen = $('[data-intro]');
+    const conversation = $('[data-intro-conversation]');
+    const button = $('[data-intro-next]');
+
+    phone.classList.add('is-intro');
+    screen.hidden = false;
+
+    const setTyping = (on) => {
+      $('[data-intro-status]').textContent = on ? 'typing...' : '';
+      const dots = conversation.querySelector('.intro-typing');
+      if (on && !dots) conversation.insertAdjacentHTML('beforeend', '<div class="intro-typing" aria-hidden="true"><i></i><i></i><i></i></div>');
+      if (!on && dots) dots.remove();
+    };
+
+    const addBubble = () => {
+      const lines = INTRO_TEXTS[shown].split('\n').map((line) => `<span>${line ? typography(line) : '&nbsp;'}</span>`).join('');
+      conversation.insertAdjacentHTML('beforeend', `<div class="message-row"><div class="bubble"><p>${lines}</p></div></div>`);
+      conversation.scrollTop = conversation.scrollHeight;
+      shown += 1;
+      button.textContent = INTRO_BUTTONS[shown - 1];
+    };
+
+    const deliver = () => {
+      busy = true;
+      button.disabled = true;
+      setTyping(true);
+      window.setTimeout(() => {
+        setTyping(false);
+        addBubble();
+        button.disabled = false;
+        busy = false;
+      }, INTRO_TYPING_MS);
+    };
+
+    button.addEventListener('click', () => {
+      if (busy) return;
+      if (shown < INTRO_TEXTS.length) return deliver();
+      screen.hidden = true;
+      phone.classList.remove('is-intro');
+      beginRun();
+    });
+
+    deliver();
+  }
+
   function beginRun() {
     const meta = metaProgress();
     localStorage.setItem('mistakery_meta', JSON.stringify({
@@ -53,6 +138,10 @@
       node.textContent = avatarText;
     });
     $('[data-status]').textContent = status;
+  }
+
+  function setDateChip(text) {
+    $('[data-date-chip]').textContent = text || 'Today';
   }
 
   function renderResources() {
@@ -98,9 +187,14 @@
 
   function renderCard() {
     const card = engine.cardById(app.deck, app.state.currentCardId);
-    setThread(card.source, 'typing...');
-    $('[data-message]').innerHTML = card.text.split('\n').map((line) => `<span>${line}</span>`).join('');
-    $('[data-card-id]').textContent = card.id;
+    const isSelf = card.source === 'saved_messages';
+    document.querySelector('[data-messenger]').classList.toggle('messenger--self', isSelf);
+    setThread(card.source, isSelf ? '' : 'typing...');
+    setDateChip(card.dateChip);
+    if (isSelf) {
+      $('[data-avatar]').innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="#fff" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-5.2L5 21V4a1 1 0 0 1 1-1z"/></svg>';
+    }
+    $('[data-message]').innerHTML = card.text.split('\n').map((line) => `<span>${typography(line)}</span>`).join('');
     $('[data-conversation]').removeAttribute('data-crisis');
     $('[data-conversation]').removeAttribute('data-ending');
     $('[data-choices]').innerHTML = choiceButton('left', card.choices.left) + choiceButton('right', card.choices.right);
@@ -109,11 +203,12 @@
 
   function renderCrisis() {
     const crisis = app.deck.crises[app.state.activeCrisisId];
+    document.querySelector('[data-messenger]').classList.remove('messenger--self');
     setThread(crisis.source, 'startup emergency');
+    setDateChip();
     $('[data-conversation]').setAttribute('data-crisis', '');
     $('[data-conversation]').removeAttribute('data-ending');
-    $('[data-message]').innerHTML = `<strong class="system-label">LAST CHANCE</strong>${crisis.text.split('\n').map((line) => `<span>${line}</span>`).join('')}`;
-    $('[data-card-id]').textContent = app.state.activeCrisisId.toUpperCase();
+    $('[data-message]').innerHTML = `<strong class="system-label">LAST CHANCE</strong>${crisis.text.split('\n').map((line) => `<span>${typography(line)}</span>`).join('')}`;
     $('[data-choices]').innerHTML = `
       <button class="choice choice--left" type="button" data-crisis-choice="giveup">${crisis.giveupLabel}</button>
       <button class="choice choice--right" type="button" data-crisis-choice="rescue">${crisis.rescueLabel}</button>`;
@@ -123,15 +218,16 @@
   }
 
   function renderEnding() {
+    document.querySelector('[data-messenger]').classList.remove('messenger--self');
     const ending = app.deck.endings[app.state.endingId] || app.deck.endings.no_proof;
     const sourceId = ending.source || (app.state.win ? '@b2buddy_bot' : '@business1');
     const decisions = app.state.history.length;
     const decisionLabel = decisions === 1 ? 'decision' : 'decisions';
     setThread(sourceId, ending.status || (app.state.win ? 'invoice received' : 'last seen recently'));
+    setDateChip();
     $('[data-conversation]').removeAttribute('data-crisis');
     $('[data-conversation]').setAttribute('data-ending', '');
-    $('[data-message]').innerHTML = `<strong class="ending-title">${ending.title}</strong><span>${ending.text}</span><small>Survived ${decisions} ${decisionLabel} · ${app.state.rescueAttempts} rescues used</small>`;
-    $('[data-card-id]').textContent = app.state.endingId.toUpperCase();
+    $('[data-message]').innerHTML = `<strong class="ending-title">${ending.title}</strong><span>${typography(ending.text)}</span><small>Survived ${decisions} ${decisionLabel} · ${app.state.rescueAttempts} rescues used</small>`;
     $('[data-choices]').innerHTML = `<button class="choice choice--restart" type="button" data-restart>Try again</button>`;
     $('[data-restart]').addEventListener('click', beginRun);
     saveEnding();
@@ -182,7 +278,7 @@
       const errors = engine.validateDeck(deck);
       if (errors.length) throw new Error(errors.join('\n'));
       app.deck = deck;
-      beginRun();
+      startIntro();
     })
     .catch((error) => {
       $('[data-message]').textContent = `Could not start Mistakery: ${error.message}`;
