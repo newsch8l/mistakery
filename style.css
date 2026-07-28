@@ -39,6 +39,7 @@ button { font: inherit; }
 }
 
 .phone {
+  position: relative;
   width: min(100%, 390px);
   height: min(844px, 100%);
   display: grid;
@@ -54,8 +55,9 @@ button { font: inherit; }
 
 .topbar { min-height: 38px; display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 0; }
 h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spacing: -.04em; }
-.turn { padding: 8px 11px; color: #fff; background: #1d2938; border-radius: 999px; font-size: .75rem; box-shadow: 0 8px 20px rgba(21,33,49,.18); }
-.turn strong { font-weight: 800; }
+.turn { padding: 8px 12px; color: #fff; background: #1d2938; border: 0; border-radius: 999px; font-size: .75rem; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px rgba(21,33,49,.18); transition: transform .15s ease, filter .15s ease; }
+.turn:hover, .turn:focus-visible { transform: translateY(-1px); filter: brightness(1.15); outline: none; }
+.turn:active { transform: translateY(1px) scale(.985); }
 
 .resources { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }
 .resource {
@@ -139,8 +141,9 @@ h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spa
 /* Intro chat — shown before the first turn, outside the deck */
 .intro[hidden] { display: none; }
 .intro { min-height: 0; display: grid; }
+.phone.is-onboarding [data-messenger] { display: none; }
 .phone.is-intro { grid-template-rows: minmax(0, 1fr); }
-.phone.is-intro .topbar, .phone.is-intro .resources, .phone.is-intro [data-messenger] { display: none; }
+.phone.is-intro .topbar, .phone.is-intro .resources { display: none; }
 .intro .threadbar__copy strong { font-size: 1.12rem; letter-spacing: -.025em; }
 .conversation--intro {
   display: flex;
@@ -150,9 +153,11 @@ h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spa
   padding: 18px 10px 20px;
   overflow-y: auto;
 }
+.conversation--intro .date-chip { align-self: center; }
 .conversation--intro .bubble { padding-bottom: 15px; }
-.conversation--intro .message-row { animation: introPop .32s cubic-bezier(.2,.9,.3,1.1) both; }
-@keyframes introPop { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: none; } }
+.conversation--intro.is-note .bubble { padding-bottom: 23px; }
+.conversation--intro .message-row, .message-row.is-pop { animation: messagePop .32s cubic-bezier(.2,.9,.3,1.1) both; }
+@keyframes messagePop { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: none; } }
 .intro-typing {
   display: flex; align-items: center; gap: 5px; width: 64px;
   margin-left: 18px; padding: 15px 16px;
@@ -188,3 +193,43 @@ h1 { margin: 0; font-size: 1.45rem; line-height: 1; font-weight: 800; letter-spa
   .reply-dock { padding: 8px; }
   .composer { display: none; }
 }
+
+/* Pinned message: a Telegram-style strip under the header, tap opens the full note */
+.pinned[hidden] { display: none; }
+.pinned {
+  position: absolute; top: 8px; left: 10px; right: 10px; z-index: 5;
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 13px; border: 1px solid rgba(255,255,255,.9); border-radius: 15px;
+  background: var(--bubble); color: var(--ink);
+  font-size: .69rem; font-weight: 600; letter-spacing: -.01em; text-align: left; cursor: pointer;
+  box-shadow: 0 8px 22px rgba(39,65,88,.16);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.pinned:hover, .pinned:focus-visible { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(39,65,88,.22); outline: none; }
+.pinned:active { transform: translateY(1px) scale(.99); }
+.pinned__pin { font-size: .8rem; line-height: 1; }
+.pinned__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pin-sheet[hidden] { display: none; }
+.pin-sheet {
+  position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px;
+  background: rgba(16,26,40,.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: sheetIn .2s ease both;
+}
+@keyframes sheetIn { from { opacity: 0; } to { opacity: 1; } }
+.pin-sheet__card {
+  width: 100%; max-height: 100%; overflow-y: auto;
+  padding: 12px; border-radius: 20px; background: var(--shell);
+  box-shadow: 0 26px 60px rgba(16,26,40,.4);
+  animation: messagePop .28s cubic-bezier(.2,.9,.3,1.1) both;
+}
+.pin-sheet__head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 2px 4px 10px; color: var(--muted); font-size: .68rem; letter-spacing: .04em;
+}
+.pin-sheet__close {
+  width: 26px; height: 26px; display: grid; place-items: center;
+  color: #fff; background: #1d2938; border: 0; border-radius: 50%; font-size: .68rem; cursor: pointer;
+}
+.pin-sheet .bubble { margin-left: 0; max-width: 100%; padding-bottom: 15px; border-radius: 16px; }
+.pin-sheet .bubble::after { display: none; }

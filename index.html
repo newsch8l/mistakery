@@ -16,17 +16,17 @@
       <section class="phone" data-game aria-label="Mistakery game">
         <header class="topbar">
           <h1>Mistakery</h1>
-          <div class="turn">Turn <strong data-turn>1</strong></div>
+          <button class="turn" type="button" data-restart-run>Back to 9-5</button>
         </header>
 
         <section class="resources" data-resources aria-label="Startup resources"></section>
 
         <section class="intro" data-intro hidden aria-label="Intro">
-          <article class="messenger">
+          <article class="messenger" data-intro-messenger>
             <header class="threadbar">
-              <div class="avatar" aria-hidden="true">M</div>
+              <div class="avatar" data-intro-avatar aria-hidden="true">M</div>
               <div class="threadbar__copy">
-                <strong>Mistakery</strong>
+                <strong data-intro-name>Mistakery</strong>
                 <span data-intro-status></span>
               </div>
               <span class="threadbar__menu" aria-hidden="true">•••</span>
@@ -39,9 +39,7 @@
                 <span>Choose a reply…</span>
                 <span aria-hidden="true">↑</span>
               </div>
-              <div class="choices">
-                <button class="choice choice--restart" type="button" data-intro-next>Next</button>
-              </div>
+              <div class="choices" data-intro-choices></div>
             </footer>
           </article>
         </section>
@@ -57,7 +55,10 @@
           </header>
 
           <section class="conversation" data-conversation aria-live="polite">
-            <div class="date-chip" data-date-chip>Today</div>
+            <button class="pinned" type="button" data-pinned hidden>
+              <span class="pinned__pin" aria-hidden="true">📌</span>
+              <span class="pinned__title" data-pinned-title></span>
+            </button>
             <div class="message-row">
               <div class="message-avatar" data-message-avatar aria-hidden="true">B</div>
               <div class="bubble">
@@ -75,6 +76,16 @@
             <div class="choices" data-choices></div>
           </footer>
         </article>
+
+        <div class="pin-sheet" data-pin-sheet hidden>
+          <div class="pin-sheet__card" role="dialog" aria-label="Pinned message">
+            <header class="pin-sheet__head">
+              <span>📌 Pinned</span>
+              <button class="pin-sheet__close" type="button" data-pin-close aria-label="Close">✕</button>
+            </header>
+            <div class="bubble"><p data-pin-text></p></div>
+          </div>
+        </div>
       </section>
     </main>
   </body>

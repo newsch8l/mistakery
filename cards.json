@@ -2,7 +2,7 @@
   "meta": {
     "title": "Mistakery",
     "chapter": "Validation",
-    "startCard": "SAVED_01_PLAN",
+    "startCard": "OPEN_01",
     "maxTurns": 24,
     "baseCashBurn": -1,
     "maxPressureCards": 4,
@@ -180,50 +180,9 @@
     "@user[number]": {
       "name": "@user481516",
       "role": "Free User"
-    },
-    "saved_messages": {
-      "name": "Saved Messages",
-      "role": ""
     }
   },
   "cards": [
-    {
-      "id": "SAVED_01_PLAN",
-      "kind": "opening",
-      "source": "saved_messages",
-      "dateChip": "5 months ago",
-      "text": "<strong>NEVER WORK AGAIN PLAN 🚀</strong>\n<b style=\"font-weight:600\">1.</b> Quit 9-5 rat race\n<b style=\"font-weight:600\">2.</b> Get bro on board\n<b style=\"font-weight:600\">3.</b> Brainstorm smth big (AI??)\n<b style=\"font-weight:600\">4.</b> Killer naming!! + domain\n<b style=\"font-weight:600\">5.</b> A team of legends\n<b style=\"font-weight:600\">6.</b> Raise 💰💰 from investors (pitch deck?)\n<b style=\"font-weight:600\">7.</b> Become a unicorn 🦄\n<b style=\"font-weight:600\">8.</b> Buy mom a house\n<b style=\"font-weight:600\">9.</b> Hire ex-boss to fire him",
-      "actor_action": "TEMP visual test: the founder rereads his day-one masterplan in Saved Messages.",
-      "player_decision": "Fake choice, both buttons lead to the update.",
-      "choices": {
-        "left": {
-          "label": "Right on track",
-          "next": "SAVED_02_UPDATE"
-        },
-        "right": {
-          "label": "Slightly behind",
-          "next": "SAVED_02_UPDATE"
-        }
-      }
-    },
-    {
-      "id": "SAVED_02_UPDATE",
-      "kind": "opening",
-      "source": "saved_messages",
-      "text": "<strong>5 MONTHS AS A FOUNDER 🚀</strong>\n<b style=\"font-weight:600\">1.</b> Never return to the office ✅\n<b style=\"font-weight:600\">2.</b> Bro as cofounder ✅\n<b style=\"font-weight:600\">3.</b> Built AI B2B SaaS. Easy money ✅\n<b style=\"font-weight:600\">4.</b> Brand: B2BuyerSpyer ✅\n<b style=\"font-weight:600\">5.</b> Slogan: We find the buyer. You light the fire 🔥✅\n<b style=\"font-weight:600\">6.</b> Team grinding 24/7. LEGENDS!! ✅\n<b style=\"font-weight:600\">7.</b> Landed a HUGE investor ✅\n \n<strong>IN PROGRESS:</strong>\n<b style=\"font-weight:600\">8.</b> Unicorn 🦄🎯\n(waiting for the market to wake up)",
-      "actor_action": "TEMP visual test: the founder posts a triumphant 5-month update over zero revenue.",
-      "player_decision": "Fake choice, both buttons pin the update and open the bot card.",
-      "choices": {
-        "left": {
-          "label": "WE'RE SO BACK",
-          "next": "OPEN_01"
-        },
-        "right": {
-          "label": "it's so over",
-          "next": "OPEN_01"
-        }
-      }
-    },
     {
       "id": "OPEN_01",
       "kind": "opening",

@@ -66,16 +66,73 @@
   ];
   const INTRO_TYPING_MS = 620;
 
-  function startIntro() {
-    let shown = 0;
-    let busy = false;
+  const BOOKMARK_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="#fff" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-5.2L5 21V4a1 1 0 0 1 1-1z"/></svg>';
+
+  // Notes the founder wrote to himself. Screens, not cards: no turn, no cash burn.
+  const NOTE_SCREENS = [
+    {
+      chip: '5 months ago',
+      text: '<strong>NEVER WORK AGAIN PLAN \uD83D\uDE80</strong>\n<b style="font-weight:600">1.</b> Quit 9-5 rat race\n<b style="font-weight:600">2.</b> Get bro on board\n<b style="font-weight:600">3.</b> Brainstorm smth big (AI??)\n<b style="font-weight:600">4.</b> Killer naming!! + domain\n<b style="font-weight:600">5.</b> A team of legends\n<b style="font-weight:600">6.</b> Raise \uD83D\uDCB0\uD83D\uDCB0 from investors (pitch deck?)\n<b style="font-weight:600">7.</b> Become a unicorn \uD83E\uDD84\n<b style="font-weight:600">8.</b> Buy mom a house\n<b style="font-weight:600">9.</b> Hire ex-boss to fire him',
+      buttons: ['Right on track', 'Slightly behind'],
+    },
+    {
+      chip: 'Today',
+      text: '<strong>5 MONTHS AS A FOUNDER \uD83D\uDE80</strong>\n<b style="font-weight:600">1.</b> Never return to the office \u2705\n<b style="font-weight:600">2.</b> Bro as cofounder \u2705\n<b style="font-weight:600">3.</b> Built AI B2B SaaS. Easy money \u2705\n<b style="font-weight:600">4.</b> Brand: B2BuyerSpyer \u2705\n<b style="font-weight:600">5.</b> Slogan: We find the buyer. You light the fire \uD83D\uDD25\u2705\n<b style="font-weight:600">6.</b> Team grinding 24/7. LEGENDS!! \u2705\n<b style="font-weight:600">7.</b> Landed a HUGE investor \u2705\n\u00A0\n<strong>IN PROGRESS:</strong>\n<b style="font-weight:600">8.</b> Unicorn \uD83E\uDD84\uD83C\uDFAF\n(waiting for the market to wake up)',
+      buttons: ["WE'RE SO BACK", "it's so over"],
+    },
+  ];
+
+  // The founder's update stays pinned for the rest of the run: the goal never leaves the screen.
+  const PINNED_NOTE = 1;
+
+  function stripTags(text) {
+    return text.replace(/<[^>]*>/g, '');
+  }
+
+  function showPinned() {
+    const note = NOTE_SCREENS[PINNED_NOTE];
+    const lines = note.text.split('\n');
+    $('[data-pinned-title]').textContent = `${stripTags(lines[0])} …`;
+    $('[data-pin-text]').innerHTML = lines.map((line) => `<span>${line ? typography(line) : '&nbsp;'}</span>`).join('');
+    $('[data-pinned]').hidden = false;
+  }
+
+  function hidePinned() {
+    $('[data-pinned]').hidden = true;
+    $('[data-pin-sheet]').hidden = true;
+  }
+
+  function bubbleHtml(text, stamp) {
+    const lines = text.split('\n').map((line) => `<span>${line ? typography(line) : '&nbsp;'}</span>`).join('');
+    const time = stamp ? '<span class="stamp">15:54</span>' : '';
+    return `<div class="message-row"><div class="bubble"><p>${lines}</p>${time}</div></div>`;
+  }
+
+  function startOnboarding(options = {}) {
+    const skipIntro = options.skipIntro === true;
     const phone = document.querySelector('.phone');
     const screen = $('[data-intro]');
+    const messenger = $('[data-intro-messenger]');
     const conversation = $('[data-intro-conversation]');
-    const button = $('[data-intro-next]');
+    const choices = $('[data-intro-choices]');
+    let delivered = skipIntro ? INTRO_TEXTS.length : 0;
+    let note = -1;
+    let busy = false;
 
-    phone.classList.add('is-intro');
+    phone.classList.add('is-onboarding', 'is-intro');
     screen.hidden = false;
+    hidePinned();
+
+    const singleButton = (label) => {
+      choices.innerHTML = `<button class="choice choice--restart" type="button" data-intro-next>${label}</button>`;
+      $('[data-intro-next]').addEventListener('click', advance);
+    };
+
+    const pairButtons = (labels) => {
+      choices.innerHTML = `<button class="choice choice--left" type="button" data-intro-next>${labels[0]}</button>`
+        + `<button class="choice choice--right" type="button" data-intro-next>${labels[1]}</button>`;
+      document.querySelectorAll('[data-intro-next]').forEach((node) => node.addEventListener('click', advance));
+    };
 
     const setTyping = (on) => {
       $('[data-intro-status]').textContent = on ? 'typing...' : '';
@@ -84,35 +141,49 @@
       if (!on && dots) dots.remove();
     };
 
-    const addBubble = () => {
-      const lines = INTRO_TEXTS[shown].split('\n').map((line) => `<span>${line ? typography(line) : '&nbsp;'}</span>`).join('');
-      conversation.insertAdjacentHTML('beforeend', `<div class="message-row"><div class="bubble"><p>${lines}</p></div></div>`);
-      conversation.scrollTop = conversation.scrollHeight;
-      shown += 1;
-      button.textContent = INTRO_BUTTONS[shown - 1];
-    };
-
-    const deliver = () => {
+    const deliverMessage = () => {
       busy = true;
-      button.disabled = true;
+      choices.querySelectorAll('button').forEach((node) => { node.disabled = true; });
       setTyping(true);
       window.setTimeout(() => {
         setTyping(false);
-        addBubble();
-        button.disabled = false;
+        conversation.insertAdjacentHTML('beforeend', bubbleHtml(INTRO_TEXTS[delivered]));
+        conversation.scrollTop = conversation.scrollHeight;
+        delivered += 1;
+        singleButton(INTRO_BUTTONS[delivered - 1]);
         busy = false;
       }, INTRO_TYPING_MS);
     };
 
-    button.addEventListener('click', () => {
-      if (busy) return;
-      if (shown < INTRO_TEXTS.length) return deliver();
-      screen.hidden = true;
+    const showNote = () => {
+      const page = NOTE_SCREENS[note];
+      // The notes are already the game: same header, same bars, same turn counter.
+      // Only the choice is free — neither button moves anything yet.
       phone.classList.remove('is-intro');
-      beginRun();
-    });
+      if (!app.state) app.state = engine.startRun(app.deck);
+      renderResources();
+      messenger.classList.add('messenger--self');
+      conversation.classList.add('is-note');
+      $('[data-intro-name]').textContent = 'Saved Messages';
+      $('[data-intro-avatar]').innerHTML = BOOKMARK_SVG;
+      $('[data-intro-status]').textContent = '';
+      conversation.innerHTML = `<div class="date-chip">${page.chip}</div>` + bubbleHtml(page.text, true);
+      pairButtons(page.buttons);
+    };
 
-    deliver();
+    function advance() {
+      if (busy) return;
+      if (delivered < INTRO_TEXTS.length) return deliverMessage();
+      note += 1;
+      if (note < NOTE_SCREENS.length) return showNote();
+      screen.hidden = true;
+      phone.classList.remove('is-onboarding', 'is-intro');
+      showPinned();
+      beginRun();
+    }
+
+    if (skipIntro) advance();
+    else deliverMessage();
   }
 
   function beginRun() {
@@ -138,10 +209,6 @@
       node.textContent = avatarText;
     });
     $('[data-status]').textContent = status;
-  }
-
-  function setDateChip(text) {
-    $('[data-date-chip]').textContent = text || 'Today';
   }
 
   function renderResources() {
@@ -185,27 +252,29 @@
     });
   }
 
+  // The game reuses one message row, so the arrival animation has to be re-armed by hand.
+  function popMessage() {
+    const row = document.querySelector('[data-conversation] .message-row');
+    if (!row) return;
+    row.classList.remove('is-pop');
+    void row.offsetWidth;
+    row.classList.add('is-pop');
+  }
+
   function renderCard() {
     const card = engine.cardById(app.deck, app.state.currentCardId);
-    const isSelf = card.source === 'saved_messages';
-    document.querySelector('[data-messenger]').classList.toggle('messenger--self', isSelf);
-    setThread(card.source, isSelf ? '' : 'typing...');
-    setDateChip(card.dateChip);
-    if (isSelf) {
-      $('[data-avatar]').innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="#fff" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-5.2L5 21V4a1 1 0 0 1 1-1z"/></svg>';
-    }
+    setThread(card.source, 'typing...');
     $('[data-message]').innerHTML = card.text.split('\n').map((line) => `<span>${typography(line)}</span>`).join('');
     $('[data-conversation]').removeAttribute('data-crisis');
     $('[data-conversation]').removeAttribute('data-ending');
     $('[data-choices]').innerHTML = choiceButton('left', card.choices.left) + choiceButton('right', card.choices.right);
     bindChoiceButtons(card);
+    popMessage();
   }
 
   function renderCrisis() {
     const crisis = app.deck.crises[app.state.activeCrisisId];
-    document.querySelector('[data-messenger]').classList.remove('messenger--self');
     setThread(crisis.source, 'startup emergency');
-    setDateChip();
     $('[data-conversation]').setAttribute('data-crisis', '');
     $('[data-conversation]').removeAttribute('data-ending');
     $('[data-message]').innerHTML = `<strong class="system-label">LAST CHANCE</strong>${crisis.text.split('\n').map((line) => `<span>${typography(line)}</span>`).join('')}`;
@@ -215,27 +284,26 @@
     document.querySelectorAll('[data-crisis-choice]').forEach((button) => {
       button.addEventListener('click', () => handleCrisis(button.dataset.crisisChoice));
     });
+    popMessage();
   }
 
   function renderEnding() {
-    document.querySelector('[data-messenger]').classList.remove('messenger--self');
     const ending = app.deck.endings[app.state.endingId] || app.deck.endings.no_proof;
     const sourceId = ending.source || (app.state.win ? '@b2buddy_bot' : '@business1');
     const decisions = app.state.history.length;
     const decisionLabel = decisions === 1 ? 'decision' : 'decisions';
     setThread(sourceId, ending.status || (app.state.win ? 'invoice received' : 'last seen recently'));
-    setDateChip();
     $('[data-conversation]').removeAttribute('data-crisis');
     $('[data-conversation]').setAttribute('data-ending', '');
     $('[data-message]').innerHTML = `<strong class="ending-title">${ending.title}</strong><span>${typography(ending.text)}</span><small>Survived ${decisions} ${decisionLabel} · ${app.state.rescueAttempts} rescues used</small>`;
     $('[data-choices]').innerHTML = `<button class="choice choice--restart" type="button" data-restart>Try again</button>`;
     $('[data-restart]').addEventListener('click', beginRun);
     saveEnding();
+    popMessage();
   }
 
   function render() {
     if (!app.deck || !app.state) return;
-    $('[data-turn]').textContent = String(Math.min(app.state.turn, app.deck.meta.maxTurns));
     renderResources();
     if (app.state.gameOver) renderEnding();
     else if (app.state.activeCrisisId) renderCrisis();
@@ -261,7 +329,20 @@
     window.setTimeout(() => { app.locked = false; }, 280);
   }
 
+  $('[data-pinned]').addEventListener('click', () => { $('[data-pin-sheet]').hidden = false; });
+  $('[data-pin-close]').addEventListener('click', () => { $('[data-pin-sheet]').hidden = true; });
+  $('[data-pin-sheet]').addEventListener('click', (event) => {
+    if (event.target === $('[data-pin-sheet]')) $('[data-pin-sheet]').hidden = true;
+  });
+
+  $('[data-restart-run]').addEventListener('click', () => {
+    app.state = engine.startRun(app.deck);
+    app.locked = false;
+    startOnboarding({ skipIntro: true });
+  });
+
   document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') $('[data-pin-sheet]').hidden = true;
     if (event.key === 'ArrowLeft') $('[data-choice="left"]')?.click();
     if (event.key === 'ArrowRight') $('[data-choice="right"]')?.click();
   });
@@ -278,7 +359,7 @@
       const errors = engine.validateDeck(deck);
       if (errors.length) throw new Error(errors.join('\n'));
       app.deck = deck;
-      startIntro();
+      startOnboarding();
     })
     .catch((error) => {
       $('[data-message]').textContent = `Could not start Mistakery: ${error.message}`;

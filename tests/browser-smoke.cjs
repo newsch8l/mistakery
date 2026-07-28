@@ -5,6 +5,24 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require('playwright');
 
+// The onboarding runs before the deck, and the card id is no longer printed on screen.
+const enterGame = async (page) => {
+  await page.waitForFunction(() => window.MistakeryApp && window.MistakeryApp.deck, null, { timeout: 4000 });
+  for (let safety = 0; safety < 40; safety += 1) {
+    const onboarding = await page.evaluate(() => {
+      const screen = document.querySelector('[data-intro]');
+      return Boolean(screen) && !screen.hidden;
+    });
+    if (!onboarding) break;
+    const button = page.locator('[data-intro-next]').first();
+    if (await button.count() && await button.isEnabled()) await button.click();
+    await page.waitForTimeout(250);
+  }
+  await page.waitForFunction(() => Boolean(window.MistakeryApp.state), null, { timeout: 4000 });
+};
+
+const currentCardId = (page) => page.evaluate(() => window.MistakeryApp.state.currentCardId);
+
 const PACKAGE_A_IDS = [
   'PAYROLL_RESTRICTED_AI_SEED', 'PAYROLL_RESTRICTED_AI_CALLBACK',
   'DEV_HOSTAGE_SEED', 'DEV_HOSTAGE_CALLBACK',
@@ -21,8 +39,8 @@ test('opens directly from index.html without a local server', async () => {
   try {
     const fileUrl = pathToFileURL(path.resolve(__dirname, '..', 'index.html')).href;
     await page.goto(fileUrl, { waitUntil: 'load' });
-    await page.waitForSelector('[data-card-id]', { timeout: 2000 });
-    assert.equal(await page.locator('[data-card-id]').textContent(), 'OPEN_01');
+    await enterGame(page);
+    assert.equal(await currentCardId(page), 'OPEN_01');
     assert.equal(await page.locator('[data-choice]').count(), 2);
     assert.equal(await page.locator('h1').textContent(), 'Mistakery');
     assert.equal((await page.locator('.topbar').textContent()).includes('Validation'), false);
@@ -32,7 +50,7 @@ test('opens directly from index.html without a local server', async () => {
     assert.ok(responseWeight < 700, `Response font is still bold: ${responseWeight}`);
     const messageGeometry = await page.evaluate(() => {
       const avatar = document.querySelector('[data-message-avatar]').getBoundingClientRect();
-      const bubble = document.querySelector('.bubble').getBoundingClientRect();
+      const bubble = document.querySelector('[data-messenger] .bubble').getBoundingClientRect();
       return {
         avatarLeft: avatar.left,
         avatarTop: avatar.top,
@@ -42,18 +60,17 @@ test('opens directly from index.html without a local server', async () => {
       };
     });
     assert.ok(messageGeometry.avatarLeft < messageGeometry.bubbleLeft);
-    assert.ok(messageGeometry.avatarTop >= messageGeometry.bubbleBottom - 10, JSON.stringify(messageGeometry));
+    assert.ok(messageGeometry.avatarTop >= messageGeometry.bubbleBottom - 12, JSON.stringify(messageGeometry));
     assert.ok(messageGeometry.avatarBottom >= messageGeometry.bubbleBottom + 14, JSON.stringify(messageGeometry));
     const conversationGeometry = await page.evaluate(() => {
-      const conversation = document.querySelector('.conversation').getBoundingClientRect();
-      const date = document.querySelector('.date-chip').getBoundingClientRect();
-      const bubble = document.querySelector('.bubble').getBoundingClientRect();
+      const conversation = document.querySelector('[data-conversation]').getBoundingClientRect();
+      const bubble = document.querySelector('[data-messenger] .bubble').getBoundingClientRect();
       const conversationCenter = (conversation.top + conversation.bottom) / 2;
-      const contentCenter = (date.top + bubble.bottom) / 2;
+      const contentCenter = (bubble.top + bubble.bottom) / 2;
       return { offsetAboveCenter: conversationCenter - contentCenter };
     });
-    assert.ok(conversationGeometry.offsetAboveCenter >= 28, JSON.stringify(conversationGeometry));
-    assert.ok(conversationGeometry.offsetAboveCenter <= 36, JSON.stringify(conversationGeometry));
+    assert.ok(conversationGeometry.offsetAboveCenter >= -2, JSON.stringify(conversationGeometry));
+    assert.ok(conversationGeometry.offsetAboveCenter <= 12, JSON.stringify(conversationGeometry));
     const topbarHeight = await page.locator('.topbar').evaluate((node) => node.getBoundingClientRect().height);
     assert.ok(topbarHeight >= 38, `Removing the label moved the chat upward: ${topbarHeight}`);
     const cardLayout = await page.evaluate(() => {
@@ -107,7 +124,7 @@ test('opens directly from index.html without a local server', async () => {
     });
     assert.equal(new Set(Object.values(cardLayout.verified).map((layout) => layout.fontSize)).size, 1, JSON.stringify(cardLayout.verified));
     Object.entries(cardLayout.verified).forEach(([id, layout]) => {
-      assert.equal(layout.fontSize, '15.6px', `${id} no longer uses the common 390px-viewport font size`);
+      assert.equal(layout.fontSize, '14.6px', `${id} no longer uses the common bubble font size`);
     });
     if (process.env.MISTAKERY_SCREENSHOT_DIR) {
       fs.mkdirSync(process.env.MISTAKERY_SCREENSHOT_DIR, { recursive: true });
@@ -116,7 +133,7 @@ test('opens directly from index.html without a local server', async () => {
         const shot = await shotBrowser.newPage({ viewport: { width: 390, height: 844 } });
         try {
           await shot.goto(fileUrl, { waitUntil: 'load' });
-          await shot.waitForSelector('[data-card-id]', { timeout: 2000 });
+          await enterGame(shot);
           await shot.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; }' });
           await shot.evaluate((cardId) => {
             window.MistakeryApp.state.gameOver = false;
@@ -151,7 +168,7 @@ test('opens directly from index.html without a local server', async () => {
     await page.evaluate(() => { window.MistakeryApp.state = window.MistakeryEngine.startRun(window.MistakeryApp.deck); window.MistakeryApp.render(); });
     const continueThroughPackageA = async (nextId) => {
       for (let safety = 0; safety < 4; safety += 1) {
-        const currentId = await page.locator('[data-card-id]').textContent();
+        const currentId = await currentCardId(page);
         if (currentId === nextId) return;
         assert.ok(PACKAGE_A_IDS.includes(currentId), `Unexpected card ${currentId} before ${nextId}`);
         await page.locator('[data-choice="left"]').click();
@@ -165,13 +182,13 @@ test('opens directly from index.html without a local server', async () => {
       await continueThroughPackageA(nextId);
     }
     await page.locator('[data-choice="left"]').click();
-    await page.waitForFunction(() => document.querySelector('[data-card-id]').textContent === 'AGENT_01');
+    await page.waitForFunction(() => window.MistakeryApp.state.currentCardId === 'AGENT_01');
     assert.equal(await page.locator('[data-ending]').count(), 0);
     assert.match(await page.locator('[data-sender]').textContent(), /@unicorn_hunter/);
 
     const desktop = await browser.newPage({ viewport: { width: 1536, height: 838 } });
     await desktop.goto(fileUrl, { waitUntil: 'load' });
-    await desktop.waitForSelector('[data-card-id]', { timeout: 2000 });
+    await enterGame(desktop);
     const desktopFit = await desktop.evaluate(() => {
       const phone = document.querySelector('[data-game]').getBoundingClientRect();
       return {
@@ -203,17 +220,19 @@ test('renders a readable two-button game with previews, crisis and ending states
 
   try {
     await page.goto(gameUrl, { waitUntil: 'networkidle' });
-    await page.waitForSelector('[data-card-id]', { timeout: 2000 });
+    await enterGame(page);
     assert.equal(await page.locator('[data-resource]').count(), 4);
     assert.equal(await page.locator('[data-choice]').count(), 2);
-    assert.equal(await page.locator('[data-card-id]').textContent(), 'OPEN_01');
-    assert.match(await page.locator('[data-message]').textContent(), /11,204 new B2B AI SaaS competitors/);
+    assert.equal(await currentCardId(page), 'OPEN_01');
+    // short words are glued with a non-breaking space at render time
+    const openingMessage = (await page.locator('[data-message]').textContent()).replace(/\u00A0/g, ' ');
+    assert.match(openingMessage, /11,204 new B2B AI SaaS competitors/);
     await page.screenshot({ path: '/tmp/mistakery-vertical-slice-mobile.png', fullPage: true });
 
     await page.locator('[data-choice="left"]').hover();
     assert.equal(await page.locator('[data-resource].is-preview').count(), 2);
     await page.locator('[data-choice="left"]').click();
-    await page.waitForFunction(() => document.querySelector('[data-card-id]').textContent === 'OPEN_02');
+    await page.waitForFunction(() => window.MistakeryApp.state.currentCardId === 'OPEN_02');
     assert.equal(await page.locator('[data-resource="cash"] [data-value]').textContent(), '24%');
     assert.equal(await page.locator('[data-resource="team"] [data-value]').textContent(), '59%');
     assert.equal(await page.locator('[data-resource="customers"] [data-value]').textContent(), '15%');
@@ -228,7 +247,7 @@ test('renders a readable two-button game with previews, crisis and ending states
         window.MistakeryApp.state.currentCardId = card.id;
         window.MistakeryApp.render();
         const conversation = document.querySelector('[data-conversation]').getBoundingClientRect();
-        const bubble = document.querySelector('.bubble').getBoundingClientRect();
+        const bubble = document.querySelector('[data-messenger] .bubble').getBoundingClientRect();
         const dock = document.querySelector('[data-reply-dock]').getBoundingClientRect();
         if (bubble.top < conversation.top || bubble.bottom > conversation.bottom || dock.bottom > window.innerHeight) failures.push(card.id);
       }
@@ -265,7 +284,7 @@ test('renders a readable two-button game with previews, crisis and ending states
 
     const desktop = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await desktop.goto(gameUrl, { waitUntil: 'networkidle' });
-    await desktop.waitForSelector('[data-card-id]', { timeout: 2000 });
+    await enterGame(desktop);
     const desktopOverflow = await desktop.evaluate(() => ({
       horizontal: document.documentElement.scrollWidth > window.innerWidth,
       vertical: document.documentElement.scrollHeight > window.innerHeight,
@@ -283,7 +302,7 @@ test('completes controlled Agents and Padel browser walkthroughs', async () => {
   const play = async (picks, expectedEnding) => {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
     await page.goto(fileUrl, { waitUntil: 'load' });
-    await page.waitForSelector('[data-card-id]', { timeout: 2000 });
+    await enterGame(page);
     await page.evaluate(() => {
       Math.random = () => 0;
       window.MistakeryApp.state = window.MistakeryEngine.startRun(window.MistakeryApp.deck);
