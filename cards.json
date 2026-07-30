@@ -8,25 +8,7 @@
     "maxPressureCards": 4,
     "pressureAfterArcSteps": [],
     "scheduler": {
-      "boundaries": [
-        {
-          "id": "opening_shared_seed",
-          "before": "OPEN_04",
-          "after": "OPEN_05",
-          "roles": [
-            "seed"
-          ]
-        },
-        {
-          "id": "opening_health_resolution",
-          "before": "OPEN_05",
-          "after": "OPEN_06",
-          "roles": [
-            "callback",
-            "reaction"
-          ]
-        }
-      ],
+      "boundaries": [],
       "protectedPairs": [
         [
           "SADBOT_04_LEAD",
@@ -187,394 +169,226 @@
       "id": "OPEN_01",
       "kind": "opening",
       "source": "@b2buddy_bot",
-      "text": "Hi there, visionary! 👋\n11,204 new B2B AI SaaS competitors launched today.\nOur startup, B2BuyerSpyer, still has the best name.",
-      "actor_action": "The bot greets the founder with generic AI enthusiasm and treats a crowded category as a naming contest.",
-      "player_decision": "Check the competitive market or trust the startup name.",
+      "text": "Hi there, visionary! 👋\n11,204 new AI B2B SaaS competitors launched today.\nB2BuyerSpyer still dominates in naming and narrative architecture",
+      "actor_action": "The bot opens the day with a competitor count and ranks the company first on the only metric it can win.",
+      "player_decision": "React to the number or accept the compliment.",
+      "continuation": "forced",
       "choices": {
         "left": {
-          "label": "Check the market",
+          "label": "WTF, how many???",
           "effects": {
-            "team": -1,
             "founder": -2
           },
           "effect_reason": {
-            "team": "Someone has to inspect thousands of overnight competitors.",
-            "founder": "The crowded market weakens confidence in the category."
+            "founder": "The size of the field lands before any comfort does."
           },
-          "next": "OPEN_02"
+          "next": "OPEN_02a"
         },
         "right": {
-          "label": "Trust the name",
+          "label": "Pure genius",
           "effects": {
             "founder": 3
           },
           "effect_reason": {
-            "founder": "Treating the name as an advantage feeds founder confidence."
+            "founder": "Taking the bot's ranking at face value feels like winning."
           },
-          "next": "OPEN_02"
+          "next": "OPEN_02b"
         }
       }
     },
     {
-      "id": "OPEN_02",
+      "id": "OPEN_02a",
       "kind": "opening",
       "source": "@b2buddy_bot",
-      "text": "Great news! 🎉\nB2BuyerSpyer found 814 companies that need buyers.\nPotential customers: 814. Paid invoices: 0.",
-      "actor_action": "The bot celebrates a large pool of potential customers while reporting zero revenue.",
-      "player_decision": "Inspect the prospect pool or inspect the empty invoices.",
+      "text": "Competitor analysis complete 📊\nWe have a slight KPI deviation (0 clients).\nI reframed this as a 'pre-revenue learning phase' 📈\nWant me to send a motivational quote to the team? 🚀🤖",
+      "actor_action": "The bot renames zero clients as a learning phase and offers the team a motivational quote instead of an answer.",
+      "player_decision": "Let the quote go out or stop it.",
+      "continuation": "storylet",
       "choices": {
         "left": {
-          "label": "Audit the 814",
+          "label": "Fuel the grind!",
           "effects": {
-            "team": -2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "The team must inspect hundreds of potential customers.",
-            "founder": "Auditing the vanity metric risks exposing its weakness."
-          },
-          "next": "OPEN_03_AUDIT"
-        },
-        "right": {
-          "label": "Open invoices",
-          "effects": {
-            "founder": -5
-          },
-          "effect_reason": {
-            "founder": "Looking at an empty invoice folder hurts confidence."
-          },
-          "next": "OPEN_03_INVOICES"
-        }
-      }
-    },
-    {
-      "id": "OPEN_03_AUDIT",
-      "kind": "opening",
-      "source": "@b2buddy_bot",
-      "text": "Audit complete! ✅\n814 companies need buyers.\n0 need B2BuyerSpyer.\nWant another 814?",
-      "actor_action": "The bot confirms that the market exists but the product is unwanted, then offers more of the same data.",
-      "player_decision": "Increase the prospect count or change how the product is presented.",
-      "choices": {
-        "left": {
-          "label": "Find more",
-          "effects": {
-            "cash": -2,
             "team": -3,
             "founder": 2
           },
           "effect_reason": {
-            "cash": "Another prospect search consumes data and compute.",
-            "team": "The team must process another batch of companies.",
-            "founder": "Blaming sample size protects the founder's belief in the product."
-          },
-          "next": "OPEN_04"
+            "team": "The team gets a motivational quote where a plan was due.",
+            "founder": "Sending something feels like handling it."
+          }
         },
         "right": {
-          "label": "Rewrite the pitch",
+          "label": "We're good",
           "effects": {
-            "team": -2,
-            "customers": 3,
-            "founder": -2
+            "founder": -1
           },
           "effect_reason": {
-            "team": "The team must produce a new sales story.",
-            "customers": "A clearer pitch improves the chance of a useful conversation.",
-            "founder": "Changing the pitch admits the current story failed."
-          },
-          "next": "OPEN_04"
+            "founder": "Declining the ritual leaves the zero sitting in plain sight."
+          }
         }
       }
     },
     {
-      "id": "OPEN_03_INVOICES",
+      "id": "OPEN_02b",
       "kind": "opening",
-      "source": "@bigdeals",
-      "text": "Chief, I fixed the empty invoice folder.\nIt’s called REVENUE PIPELINE now.\nFake one invoice or call five prospects?",
-      "actor_action": "Sales renames the empty invoice folder and proposes fake evidence or real outreach.",
-      "player_decision": "Fake an invoice or call prospective customers.",
+      "source": "@b2buddy_bot",
+      "text": "Great energy! ✅\nB2BuyerSpyer leads the market in unrealized potential.\nClients: 0\nOpportunities: 100% 📈",
+      "actor_action": "The bot turns having no clients into a market-leading position on unrealized potential.",
+      "player_decision": "Push the number at sales or at marketing.",
+      "continuation": "storylet",
       "choices": {
         "left": {
-          "label": "Fake one",
+          "label": "Sales, wake up",
           "effects": {
-            "team": -5,
-            "founder": 5
+            "team": -2,
+            "founder": 2
           },
           "effect_reason": {
-            "team": "The team loses trust in fake financial evidence.",
-            "founder": "Performing success temporarily inflates confidence."
-          },
-          "next": "OPEN_04"
+            "team": "Sales is handed the zero as a personal failure.",
+            "founder": "Naming someone responsible steadies him."
+          }
         },
         "right": {
-          "label": "Call five",
+          "label": "Marketing, spin this",
           "effects": {
-            "team": -3,
-            "customers": 4,
-            "founder": -2
+            "team": -1,
+            "founder": 3
           },
           "effect_reason": {
-            "team": "The team must prepare five urgent sales calls.",
-            "customers": "Real outreach improves proximity to a buyer.",
-            "founder": "Cold outreach is humiliating after claiming the product finds buyers."
-          },
-          "setFlags": [
-            "sales_outreach_started"
-          ],
-          "next": "OPEN_04"
+            "team": "Marketing takes on dressing up a number nobody can fix.",
+            "founder": "A promised spin is easier to believe than a client."
+          }
         }
       }
     },
     {
-      "id": "OPEN_04",
+      "id": "OPEN_BOSS",
       "kind": "opening",
       "source": "@business1",
-      "text": "Five months since you quit to build AI that finds B2B customers.\nHas it found one for you yet?",
-      "actor_action": "The ex-boss politely checks whether the founder has failed.",
-      "player_decision": "Ignore this humiliation or answer with bravado.",
+      "text": "Just a friendly check-in.\nIt's been five months since you left to play businessman.\nHas your revolutionary AI actually found a customer yet?",
+      "actor_action": "The ex-boss counts the months out loud and asks the one question the company cannot answer.",
+      "player_decision": "Ignore the message or answer with bravado.",
+      "storyletEntry": true,
+      "oncePerRun": true,
+      "weight": 3,
+      "continuation": "storylet",
       "choices": {
         "left": {
-          "label": "Leave on read",
+          "label": "Leave unread",
           "effects": {
-            "founder": 2
+            "founder": -2
           },
           "effect_reason": {
-            "founder": "Ignoring the message stops the immediate humiliation."
+            "founder": "The question stays open and keeps working on him."
           },
           "setFlags": [
-            "opening_overload_exposed"
-          ],
-          "next": "OPEN_05"
+            "met_boss"
+          ]
         },
         "right": {
-          "label": "Claim we’re close",
+          "label": "Crushing it",
           "effects": {
-            "founder": 7
+            "founder": 3
           },
           "effect_reason": {
-            "founder": "An unearned declaration of victory feeds founder confidence."
+            "founder": "Saying it out loud is briefly as good as it being true."
           },
           "setFlags": [
-            "opening_overload_exposed"
-          ],
-          "next": "OPEN_05"
+            "met_boss"
+          ]
         }
       }
     },
     {
-      "id": "OPEN_05",
+      "id": "OPEN_DEV",
       "kind": "opening",
       "source": "@error404",
-      "schedulerSpineStep": true,
       "text": "payroll is friday\nare we getting money or another speech about changing b2b forever",
-      "actor_action": "The developer asks whether salaries will actually be paid.",
-      "player_decision": "Reserve cash for payroll or promise that revenue is coming.",
+      "actor_action": "The dev names the payroll date and refuses to accept another speech instead of a transfer.",
+      "player_decision": "Reserve the money or answer with partnership talk.",
+      "storyletEntry": true,
+      "oncePerRun": true,
+      "weight": 3,
+      "continuation": "storylet",
       "choices": {
         "left": {
-          "label": "Reserve payroll",
+          "label": "Take your money",
           "effects": {
             "cash": -3,
             "team": 5,
             "founder": -2
           },
           "effect_reason": {
-            "cash": "Money is ring-fenced for salaries.",
-            "team": "The team trusts a concrete payroll commitment.",
-            "founder": "The remaining runway becomes painfully visible."
-          },
-          "next": "OPEN_06"
-        },
-        "right": {
-          "label": "Promise revenue",
-          "effects": {
-            "team": -4,
-            "founder": 3
-          },
-          "effect_reason": {
-            "team": "Another promise without money weakens trust.",
-            "founder": "Repeating the revenue story protects confidence."
+            "cash": "Payroll leaves the account on the promised day.",
+            "team": "Being paid on time is the whole argument.",
+            "founder": "Watching the balance drop costs him."
           },
           "setFlags": [
-            "payroll_unresolved",
-            "dev_payroll_risk_visible"
-          ],
-          "next": "OPEN_06"
+            "met_dev"
+          ]
+        },
+        "right": {
+          "label": "But we're partners!",
+          "effects": {
+            "team": -5,
+            "founder": 2
+          },
+          "effect_reason": {
+            "team": "Partnership talk instead of a transfer reads as a refusal.",
+            "founder": "The money stays and so does the story about the mission."
+          },
+          "setFlags": [
+            "met_dev"
+          ]
         }
       }
     },
     {
-      "id": "OPEN_06",
+      "id": "OPEN_INVESTOR",
       "kind": "opening",
       "source": "@unicorn_hunter",
+      "text": "I AINT FUND NO AI JUST TO GET ZERO CLIENTS.\nWHY WE STILL GOT NO BUYERS???\nIF I WANTED TO WASTE CASH I'D BUY A YACHT FOR MY EX WIFE",
+      "actor_action": "The investor measures his cheque against a yacht and demands to know where the buyers are.",
+      "player_decision": "Blame the market or blame the team — the excuse becomes the route.",
+      "storyletEntry": true,
+      "oncePerRun": true,
+      "weight": 3,
+      "requires": [
+        "met_boss",
+        "met_dev"
+      ],
       "continuation": "forced",
-      "text": "I FUNDED AI THAT FINDS BUYERS.\nIT FOUND ZERO FOR US.\nGET A PAID INVOICE.\nBUILD FOR ENTERPRISE OR HUNT A WHALE.",
-      "actor_action": "The investor demands a credible route to the first paying customer.",
-      "player_decision": "Modify the product for enterprise buyers or chase one enormous customer.",
-      "stateEffects": [
-        {
-          "requires": [
-            "control_seed_mom",
-            "route_control_mom_boundary",
-            "mom_investor_clash_resolved"
-          ],
+      "choices": {
+        "left": {
+          "label": "Market's not ready",
           "effects": {
-            "team": 3,
-            "founder": -4
-          },
-          "effect_reason": {
-            "team": "Mom's boundary gives the team breathing room.",
-            "founder": "Accepting Mom's boundary cuts through founder mania."
-          }
-        },
-        {
-          "requires": [
-            "control_seed_mom",
-            "route_control_investor_directive",
-            "mom_investor_clash_resolved"
-          ],
-          "effects": {
-            "team": -1,
-            "founder": -1
-          },
-          "effect_reason": {
-            "team": "Investor control erodes the relief Mom created.",
-            "founder": "The clash leaves the founder drained."
-          }
-        },
-        {
-          "requires": [
-            "control_seed_investor",
-            "route_control_mom_boundary",
-            "mom_investor_clash_resolved"
-          ],
-          "effects": {
-            "team": 1,
-            "founder": -4
-          },
-          "effect_reason": {
-            "team": "Mom ignores the reassurance and later creates a small health boundary.",
-            "founder": "The family intervention stops the work spiral."
-          }
-        },
-        {
-          "requires": [
-            "control_seed_investor",
-            "route_control_investor_directive",
-            "mom_investor_clash_resolved"
-          ],
-          "effects": {
-            "team": -3,
-            "founder": 3
-          },
-          "effect_reason": {
-            "team": "Dismissing Mom keeps the team inside the work spiral.",
-            "founder": "Insisting everything is fine feeds founder mania."
-          }
-        },
-        {
-          "requires": [
-            "coma_campaign_authorized",
-            "coma_callback_public"
-          ],
-          "effects": {
-            "team": -3,
-            "founder": -4
-          },
-          "effect_reason": {
-            "team": "The team must sustain a public lie about the founder.",
-            "founder": "Remaining publicly comatose is psychologically crushing."
-          }
-        },
-        {
-          "requires": [
-            "coma_campaign_authorized",
-            "coma_callback_retracted"
-          ],
-          "effects": {
-            "team": -1,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "Retracting the lie still leaves cleanup work.",
-            "founder": "Ending the fake story carries a smaller humiliation."
-          }
-        },
-        {
-          "requires": [
-            "coma_campaign_blocked",
-            "coma_callback_rest"
-          ],
-          "effects": {
-            "team": 2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "A real break reduces the team's immediate strain.",
-            "founder": "Taking a real break forces the founder out of the work spiral."
-          }
-        },
-        {
-          "requires": [
-            "coma_campaign_blocked",
-            "coma_callback_denied"
-          ],
-          "effects": {
-            "team": -2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Continuing without rest adds pressure to the team.",
-            "founder": "Denying exhaustion deepens the crash."
-          }
-        },
-        {
-          "requires": [
-            "mom_flyers_removed"
-          ],
-          "effects": {
+            "cash": -2,
             "founder": 1
           },
           "effect_reason": {
-            "founder": "Removing the flyers restores some privacy and control."
-          }
-        },
-        {
-          "requires": [
-            "mom_flyers_public"
+            "cash": "Another month of burn goes by with nothing sold.",
+            "founder": "Blaming the market keeps the product blameless."
+          },
+          "setFlags": [
+            "opening_done"
           ],
-          "effects": {
-            "team": -1,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Public family intervention adds distraction for the team.",
-            "founder": "The flyers make the founder's overload public."
-          }
-        }
-      ],
-      "choices": {
-        "left": {
-          "label": "Build for enterprise",
-          "effects": {
-            "team": -3,
-            "founder": 3
-          },
-          "effect_reason": {
-            "team": "Another investor-led product change creates work.",
-            "founder": "A new product story restores some confidence."
-          },
           "startArc": "agents",
           "next": "AGENT_01"
         },
         "right": {
-          "label": "Hunt a whale",
+          "label": "Team's too slow",
           "effects": {
+            "cash": -2,
             "team": -4,
-            "founder": 6
+            "founder": 2
           },
           "effect_reason": {
-            "team": "The team must prepare an impossible enterprise pitch.",
-            "founder": "Targeting the biggest possible buyer feeds ambition."
+            "cash": "Another month of burn goes by with nothing sold.",
+            "team": "The blame lands on the people who did the work.",
+            "founder": "Someone else being at fault is a relief."
           },
+          "setFlags": [
+            "opening_done"
+          ],
           "startArc": "padel",
           "next": "PADEL_01"
         }
@@ -644,7 +458,10 @@
             "empathy_demanded"
           ]
         }
-      }
+      },
+      "requires": [
+        "opening_done"
+      ]
     },
     {
       "id": "SADBOT_01_SEED",
@@ -681,7 +498,10 @@
             "founder": "Refusing the pity trick preserves self-respect."
           }
         }
-      }
+      },
+      "requires": [
+        "opening_done"
+      ]
     },
     {
       "id": "SADBOT_02_EVIDENCE",
@@ -1799,1326 +1619,6 @@
           "paid": true,
           "validationProof": true,
           "ending": "acquired_validation"
-        }
-      }
-    },
-    {
-      "id": "PAYROLL_RESTRICTED_AI_SEED",
-      "kind": "sideStory",
-      "source": "@unicorn_hunter",
-      "continuation": "sideStory",
-      "weight": 8,
-      "oncePerRun": true,
-      "requires": [
-        "payroll_unresolved"
-      ],
-      "excludes": [
-        "sadbot_hyped"
-      ],
-      "resourceRange": {
-        "cash": {
-          "max": 30
-        },
-        "founder": {
-          "min": 45
-        }
-      },
-      "text": "I BOUGHT AI CREDITS.\nYOUR TEAM CAN WORK FOR THE SUBSCRIPTION.\nNO REVENUE, NO PAYROLL.",
-      "actor_action": "The investor presents AI credits as compensation and makes payroll contingent on revenue.",
-      "player_decision": "Accept the AI credits or demand actual payroll.",
-      "choices": {
-        "left": {
-          "label": "Accept credits",
-          "effects": {
-            "team": -2,
-            "founder": 2
-          },
-          "effect_reason": {
-            "team": "The team hears that AI credits are supposed to replace payroll.",
-            "founder": "Accepting AI credits as compensation feeds the founder's automation confidence."
-          },
-          "setFlags": [
-            "payroll_offer_compute_only",
-            "payroll_seeded"
-          ],
-          "delay": {
-            "card": "PAYROLL_RESTRICTED_AI_CALLBACK",
-            "storyDecisions": 3
-          }
-        },
-        "right": {
-          "label": "Demand payroll",
-          "effects": {
-            "founder": -2
-          },
-          "effect_reason": {
-            "founder": "Demanding usable payroll money forces the founder to face the shortage."
-          },
-          "setFlags": [
-            "payroll_offer_ordinary_compute",
-            "payroll_seeded"
-          ],
-          "delay": {
-            "card": "PAYROLL_RESTRICTED_AI_CALLBACK",
-            "storyDecisions": 3
-          }
-        }
-      }
-    },
-    {
-      "id": "PAYROLL_RESTRICTED_AI_CALLBACK",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@error404",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "payroll_seeded"
-      ],
-      "text": "the ai has everything\npayroll has nothing\npay us or i shut everything down right now",
-      "actor_action": "Dev demands payroll and threatens to shut everything down immediately.",
-      "player_decision": "Promise payroll or cover it from personal funds.",
-      "choices": {
-        "left": {
-          "label": "Promise payroll",
-          "effects": {
-            "team": -3
-          },
-          "effect_reason": {
-            "team": "Another promise without money pushes the team closer to walking."
-          },
-          "setFlags": [
-            "payroll_priority_machines",
-            "cloud_credits_resolved"
-          ]
-        },
-        "right": {
-          "label": "Pay out of pocket",
-          "effects": {
-            "team": 2,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "Personal money gives the team immediate proof that payroll matters.",
-            "founder": "Covering payroll personally exposes the cost of the AI-credit deal."
-          },
-          "setFlags": [
-            "payroll_priority_people",
-            "cloud_credits_resolved"
-          ]
-        }
-      }
-    },
-    {
-      "id": "DEV_HOSTAGE_SEED",
-      "kind": "sideStory",
-      "source": "@error404",
-      "continuation": "sideStory",
-      "weight": 8,
-      "oncePerRun": true,
-      "requires": [
-        "payroll_unresolved",
-        "dev_payroll_risk_visible"
-      ],
-      "excludes": [
-        "sadbot_hyped"
-      ],
-      "resourceRange": {
-        "cash": {
-          "max": 30
-        },
-        "founder": {
-          "min": 45
-        }
-      },
-      "text": "investor says he'll replace me with ai\ncool. call him an idiot in public\nor lie and say he apologized",
-      "actor_action": "Dev reacts to the investor's AI replacement threat and demands public support or a face-saving lie.",
-      "player_decision": "Insult the investor publicly or fake his apology.",
-      "choices": {
-        "left": {
-          "label": "Call him an idiot",
-          "effects": {
-            "team": 1,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Publicly backing Dev restores some team trust.",
-            "founder": "Insulting the investor in public costs founder confidence."
-          },
-          "setFlags": [
-            "dev_conflict_public",
-            "dev_hostage_seeded"
-          ],
-          "delay": {
-            "card": "DEV_HOSTAGE_CALLBACK",
-            "storyDecisions": 3
-          }
-        },
-        "right": {
-          "label": "Fake investor's apology",
-          "effects": {
-            "team": -3,
-            "founder": 2
-          },
-          "effect_reason": {
-            "team": "The fake apology calms no one for long.",
-            "founder": "Avoiding a public confrontation with the investor protects confidence."
-          },
-          "setFlags": [
-            "dev_conflict_bypassed",
-            "dev_hostage_seeded"
-          ],
-          "delay": {
-            "card": "DEV_HOSTAGE_CALLBACK",
-            "storyDecisions": 3
-          }
-        }
-      }
-    },
-    {
-      "id": "DEV_HOSTAGE_CALLBACK",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@error404",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "dev_hostage_seeded"
-      ],
-      "text": "updates are back\nwrite down who has access\nor schedule my 3am call now",
-      "actor_action": "Dev confirms updates are back and sarcastically asks for durable rules or another scheduled emergency call.",
-      "player_decision": "Write access rules or book the next emergency call.",
-      "choices": {
-        "left": {
-          "label": "Write the rules",
-          "effects": {
-            "team": 2,
-            "founder": -1
-          },
-          "effect_reason": {
-            "team": "Written access rules reduce the team's dependency on one emergency responder.",
-            "founder": "Formal rules reduce the founder's direct control."
-          },
-          "setFlags": [
-            "dev_access_protected",
-            "dev_updates_restored"
-          ]
-        },
-        "right": {
-          "label": "Book the call",
-          "effects": {
-            "team": -3,
-            "founder": 2
-          },
-          "effect_reason": {
-            "team": "Booking the next emergency call preserves the same fragile dependency.",
-            "founder": "Another quick workaround restores short-term control."
-          },
-          "setFlags": [
-            "dev_access_contested",
-            "dev_updates_restored"
-          ]
-        }
-      }
-    },
-    {
-      "id": "MOM_INVESTOR_SEED",
-      "kind": "sideStory",
-      "source": "@i_love_cats72",
-      "continuation": "sideStory",
-      "weight": 2,
-      "oncePerRun": true,
-      "requires": [
-        "opening_overload_exposed"
-      ],
-      "excludes": [
-        "health_control_story",
-        "mom_investor_seen",
-        "fake_coma_seen"
-      ],
-      "resourceRange": {
-        "founder": {
-          "min": 58,
-          "max": 65
-        }
-      },
-      "scheduler": {
-        "role": "seed",
-        "slot": "opening_shared_seed",
-        "moduleId": "mom_investor"
-      },
-      "text": "That investor keeps calling about money.\nYou don't eat. You don't sleep.\nGive me his number.",
-      "actor_action": "Mom sees the investor's calls and asks for his number because the founder is not eating or sleeping.",
-      "player_decision": "Let Mom call or reassure her that everything is fine.",
-      "choices": {
-        "left": {
-          "label": "Let Mom call",
-          "effects": {
-            "team": 1,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "Mom's intervention gives the team a small health boundary.",
-            "founder": "Letting Mom intervene is humiliating but grounding."
-          },
-          "setFlags": [
-            "health_control_story",
-            "mom_investor_seen",
-            "control_seed_mom"
-          ],
-          "reserveCallback": {
-            "callbackId": "MOM_INVESTOR_CALLBACK",
-            "callbackSlot": "opening_health_resolution",
-            "spineSteps": 1
-          }
-        },
-        "right": {
-          "label": "I'm fine, Mom",
-          "effects": {
-            "team": -2,
-            "founder": 2
-          },
-          "effect_reason": {
-            "team": "Dismissing Mom keeps the team inside the work spiral.",
-            "founder": "Insisting everything is fine feeds founder confidence."
-          },
-          "setFlags": [
-            "health_control_story",
-            "mom_investor_seen",
-            "control_seed_investor"
-          ],
-          "reserveCallback": {
-            "callbackId": "MOM_INVESTOR_CALLBACK",
-            "callbackSlot": "opening_health_resolution",
-            "spineSteps": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "MOM_INVESTOR_CALLBACK",
-      "kind": "sideStory",
-      "source": "@unicorn_hunter",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "scheduler": {
-        "role": "callback",
-        "slot": "opening_health_resolution",
-        "moduleId": "mom_investor"
-      },
-      "text": "YOUR MOTHER CALLED ME ABOUT YOUR SLEEP.\nWHAT THE HELL? I DIDN'T FUND A BEDTIME.\nGET BACK TO WORK.",
-      "actor_action": "The investor confirms Mom called about the founder's sleep and rejects her attempt to impose a boundary.",
-      "player_decision": "Take the break or follow the investor's work directive.",
-      "choices": {
-        "left": {
-          "label": "Take the break",
-          "effects": {},
-          "effect_reason": {},
-          "setFlags": [
-            "route_control_mom_boundary",
-            "mom_investor_clash_resolved"
-          ]
-        },
-        "right": {
-          "label": "Keep working",
-          "effects": {},
-          "effect_reason": {},
-          "setFlags": [
-            "route_control_investor_directive",
-            "mom_investor_clash_resolved"
-          ]
-        }
-      }
-    },
-    {
-      "id": "COMA_SEED",
-      "kind": "sideStory",
-      "source": "@hype_queen",
-      "continuation": "sideStory",
-      "weight": 1,
-      "oncePerRun": true,
-      "requires": [
-        "opening_overload_exposed"
-      ],
-      "excludes": [
-        "health_control_story",
-        "mom_investor_seen",
-        "fake_coma_seen"
-      ],
-      "resourceRange": {
-        "founder": {
-          "min": 58,
-          "max": 65
-        }
-      },
-      "scheduler": {
-        "role": "seed",
-        "slot": "opening_shared_seed",
-        "moduleId": "fake_coma"
-      },
-      "text": "okay hear me out\nwe say you worked yourself into a coma\ntragic founder lore. people will eat this up 😭",
-      "actor_action": "Marketing asks permission to publish a false coma story before posting anything.",
-      "player_decision": "Authorize the false post or block it before publication.",
-      "choices": {
-        "left": {
-          "label": "Approve the post",
-          "effects": {
-            "team": -2,
-            "founder": 1
-          },
-          "effect_reason": {
-            "team": "The team must support a public lie about the founder.",
-            "founder": "Turning overwork into lore feeds founder confidence."
-          },
-          "setFlags": [
-            "health_control_story",
-            "fake_coma_seen",
-            "coma_campaign_authorized"
-          ],
-          "reserveCallback": {
-            "callbackId": "COMA_CALLBACK_AUTHORIZED",
-            "callbackSlot": "opening_health_resolution",
-            "spineSteps": 1
-          }
-        },
-        "right": {
-          "label": "Kill the story",
-          "effects": {
-            "team": 1,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "Blocking the lie protects the team from campaign cleanup.",
-            "founder": "Rejecting the attention forces the founder to face real exhaustion."
-          },
-          "setFlags": [
-            "health_control_story",
-            "fake_coma_seen",
-            "coma_campaign_blocked"
-          ],
-          "reserveCallback": {
-            "callbackId": "COMA_CALLBACK_BLOCKED",
-            "callbackSlot": "opening_health_resolution",
-            "spineSteps": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "COMA_CALLBACK_AUTHORIZED",
-      "kind": "sideStory",
-      "source": "@hype_queen",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "coma_campaign_authorized"
-      ],
-      "scheduler": {
-        "role": "callback",
-        "slot": "opening_health_resolution",
-        "moduleId": "fake_coma"
-      },
-      "text": "oh my god they believed the coma 😭\npeople are asking what we built\ndo not wake up online yet",
-      "actor_action": "The authorized false post is live and has created real external interest in what the team built.",
-      "player_decision": "Keep the post live or delete it.",
-      "choices": {
-        "left": {
-          "label": "Keep the post",
-          "effects": {
-            "customers": 2
-          },
-          "effect_reason": {
-            "customers": "The published lie creates real external questions about the product."
-          },
-          "setFlags": [
-            "coma_callback_public"
-          ]
-        },
-        "right": {
-          "label": "Delete the post",
-          "effects": {
-            "founder": -2
-          },
-          "effect_reason": {
-            "founder": "Retracting the public lie is humiliating."
-          },
-          "setFlags": [
-            "coma_callback_retracted"
-          ]
-        }
-      }
-    },
-    {
-      "id": "COMA_CALLBACK_BLOCKED",
-      "kind": "sideStory",
-      "source": "@hype_queen",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "coma_campaign_blocked"
-      ],
-      "scheduler": {
-        "role": "callback",
-        "slot": "opening_health_resolution",
-        "moduleId": "fake_coma"
-      },
-      "text": "fine. no coma post\nyou still look like shit though\ntake a rest. this one isn't content",
-      "actor_action": "Marketing confirms no coma post was published and points to the founder's real exhaustion.",
-      "player_decision": "Take a break or keep working without the post.",
-      "choices": {
-        "left": {
-          "label": "Take rest",
-          "effects": {
-            "team": 2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Real rest reduces the team's immediate strain.",
-            "founder": "Taking a break interrupts the founder's work spiral."
-          },
-          "setFlags": [
-            "coma_callback_rest"
-          ]
-        },
-        "right": {
-          "label": "Keep working",
-          "effects": {
-            "team": -2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Continuing without rest adds pressure to the team.",
-            "founder": "Denying exhaustion deepens the founder's crash."
-          },
-          "setFlags": [
-            "coma_callback_denied"
-          ]
-        }
-      }
-    },
-    {
-      "id": "MOM_FLYERS",
-      "kind": "sideStory",
-      "source": "@i_love_cats72",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "excludes": [
-        "health_control_story"
-      ],
-      "resourceRange": {
-        "founder": {
-          "min": 66,
-          "max": 78
-        }
-      },
-      "scheduler": {
-        "role": "reaction",
-        "slot": "opening_health_resolution",
-        "moduleId": "mom_flyers"
-      },
-      "text": "I put up flyers.\nB2BuyerSpyer and your phone number are on them.\nThey say you need help. Don't be mad.",
-      "actor_action": "Mom posts paper flyers with the public company name and her child's phone number to find help.",
-      "player_decision": "Remove the flyers or leave them in public.",
-      "choices": {
-        "left": {
-          "label": "Take them down",
-          "effects": {
-            "team": 1,
-            "founder": -1
-          },
-          "effect_reason": {
-            "team": "Removing the flyers reduces the team's public distraction.",
-            "founder": "The family intervention is still embarrassing."
-          },
-          "setFlags": [
-            "mom_flyers_removed"
-          ]
-        },
-        "right": {
-          "label": "Leave them up",
-          "effects": {
-            "team": -1,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "Public flyers add distraction without creating a lead.",
-            "founder": "The founder's overload and phone number remain public."
-          },
-          "setFlags": [
-            "mom_flyers_public"
-          ]
-        }
-      }
-    },
-    {
-      "id": "B3_SALES_PRESSURE_SEED",
-      "kind": "sideStory",
-      "source": "@bigdeals",
-      "continuation": "sideStory",
-      "weight": 8,
-      "oncePerRun": true,
-      "requires": [
-        "sales_outreach_started"
-      ],
-      "resourceRange": {
-        "cash": {
-          "max": 35
-        },
-        "founder": {
-          "min": 45
-        }
-      },
-      "excludes": [
-        "b3_seed_seen",
-        "b3_followups_authorized",
-        "b3_contact_stopped",
-        "b3_callback_resolved",
-        "b3_free_optout_granted",
-        "sadbot_hyped"
-      ],
-      "text": "Boss, your pitch deserved a reply.\nThey ignored four emails.\nLet me send three more.",
-      "actor_action": "Sales asks permission to continue unwanted follow-ups to one off-screen prospect.",
-      "player_decision": "Authorize three more emails or permanently stop contacting the prospect.",
-      "choices": {
-        "left": {
-          "label": "Send three more",
-          "effects": {
-            "team": -2,
-            "founder": 2
-          },
-          "effect_reason": {
-            "team": "Sales spends more time pursuing a company that has not replied.",
-            "founder": "Aggressive follow-ups make the founder feel commercially decisive."
-          },
-          "setFlags": [
-            "b3_seed_seen",
-            "b3_followups_authorized"
-          ],
-          "delay": {
-            "card": "B3_PAID_OPTOUT_CALLBACK",
-            "storyDecisions": 3
-          }
-        },
-        "right": {
-          "label": "Leave them alone",
-          "effects": {
-            "team": 2,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "Sales can remove a dead account from the follow-up queue.",
-            "founder": "Giving up the account feels like admitting the pitch failed."
-          },
-          "setFlags": [
-            "b3_seed_seen",
-            "b3_contact_stopped",
-            "b3_resolved_without_offer"
-          ]
-        }
-      }
-    },
-    {
-      "id": "B3_PAID_OPTOUT_CALLBACK",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@bigdeals",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "b3_seed_seen",
-        "b3_followups_authorized"
-      ],
-      "excludes": [
-        "b3_contact_stopped",
-        "b3_resolved_without_offer",
-        "b3_callback_resolved",
-        "b3_free_optout_granted"
-      ],
-      "text": "We closed their hatred 🎉\nThey’ll pay to never hear from us again.\nSay yes and this beautiful first invoice hits my commission.",
-      "actor_action": "Sales reports a real offer to pay for permanent removal from outreach.",
-      "player_decision": "Invoice the permanent opt-out or grant it for free.",
-      "choices": {
-        "left": {
-          "label": "Send invoice",
-          "effects": {
-            "cash": 12,
-            "team": -1,
-            "founder": 6
-          },
-          "effect_reason": {
-            "cash": "The prospect pays a real invoice for permanent opt-out.",
-            "team": "The team must formalize the permanent suppression agreement.",
-            "founder": "The first payment arriving for disappearance feels like victory and failure at once."
-          },
-          "setFlags": [
-            "b3_paid_optout_accepted",
-            "first_invoice_paid",
-            "core_product_not_validated",
-            "b3_callback_resolved"
-          ],
-          "paid": true,
-          "validationProof": false,
-          "terminalPriority": true,
-          "ending": "paid_to_disappear"
-        },
-        "right": {
-          "label": "Waive the fee",
-          "effects": {
-            "team": 2,
-            "founder": -3
-          },
-          "effect_reason": {
-            "team": "The account is removed without more sales administration.",
-            "founder": "Waiving the only offered invoice preserves the product story but hurts."
-          },
-          "setFlags": [
-            "b3_free_optout_granted",
-            "b3_callback_resolved"
-          ]
-        }
-      }
-    },
-    {
-      "id": "PRESS_FRIDGE",
-      "kind": "pressure",
-      "source": "@b2buddy_bot",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "cash": {
-          "max": 25
-        }
-      },
-      "text": "Runway protection activated 😊\nFood delivery canceled. Fridge locked except raw carrots.\nUnlocks after our first paid invoice.",
-      "actor_action": "The bot cancels food delivery and locks every fridge shelf except the carrots.",
-      "player_decision": "Break the lock or accept the automated diet.",
-      "choices": {
-        "left": {
-          "label": "Break the lock",
-          "lowLabel": "Open it somehow",
-          "highLabel": "Destroy the lock",
-          "effects": {
-            "cash": -1,
-            "founder": 5
-          },
-          "effect_reason": {
-            "cash": "Repairing the forced lock costs money.",
-            "founder": "Defeating the bot restores a sense of control."
-          }
-        },
-        "right": {
-          "label": "Eat carrots",
-          "lowLabel": "Accept the carrots",
-          "highLabel": "Optimize my body",
-          "effects": {
-            "founder": -5
-          },
-          "effect_reason": {
-            "founder": "Being diet-managed by the company bot hurts morale."
-          }
-        }
-      }
-    },
-    {
-      "id": "PRESS_MOM",
-      "kind": "pressure",
-      "source": "@i_love_cats72",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "cash": {
-          "max": 20
-        }
-      },
-      "text": "Sweetie, I called your investor.\nI blamed your diarrhea for zero sales.\nHe’ll send your little company $10k if I never call him again ❤️",
-      "actor_action": "Mom accidentally negotiates real emergency funding from the established investor.",
-      "player_decision": "Take the humiliating bridge money or protect dignity.",
-      "choices": {
-        "left": {
-          "label": "Take his money",
-          "lowLabel": "Accept the help",
-          "highLabel": "Close the bridge",
-          "effects": {
-            "cash": 10,
-            "founder": -7
-          },
-          "effect_reason": {
-            "cash": "The investor transfers actual bridge funding.",
-            "founder": "Funding obtained through a diarrhea story is humiliating."
-          }
-        },
-        "right": {
-          "label": "Protect dignity",
-          "lowLabel": "Refuse politely",
-          "highLabel": "Reject pity capital",
-          "effects": {
-            "founder": 7
-          },
-          "effect_reason": {
-            "founder": "Refusing humiliating money preserves self-respect."
-          }
-        }
-      }
-    },
-    {
-      "id": "PRESS_FONT",
-      "kind": "pressure",
-      "source": "@pixel_perfect",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "cash": {
-          "max": 35
-        }
-      },
-      "text": "I found the perfect font.\n$4,500—more than our servers.\nBuy it before we waste that money on salaries.",
-      "actor_action": "The designer proposes a font more expensive than the servers.",
-      "player_decision": "Buy aesthetic status or force the company onto Arial.",
-      "choices": {
-        "left": {
-          "label": "Buy the font",
-          "lowLabel": "Approve the font",
-          "highLabel": "Fund the aesthetic",
-          "effects": {
-            "cash": -2,
-            "team": -3
-          },
-          "effect_reason": {
-            "cash": "The font license costs real money.",
-            "team": "The team resents an aesthetic purchase during payroll risk."
-          }
-        },
-        "right": {
-          "label": "Use Arial",
-          "lowLabel": "Keep the old font",
-          "highLabel": "Standardize ugliness",
-          "effects": {
-            "team": 5,
-            "founder": -4
-          },
-          "effect_reason": {
-            "team": "The team prefers saving money over typography.",
-            "founder": "Using Arial makes the startup feel painfully ordinary."
-          }
-        }
-      }
-    },
-    {
-      "id": "PRESS_FIGHT",
-      "kind": "pressure",
-      "source": "@hustler",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "founder": {
-          "min": 55
-        }
-      },
-      "text": "bro i bet our pre-seed on you fighting your college rival @yc_founder tonight !!!\nwinner becomes category leader !!!",
-      "actor_action": "The cofounder bets company money on a fight with the existing rival.",
-      "player_decision": "Honor the bet or cancel the fight.",
-      "choices": {
-        "left": {
-          "label": "Accept the bet",
-          "lowLabel": "Accept the fight",
-          "highLabel": "Own the category",
-          "effects": {
-            "cash": -2,
-            "team": -3,
-            "founder": 8
-          },
-          "effect_reason": {
-            "cash": "The pre-seed stake leaves the bank account.",
-            "team": "The team loses trust in combat-based strategy.",
-            "founder": "Accepting a founder fight feeds ego."
-          }
-        },
-        "right": {
-          "label": "Cancel fight",
-          "lowLabel": "Stop the fight",
-          "highLabel": "Reject the spectacle",
-          "effects": {
-            "team": 5,
-            "founder": -5
-          },
-          "effect_reason": {
-            "team": "Canceling protects the company from the cofounder's bet.",
-            "founder": "Backing out of a public fight hurts pride."
-          }
-        }
-      }
-    },
-    {
-      "id": "PRESS_FAMILY",
-      "kind": "pressure",
-      "source": "@user[number]",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "trigger": {
-        "all": "sadbot_hyped"
-      },
-      "text": "My wife and kids share one free AI agent.\nAdd family therapy mode or I leave a one-star review.",
-      "actor_action": "A free user demands a family plan after the agents become public.",
-      "player_decision": "Build the requested mode or reject the family.",
-      "choices": {
-        "left": {
-          "label": "Ship family mode",
-          "lowLabel": "Add the mode",
-          "highLabel": "Disrupt the family",
-          "effects": {
-            "cash": -2,
-            "team": -5,
-            "customers": 7
-          },
-          "effect_reason": {
-            "cash": "The new mode needs additional compute and support.",
-            "team": "The team must build an unplanned consumer feature.",
-            "customers": "The user and similar families become more attached to the product."
-          }
-        },
-        "right": {
-          "label": "Ban families",
-          "lowLabel": "Refuse the mode",
-          "highLabel": "Delete the family",
-          "effects": {
-            "customers": -6,
-            "founder": 5
-          },
-          "effect_reason": {
-            "customers": "The user leaves the threatened one-star review.",
-            "founder": "Rejecting consumer demands restores a sense of authority."
-          }
-        }
-      }
-    },
-    {
-      "id": "PRESS_RIVAL",
-      "kind": "pressure",
-      "source": "@yc_founder",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "founder": {
-          "max": 70
-        }
-      },
-      "text": "Just raised at a $50M cap. Honestly exhausted by winning.\nStill hunting your first paying customer?",
-      "actor_action": "The successful rival sends a private fundraising update designed to humiliate.",
-      "player_decision": "Swallow the humiliation and ask for a buyer introduction, or mute him.",
-      "choices": {
-        "left": {
-          "label": "Ask for an intro",
-          "lowLabel": "Beg for an intro",
-          "highLabel": "Demand his network",
-          "effects": {
-            "customers": 4,
-            "founder": -5
-          },
-          "effect_reason": {
-            "customers": "The rival introduces one real prospect.",
-            "founder": "Asking the victorious rival for help is humiliating."
-          }
-        },
-        "right": {
-          "label": "Mute him",
-          "lowLabel": "Hide the update",
-          "highLabel": "Erase the winner",
-          "effects": {
-            "founder": 4
-          },
-          "effect_reason": {
-            "founder": "Removing the rival stops the immediate humiliation."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_THERAPY_LEAK",
-      "kind": "pressure",
-      "source": "@b2buddy_bot",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "text": "Great news! I published your therapy sessions for transparency 😊\nVulnerable founders earn 3x more trust.\nThe team already read what you said about them.",
-      "actor_action": "The bot publishes the founder's private therapy sessions and frames the exposure as a growth tactic.",
-      "player_decision": "Own the leak as honesty or make the bot take it down.",
-      "choices": {
-        "left": {
-          "label": "Own it",
-          "lowLabel": "Call it honesty",
-          "highLabel": "Brand it radical openness",
-          "effects": {
-            "founder": 3,
-            "team": -4
-          },
-          "effect_reason": {
-            "founder": "Reframing his own breakdown as strategy feeds the founder's mania.",
-            "team": "Leaving their appraisal public on purpose is a second insult."
-          }
-        },
-        "right": {
-          "label": "Take it down",
-          "lowLabel": "Make him delete it",
-          "highLabel": "Order an immediate wipe",
-          "effects": {
-            "founder": -2,
-            "team": -2
-          },
-          "effect_reason": {
-            "founder": "Scrambling to erase his own breakdown is humiliating.",
-            "team": "They already read it; deleting the posts does not unread it."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_BLACK_SQUARE",
-      "kind": "pressure",
-      "source": "@pixel_perfect",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "text": "I redesigned the site. It is now a single black square.\nButtons were bourgeois noise. This is Malevich, not a bug.\nYou're welcome.",
-      "actor_action": "The designer replaces the whole site with a black square and dismisses the buttons as noise.",
-      "player_decision": "Keep the black void or restore the buttons.",
-      "choices": {
-        "left": {
-          "label": "Keep the void",
-          "lowLabel": "Leave the square",
-          "highLabel": "Defend the art",
-          "effects": {
-            "customers": -3,
-            "founder": 2
-          },
-          "effect_reason": {
-            "customers": "Prospects reach a black screen and leave.",
-            "founder": "Backing the bold aesthetic feels visionary."
-          }
-        },
-        "right": {
-          "label": "Restore buttons",
-          "lowLabel": "Bring buttons back",
-          "highLabel": "Force the buttons back",
-          "effects": {
-            "team": -2
-          },
-          "effect_reason": {
-            "team": "The dev has to rebuild what the designer removed."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_CHAKRA_RETREAT",
-      "kind": "pressure",
-      "source": "@unicorn_hunter",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "resourceRange": {
-        "cash": {
-          "min": 22,
-          "max": 45
-        }
-      },
-      "text": "MY GURU RUNS A SILENT CHAKRA RETREAT THIS WEEKEND.\nSEND THE WHOLE TEAM OR I FREEZE THE MONEY.\nREAL FOUNDERS ALIGN THEIR CHAKRAS BEFORE THEY SCALE.",
-      "actor_action": "The investor demands the team attend his guru's retreat and threatens the tranche.",
-      "player_decision": "Send the team to the retreat or keep them working.",
-      "choices": {
-        "left": {
-          "label": "Send the team",
-          "lowLabel": "Send them off",
-          "highLabel": "Ship them off",
-          "effects": {
-            "team": -3,
-            "founder": -2
-          },
-          "effect_reason": {
-            "team": "A stolen weekend with a guru burns the team out.",
-            "founder": "Obeying the retreat order stings."
-          }
-        },
-        "right": {
-          "label": "Keep them coding",
-          "lowLabel": "Refuse the retreat",
-          "highLabel": "Keep coding anyway",
-          "effects": {
-            "cash": -2,
-            "team": 2,
-            "founder": 2
-          },
-          "effect_reason": {
-            "cash": "The investor cuts the tranche in retaliation.",
-            "team": "The team keeps working instead of chanting.",
-            "founder": "Holding the line restores some backbone."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_DOMAIN_RANSOM",
-      "kind": "pressure",
-      "source": "@hustler",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "excludes": [
-        "sadbot_hyped"
-      ],
-      "text": "bro don't freak. forgot to renew our domain.\nsome guy grabbed it — it's now a hair-loss ad with YOUR face on it.\ni'll fix it",
-      "actor_action": "The cofounder reveals he let the domain lapse and a squatter turned it into an embarrassing ad.",
-      "player_decision": "Buy the domain back or scare the squatter with a fake threat.",
-      "choices": {
-        "left": {
-          "label": "Buy it back",
-          "lowLabel": "Pay the ransom",
-          "highLabel": "Just buy it back",
-          "effects": {
-            "cash": -2,
-            "team": -2,
-            "founder": 2
-          },
-          "effect_reason": {
-            "cash": "Ransoming the domain drains money meant for payroll.",
-            "team": "The team notices payroll cash going to a squatter.",
-            "founder": "Getting the domain back restores a little control."
-          }
-        },
-        "right": {
-          "label": "Threaten him",
-          "lowLabel": "Bluff the feds",
-          "highLabel": "Send a fake threat",
-          "effects": {
-            "founder": 2
-          },
-          "effect_reason": {
-            "founder": "Bluffing the squatter feels like taking charge."
-          },
-          "setFlags": [
-            "domain_forged"
-          ],
-          "delay": {
-            "card": "AMBIENT_DOMAIN_LAWSUIT",
-            "storyDecisions": 3
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_DOMAIN_LAWSUIT",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@hustler",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "domain_forged"
-      ],
-      "text": "so that domain guy? turns out he's a lawyer.\nyour fake FBI letter is now 'forgery.' he's suing us.\ni'm sorry bro",
-      "actor_action": "The squatter turns out to be a lawyer and sues over the forged federal letter.",
-      "player_decision": "Settle the lawsuit quietly or fight it.",
-      "choices": {
-        "left": {
-          "label": "Settle quietly",
-          "lowLabel": "Pay it off",
-          "highLabel": "Make it disappear",
-          "effects": {
-            "cash": -4
-          },
-          "effect_reason": {
-            "cash": "Settling the forgery claim costs real money."
-          }
-        },
-        "right": {
-          "label": "Lawyer up",
-          "lowLabel": "Fight it",
-          "highLabel": "Go to war",
-          "effects": {
-            "founder": -3,
-            "team": -2
-          },
-          "effect_reason": {
-            "founder": "A forgery lawsuit hangs over everything.",
-            "team": "The team watches the founder drag them into court."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_PROMO_XXX",
-      "kind": "pressure",
-      "source": "@hype_queen",
-      "continuation": "ambient",
-      "weight": 3,
-      "oncePerRun": true,
-      "excludes": [
-        "sadbot_stage2"
-      ],
-      "text": "put our promo video on a porn site — tech investors browse there too 😌\ntraffic is INSANE rn.\nyou're welcome",
-      "actor_action": "The marketer uploads the company promo video to a porn site as a guerrilla-marketing stunt.",
-      "player_decision": "Leave the video up for the traffic or take it down.",
-      "choices": {
-        "left": {
-          "label": "Leave it up",
-          "lowLabel": "Ride the traffic",
-          "highLabel": "Milk the traffic",
-          "effects": {
-            "founder": 3
-          },
-          "effect_reason": {
-            "founder": "Betting on the stunt makes the founder feel dangerous."
-          },
-          "setFlags": [
-            "promo_on_xxx"
-          ],
-          "delay": {
-            "card": "AMBIENT_PROMO_XXX_INVESTOR",
-            "storyDecisions": 3
-          }
-        },
-        "right": {
-          "label": "Take it down",
-          "lowLabel": "Kill the post",
-          "highLabel": "Scrub it now",
-          "effects": {
-            "team": -3
-          },
-          "effect_reason": {
-            "team": "Fining the marketer for her best idea sours the team."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_PROMO_XXX_INVESTOR",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@unicorn_hunter",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "promo_on_xxx"
-      ],
-      "text": "MY FRIEND JUST FOUND OUR PROMO VIDEO ON A PORN SITE!!\nEXPLAIN YOURSELF RIGHT NOW!!!",
-      "actor_action": "The investor blames a friend for finding the promo video on the porn site and demands an explanation.",
-      "player_decision": "Call the stunt a mistake or defend it as smart marketing.",
-      "choices": {
-        "left": {
-          "label": "Call it a mistake",
-          "lowLabel": "Blame the stunt",
-          "highLabel": "Disown it fully",
-          "effects": {
-            "founder": -2,
-            "team": -2
-          },
-          "effect_reason": {
-            "founder": "Disowning your own company looks weak.",
-            "team": "Throwing the marketer under the bus stings the team."
-          }
-        },
-        "right": {
-          "label": "Defend the traffic",
-          "lowLabel": "Own the hype",
-          "highLabel": "Double down",
-          "effects": {
-            "founder": 2,
-            "cash": -4
-          },
-          "effect_reason": {
-            "founder": "Standing by the stunt keeps your nerve.",
-            "cash": "The unimpressed investor pulls his money."
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_MOM_POLICE",
-      "kind": "pressure",
-      "source": "@i_love_cats72",
-      "continuation": "ambient",
-      "weight": 1,
-      "oncePerRun": true,
-      "excludes": [
-        "sadbot_hyped"
-      ],
-      "text": "Baby, I found the papers for your \"company.\"\nYou're signing your whole life over to them!! It's a cult.\nI sent the police to your door — they're there now ❤️",
-      "actor_action": "The mother mistakes the company's paperwork for a cult contract and sends the police to check on the founder.",
-      "player_decision": "Let the police in or send them away.",
-      "choices": {
-        "left": {
-          "label": "Let them in",
-          "lowLabel": "Open the door",
-          "highLabel": "Just let them in",
-          "effects": {
-            "founder": -4
-          },
-          "effect_reason": {
-            "founder": "Proving to the police that your own company is not a cult is humiliating."
-          }
-        },
-        "right": {
-          "label": "Send them away",
-          "lowLabel": "Wave them off",
-          "highLabel": "Get rid of them",
-          "effects": {
-            "founder": 2
-          },
-          "effect_reason": {
-            "founder": "Dodging the welfare check feels like a small win."
-          },
-          "setFlags": [
-            "mom_worried"
-          ],
-          "delay": {
-            "card": "AMBIENT_MOM_FAMILY",
-            "storyDecisions": 3
-          }
-        }
-      }
-    },
-    {
-      "id": "AMBIENT_MOM_FAMILY",
-      "kind": "sideStory",
-      "callbackOnly": true,
-      "source": "@i_love_cats72",
-      "continuation": "sideStory",
-      "oncePerRun": true,
-      "requires": [
-        "mom_worried"
-      ],
-      "text": "The whole family knows you're in a cult now.\nWe pooled money to get you out — $2000 already.\nCome home and it's yours ❤️❤️",
-      "actor_action": "The family raises a rescue fund to save the founder from the imagined cult.",
-      "player_decision": "Take the family's rescue money or come clean that it is a startup.",
-      "choices": {
-        "left": {
-          "label": "Take the money",
-          "lowLabel": "Accept the fund",
-          "highLabel": "Cash the pity",
-          "effects": {
-            "cash": 5,
-            "founder": -3
-          },
-          "effect_reason": {
-            "cash": "The family's rescue fund is real money.",
-            "founder": "You are now officially the family's cult victim."
-          }
-        },
-        "right": {
-          "label": "Come clean",
-          "lowLabel": "Tell the truth",
-          "highLabel": "Confess the startup",
-          "effects": {
-            "founder": -2
-          },
-          "effect_reason": {
-            "founder": "Admitting it's a failing startup disappoints everyone."
-          }
         }
       }
     }
