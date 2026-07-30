@@ -3,7 +3,7 @@
     "title": "Mistakery",
     "chapter": "Validation",
     "startCard": "OPEN_01",
-    "maxTurns": 24,
+    "maxTurns": 9999,
     "baseCashBurn": -1,
     "maxPressureCards": 4,
     "pressureAfterArcSteps": [],
@@ -175,7 +175,7 @@
       "continuation": "forced",
       "choices": {
         "left": {
-          "label": "WTF, how many???",
+          "label": "WTF so many?",
           "effects": {
             "founder": -2
           },
@@ -285,7 +285,7 @@
           ]
         },
         "right": {
-          "label": "Crushing it",
+          "label": "We crushing it!!",
           "effects": {
             "founder": 3
           },
