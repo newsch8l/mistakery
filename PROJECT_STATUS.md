@@ -2,15 +2,18 @@
 
 ## Verified snapshot
 
-- Updated: 2026-08-21 18:59 MSK
+- Updated: 2026-08-21 19:14 MSK
 - Branch: `design/personal-chat-runtime`
 - Commit/base: `84fb9b878deff127efb7f04af1888df114abd020`
+- Published implementation commit: `e2faaf6f0c72b585f0a111ee69fadbe8a31b3cc8`
 - Worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`
-- Working tree: intentionally uncommitted. Nothing was committed, pushed, or published.
+- Published refs: `origin/design/personal-chat-runtime`, `origin/main`, and Pages source `origin/lean-opening` all contain the implementation commit.
+- Live URL: `https://newsch8l.github.io/mistakery/`
+- Working tree: clean after the implementation commit; this file is the final status-only handoff update.
 
 ## Current objective
 
-Keep the approved opening locally playable through Personal Chat, Padel Invite, Dream Team, the conditional IRL match, and Outcomes 0–7. The Padel branch uses a hidden, temporary CEO score to choose the exact requested outcome probabilities. Card 6 now presents a deciding point, while completed IRL outcomes show the match result instead of a final numerical score. Outcome replies return through `SAVED_02_UPDATE` (`5 MONTHS AS A FOUNDER 🚀`), whose existing CTA begins a fresh run.
+Keep the published opening playable through Personal Chat, Padel Invite, Dream Team, the conditional IRL match, and Outcomes 0–7. The Padel branch uses a hidden, temporary CEO score to choose the exact requested outcome probabilities. Card 6 presents a deciding point, while completed IRL outcomes show the match result instead of a final numerical score. Outcome replies return through `SAVED_02_UPDATE` (`5 MONTHS AS A FOUNDER 🚀`), whose existing CTA begins a fresh run.
 
 ## Completed work
 
@@ -41,6 +44,8 @@ Keep the approved opening locally playable through Personal Chat, Padel Invite, 
 - Prevented all Padel resource movement, including the engine's normal passive cash burn. Padel transitions use a shallow deck view with `baseCashBurn: 0`; history/turn progression remains engine-owned and its resource deltas stay zero.
 - Regenerated `cards.bundle.js` from canonical `cards.json`.
 - Added no-commit TDD plans at `docs/plans/2026-08-21-padel-ceo-outcomes.md` and `docs/plans/2026-08-21-padel-match-status.md`.
+- Committed the full 25-file Personal Chat/Padel runtime as `e2faaf6`, pushed the feature branch, fast-forwarded `main`, then fast-forwarded the actual Pages source branch `lean-opening`.
+- Verified the live GitHub Pages build and all required CSS/JS/IRL image assets.
 
 ## Key technical decisions
 
@@ -53,6 +58,7 @@ Keep the approved opening locally playable through Personal Chat, Padel Invite, 
 - Outcome replies have no `next` and no resource effects because the app boundary returns to Saved Messages, which is a UI state rather than an engine card.
 - Outcome 0 must stay Personal Chat with the handle `@padel_pro`; Outcomes 1–7 must stay IRL with `ClosedAI CEO`.
 - The existing `score` field owns both live score strings and final match-result strings because the renderer already presents it verbatim in the same status bar. No new runtime field or outcome-ID mapping was added.
+- GitHub Pages is configured from `lean-opening`, not `main`. Publishing this site requires fast-forwarding the tested commit to that source branch; pushing only `main` does not refresh the live URL.
 
 ## Main changed files
 
@@ -85,12 +91,16 @@ Keep the approved opening locally playable through Personal Chat, Padel Invite, 
 | In-app Browser 390×844 | Card 6, won Outcome 1, lost Outcome 4, and Outcome 7 statuses fit inside the existing bar; scene/page overflow `0` |
 | In-app Browser 320×650 | Card 6, won Outcome 1, lost Outcome 3, and Outcome 7 statuses fit; `+4` route still skipped Card 6; scene/page overflow `0` |
 | `node --check app.js`, `node --check cards.bundle.js`, `git diff --check` | passed |
+| Git push | `design/personal-chat-runtime`, `main`, and Pages source `lean-opening` fast-forwarded to implementation commit `e2faaf6` without force-push |
+| Live file integrity | published `index.html` SHA-256 `ef94bab000c530909cebbbcdd594aa10afe061a129ff9e4e60f0e9831f1d0a00` and `cards.json` SHA-256 `77079f45261a2f1bd7730d818a18b8651c669cb4f08faa65d3e0cf485e9ee21b` exactly match commit `e2faaf6` |
+| Live asset audit | `style.css`, `app.js`, `cards.bundle.js`, court photo, and both IRL avatars returned HTTP 200 |
 
 ## Known issues and intentionally deferred work
 
 - Outcome reply buttons are intentionally cosmetic: both choices have identical completion behavior and no consequence metadata.
 - No resources, flags, endings, or later story branches are awarded by outcomes on this pass.
 - The broad legacy catalog still contains the older engine-driven Padel arc (`PADEL_01` etc.); the scoped Personal Chat runtime continues to gate it out.
+- `gh auth status` reports invalid saved GitHub CLI tokens. Git fetch/push succeeded through the configured Git credential helper; future GitHub API/settings operations via `gh` require re-authentication.
 
 ## Failed approaches — do not repeat
 
@@ -103,9 +113,10 @@ Keep the approved opening locally playable through Personal Chat, Padel Invite, 
 - Do not render Outcome 0 as IRL or Outcomes 1–7 as chat.
 - Do not add a runtime match-status mapper or reintroduce a final numerical score; the canonical `score` strings already own this presentation.
 - Do not zoom/crop the supplied IRL avatar photos or change the approved IRL background/frame treatment.
+- Do not assume `main` is the Pages source. Live-file hashes proved the site was serving `lean-opening`; update that branch for future deployments unless repository settings change.
 
 ## Next steps
 
-1. Review Card 6, one won/lost Outcome, Outcome 7, and Outcome 0 locally at `http://127.0.0.1:4174/index.html`.
+1. Review Card 6, one won/lost Outcome, Outcome 7, and Outcome 0 at `https://newsch8l.github.io/mistakery/`.
 2. Define resource/flag consequences only in a later explicitly approved pass.
-3. Do not commit, push, or publish until explicitly requested.
+3. Re-authenticate GitHub CLI only if a future task needs Pages settings, PRs, or other authenticated GitHub API operations.
