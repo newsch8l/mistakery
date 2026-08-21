@@ -145,7 +145,14 @@
     },
     "@padel_pro": {
       "name": "@padel_pro",
+      "irlName": "Padel coach",
+      "irlAvatar": "assets/irl-padel-coach-avatar.png",
       "role": "Padel Coach"
+    },
+    "dream_team": {
+      "name": "Dream Team",
+      "role": "6 members · 3 online",
+      "avatar": "DT"
     },
     "@head_of_agile": {
       "name": "@head_of_agile",
@@ -153,6 +160,8 @@
     },
     "@iclosedai": {
       "name": "@iclosedai",
+      "irlName": "ClosedAI CEO",
+      "irlAvatar": "assets/irl-closedai-ceo-avatar.png",
       "role": "ClosedAI CEO"
     },
     "@wmwerke": {
@@ -200,7 +209,7 @@
       "id": "OPEN_02a",
       "kind": "opening",
       "source": "@b2buddy_bot",
-      "text": "Competitor analysis complete 📊\nWe have a slight KPI deviation (0 clients).\nI reframed this as a 'pre-revenue learning phase' 📈\nWant me to send a motivational quote to the team? 🚀🤖",
+      "text": "Competitor analysis complete 📊\nWe have a slight KPI deviation (0 clients).\nI reframed this as a 'pre-revenue learning phase' 📈\n\nWant me to send a motivational quote to the team? 🚀🤖",
       "actor_action": "The bot renames zero clients as a learning phase and offers the team a motivational quote instead of an answer.",
       "player_decision": "Let the quote go out or stop it.",
       "continuation": "storylet",
@@ -302,7 +311,7 @@
       "id": "OPEN_DEV",
       "kind": "opening",
       "source": "@error404",
-      "text": "payroll is friday\nare we getting money or another speech about changing b2b forever",
+      "text": "payroll is friday\n\nare we getting money or another speech about changing b2b saas forever?",
       "actor_action": "The dev names the payroll date and refuses to accept another speech instead of a transfer.",
       "player_decision": "Reserve the money or answer with partnership talk.",
       "storyletEntry": true,
@@ -346,7 +355,7 @@
       "id": "OPEN_INVESTOR",
       "kind": "opening",
       "source": "@unicorn_hunter",
-      "text": "I AINT FUND NO AI JUST TO GET ZERO CLIENTS.\nWHY WE STILL GOT NO BUYERS???\nIF I WANTED TO WASTE CASH I'D BUY A YACHT FOR MY EX WIFE",
+      "text": "I DIDN’T DUMP MY CASH INTO THIS AI CRAP TO GET ZERO CLIENTS.\n\nWHERE THE HELL ARE THE BUYERS???\n\nIF I WANTED TO WASTE MONEY I’D BUY A YACHT FOR MY EX-WIFE.",
       "actor_action": "The investor measures his cheque against a yacht and demands to know where the buyers are.",
       "player_decision": "Blame the market or blame the team — the excuse becomes the route.",
       "storyletEntry": true,
@@ -391,6 +400,366 @@
           ],
           "startArc": "padel",
           "next": "PADEL_01"
+        }
+      }
+    },
+    {
+      "id": "PADEL_INVITE",
+      "kind": "story",
+      "source": "@padel_pro",
+      "continuation": "forced",
+      "text": "Yo champ, anyone in the club would die for this match, but I held the slot for you.\nTomorrow 7 AM vs ClosedAI CEO.\n\nThat’s your dream client, man. Remember who opened this door for you.",
+      "actor_action": "The coach offers the founder a held match slot with the ClosedAI CEO and reminds him who created the opportunity.",
+      "player_decision": "Accept the match or claim to be sick; either answer becomes team news.",
+      "choices": {
+        "left": {
+          "label": "I'm in",
+          "effects": {},
+          "next": "DREAM_TEAM"
+        },
+        "right": {
+          "label": "Feeling sick, pass",
+          "effects": {},
+          "next": "DREAM_TEAM"
+        }
+      }
+    },
+    {
+      "id": "DREAM_TEAM",
+      "kind": "story",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "outgoing",
+          "text": "Guess what? Playing padel with ClosedAI's CEO tomorrow.\nFinally landing our first big client!! 💸"
+        },
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "Insane pull, boss! 🎯\nNow let him win. Stroke his ego and we close this easily"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "nah, smoke him. pure clout for us\nimagine the feed: no-name startup founder violates ClosedAI CEO in 4K 💀"
+        }
+      ],
+      "actor_action": "The founder announces the match while Sales and Marketing argue over whether winning or losing creates more leverage.",
+      "player_decision": "Promise to protect the deal or leave the match strategy open.",
+      "choices": {
+        "left": {
+          "label": "I'll play nice 😇",
+          "effects": {},
+          "next": "IRL_PADEL_01"
+        },
+        "right": {
+          "label": "We’ll see",
+          "effects": {},
+          "next": "IRL_PADEL_01"
+        }
+      }
+    },
+    {
+      "id": "IRL_PADEL_01",
+      "kind": "story",
+      "source": "@padel_pro",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "Score: 0–0",
+      "text": "Bro, you do NOT pitch here.\nStart selling, and you're a nobody to him.\nEarn his respect on the court first.",
+      "actor_action": "The padel coach warns the founder not to pitch the ClosedAI CEO before earning his respect on the court.",
+      "player_decision": "Stay quiet and play or pitch before the match creates an opening.",
+      "choices": {
+        "left": {
+          "label": "Mouth shut, game on",
+          "effects": {},
+          "ceoScore": 0,
+          "next": "IRL_PADEL_04"
+        },
+        "right": {
+          "label": "Now or never, pitching",
+          "effects": {},
+          "ceoScore": 1,
+          "next": "IRL_PADEL_03B"
+        }
+      }
+    },
+    {
+      "id": "IRL_PADEL_03B",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "Score: 0–0",
+      "text": "Who let a pop-up ad onto my court?\nGo fetch the balls and grab my water before I replace your whole startup with one prompt.",
+      "actor_action": "The ClosedAI CEO humiliates the founder for pitching before the match and orders him to fetch water.",
+      "player_decision": "Accept the errand or defer business until after the match.",
+      "choices": {
+        "left": {
+          "label": "Getting your water",
+          "effects": {},
+          "ceoScore": -1,
+          "next": "IRL_PADEL_04"
+        },
+        "right": {
+          "label": "Business after the match",
+          "effects": {},
+          "ceoScore": 1,
+          "next": "IRL_PADEL_04"
+        }
+      }
+    },
+    {
+      "id": "IRL_PADEL_04",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "Score: 0–0",
+      "text": "We skip the side switching.\nYou won’t melt after a couple of sets in the sun, right?",
+      "actor_action": "The ClosedAI CEO tries to skip side switching and keep the founder in the sun.",
+      "player_decision": "Accept the disadvantage or insist on the rules.",
+      "choices": {
+        "left": {
+          "label": "Happy to take it",
+          "effects": {},
+          "ceoScore": -1,
+          "next": "IRL_PADEL_05"
+        },
+        "right": {
+          "label": "Let's stick to rules",
+          "effects": {},
+          "ceoScore": 1,
+          "next": "IRL_PADEL_05"
+        }
+      }
+    },
+    {
+      "id": "IRL_PADEL_05",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "Score: 4–4",
+      "text": "THAT BALL WAS OUT! Are you blind???\nDon’t even try to cheat me. That’s my point.",
+      "actor_action": "The ClosedAI CEO claims a disputed ball was out and accuses the founder of cheating.",
+      "player_decision": "Concede the point or stand by the call.",
+      "choices": {
+        "left": {
+          "label": "Definitely out, my bad",
+          "effects": {},
+          "ceoScore": -1,
+          "next": "IRL_PADEL_06"
+        },
+        "right": {
+          "label": "No way, that's in",
+          "effects": {},
+          "ceoScore": 1,
+          "next": "IRL_PADEL_06"
+        }
+      }
+    },
+    {
+      "id": "IRL_PADEL_06",
+      "kind": "story",
+      "source": "@padel_pro",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "Score: 5–5 · 40–40 · DECIDING POINT",
+      "text": "Match point, bro. Give him the win.\nThe best shot right now is the one you don't take.",
+      "actor_action": "The coach tells the founder to throw match point and protect the business opportunity.",
+      "player_decision": "Give the CEO the match or fight through match point.",
+      "choices": {
+        "left": {
+          "label": "I'll throw it, coach",
+          "effects": {}
+        },
+        "right": {
+          "label": "Fighting till the end",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_0",
+      "kind": "story",
+      "source": "@padel_pro",
+      "mode": "personal",
+      "continuation": "forced",
+      "text": "Man... for real?\nI risked my own reputation to give you a golden ticket and you backed out.\nYou just clowned both of us.",
+      "actor_action": "The coach calls out the founder for backing out of the match and embarrassing them both.",
+      "player_decision": "Give an excuse or accept the disappointment; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "I have a fever!",
+          "effects": {}
+        },
+        "right": {
+          "label": "😔😔😔",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_1",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU WON THE MATCH",
+      "text": "Relax, boy. It was only a warm-up.\nWatching you sweat and cheat for that win was painful to watch.\nHave fun begging for money!",
+      "actor_action": "The CEO dismisses the founder's win and rejects the business pitch.",
+      "player_decision": "Plead or answer back; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Please wait, sir!",
+          "effects": {}
+        },
+        "right": {
+          "label": "Learn to lose",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_2",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU WON THE MATCH",
+      "text": "Well, look at that.\nTurns out you actually have some balls.\nSend the demo. Let's see if your startup is just as ballsy.",
+      "actor_action": "The CEO respects the founder's nerve and asks for the demo after losing.",
+      "player_decision": "Celebrate the result; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Play hard, work harder",
+          "effects": {}
+        },
+        "right": {
+          "label": "Prepare to stare",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_3",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU LOST THE MATCH",
+      "text": "Easiest win of my life.\nIt was almost cute watching you panic on match point.\nKnew you were soft from the start. Get off my court.",
+      "actor_action": "The CEO mocks the founder after the deliberately lost match and rejects the pitch.",
+      "player_decision": "Admit the throw or try the pitch; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Just let you win!",
+          "effects": {}
+        },
+        "right": {
+          "label": "So... about the deal?",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_4",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU LOST THE MATCH",
+      "text": "Easy win.\nGood boy. Ready to do whatever I say.\nDeal is done. Send the demo, let's see what new toy I just bought.",
+      "actor_action": "The CEO rewards the founder's submission with a deal and asks for the demo.",
+      "player_decision": "Accept the order; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Right away, boss!",
+          "effects": {}
+        },
+        "right": {
+          "label": "We're the future",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_5",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU LOST THE MATCH",
+      "text": "What were you thinking, kid? I always win.\nConsider this deal your consolation prize for trying.\nSend the demo.",
+      "actor_action": "The CEO wins the match but offers the founder a consolation deal for fighting.",
+      "player_decision": "Accept the deal; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Accepted",
+          "effects": {}
+        },
+        "right": {
+          "label": "Rematch tomorrow",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_6",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "YOU LOST THE MATCH",
+      "text": "You lost, kid. Nice try.\nKeep working hard, maybe one day I'll hire you to take out my trash.\nAnd yes, forget about business.",
+      "actor_action": "The CEO wins the match, humiliates the founder, and rejects the business pitch.",
+      "player_decision": "Answer with defiance or indifference; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Remember my name",
+          "effects": {}
+        },
+        "right": {
+          "label": "Fine without you",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "PADEL_OUTCOME_7",
+      "kind": "story",
+      "source": "@iclosedai",
+      "mode": "irl",
+      "continuation": "forced",
+      "location": "IRL · PADEL CLUB",
+      "score": "MATCH ABORTED",
+      "text": "MATCH OVER! I am SO done with this.\nBitching and crying over every single point.\nKnow your place, nobody. You’re blacklisted everywhere.",
+      "actor_action": "The CEO ends the match early and blacklists the founder after being pushed too far.",
+      "player_decision": "Taunt or plead; either reply ends the Padel branch.",
+      "choices": {
+        "left": {
+          "label": "Who's crying now?",
+          "effects": {}
+        },
+        "right": {
+          "label": "I'll do anything, please!",
+          "effects": {}
         }
       }
     },

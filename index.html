@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#dfe9f2">
+    <meta name="theme-color" content="#bdd5e8">
     <title>Mistakery</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
@@ -13,80 +13,61 @@
   </head>
   <body>
     <main class="app" data-app>
-      <section class="phone" data-game aria-label="Mistakery game">
-        <header class="topbar">
-          <h1>Mistakery</h1>
-          <button class="turn" type="button" data-restart-run>Back to 9-5</button>
-        </header>
-
-        <section class="resources" data-resources aria-label="Startup resources"></section>
-
-        <section class="intro" data-intro hidden aria-label="Intro">
-          <article class="messenger" data-intro-messenger>
-            <header class="threadbar">
-              <div class="avatar" data-intro-avatar aria-hidden="true">M</div>
-              <div class="threadbar__copy">
-                <strong data-intro-name>Mistakery</strong>
-                <span data-intro-status></span>
-              </div>
-              <span class="threadbar__menu" aria-hidden="true">•••</span>
-            </header>
-
-            <section class="conversation conversation--intro" data-intro-conversation aria-live="polite"></section>
-
-            <footer class="reply-dock">
-              <div class="composer">
-                <span>Choose a reply…</span>
-                <span aria-hidden="true">↑</span>
-              </div>
-              <div class="choices" data-intro-choices></div>
-            </footer>
-          </article>
-        </section>
-
-        <article class="messenger" data-messenger>
-          <header class="threadbar">
-            <div class="avatar" data-avatar aria-hidden="true">B</div>
-            <div class="threadbar__copy">
-              <strong data-sender>Loading…</strong>
-              <span data-status>typing...</span>
-            </div>
-            <span class="threadbar__menu" aria-hidden="true">•••</span>
+      <h1>Mistakery</h1>
+      <div class="frame">
+        <section class="phone" data-game data-view="loading" data-shell-stage="intro" aria-label="Mistakery game">
+          <header class="top" data-top hidden>
+            <div class="brand"><b>B2BuyerSpyer</b><span>AI-POWERED</span></div>
+            <button class="quit" type="button" data-restart-run disabled>Back to 9–5</button>
           </header>
 
-          <section class="conversation" data-conversation aria-live="polite">
+          <div class="resources" data-resources aria-label="Startup resources" hidden></div>
+
+          <section class="messenger-scene scene--card personal-scene" data-scene>
+            <header class="contact">
+              <div class="avatar" data-avatar aria-hidden="true">M</div>
+              <div class="contact__text"><b data-sender>Mistakery</b><i data-status>typing...</i></div>
+              <span class="more" aria-hidden="true">⋯</span>
+            </header>
+
             <button class="pinned" type="button" data-pinned hidden>
-              <span class="pinned__pin" aria-hidden="true">📌</span>
-              <span class="pinned__title" data-pinned-title></span>
+              <span class="pin" aria-hidden="true">📌</span>
+              <span><small>PINNED</small><b data-pinned-title>5 MONTHS AS A FOUNDER 🚀</b></span>
             </button>
-            <div class="message-row">
-              <div class="message-avatar" data-message-avatar aria-hidden="true">B</div>
-              <div class="bubble">
-                <p data-message>Opening the founder chat…</p>
-                <span class="stamp">15:54</span>
+
+            <div class="chat" data-chat aria-live="polite">
+              <span class="sr-only" data-card-id></span>
+              <div class="message-row">
+                <div class="mini-avatar message-avatar" data-message-avatar aria-hidden="true">M</div>
+                <div class="message-stack" data-message-stack>
+                  <div class="message"><p data-message>Opening Mistakery…</p></div>
+                </div>
               </div>
             </div>
+
+            <div class="reply-hint-dock" data-reply-hint hidden>
+              <div class="reply-hint">
+                <span class="reply-hint__text">Choose a reply...</span>
+                <span class="reply-hint__arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <footer class="choices" data-choices></footer>
           </section>
 
-          <footer class="reply-dock" data-reply-dock>
-            <div class="composer">
-              <span>Choose a reply…</span>
-              <span aria-hidden="true">↑</span>
+          <div class="pin-sheet" data-pin-sheet hidden>
+            <div class="pin-sheet__card" role="dialog" aria-label="Pinned message">
+              <header class="pin-sheet__head">
+                <span>📌 Pinned</span>
+                <button class="pin-sheet__close" type="button" data-pin-close aria-label="Close">✕</button>
+              </header>
+              <div class="message note-message"><p data-pin-text></p></div>
             </div>
-            <div class="choices" data-choices></div>
-          </footer>
-        </article>
-
-        <div class="pin-sheet" data-pin-sheet hidden>
-          <div class="pin-sheet__card" role="dialog" aria-label="Pinned message">
-            <header class="pin-sheet__head">
-              <span>📌 Pinned</span>
-              <button class="pin-sheet__close" type="button" data-pin-close aria-label="Close">✕</button>
-            </header>
-            <div class="bubble"><p data-pin-text></p></div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   </body>
 </html>
