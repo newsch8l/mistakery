@@ -2,12 +2,13 @@
 
 ## Verified snapshot
 
-- Updated: 2026-08-31 00:31 MSK
+- Updated: 2026-08-31 09:35 MSK
 - Branch: `design/personal-chat-runtime`
-- Base commit: `f2b75a53054d946d930fefdb4f24d71862281f48`
+- Published implementation commit: `bb5c68e5a991edde4c6299c889645969e5306bd6`
 - Worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`
-- Working tree: intentionally dirty with the completed AI Influencer implementation, tests, generated artifacts, and previously approved uncommitted UI/Padel edits.
-- Publication: this pass was not committed, pushed, or published.
+- Working tree: clean after the implementation commit; this file is the deployment handoff update.
+- Publication: `origin/design/personal-chat-runtime`, `origin/main`, and the GitHub Pages source `origin/lean-opening` contain the implementation commit.
+- Live URL: `https://newsch8l.github.io/mistakery/`
 
 ## Current objective
 
@@ -21,6 +22,7 @@ The AI Influencer prototype story is implemented and verified. It reuses the exi
 - Verified all six routes from Card 4 to Card 7/8; none repeats Card 5 or Card 6.
 - Implemented exactly one weighted draw per terminal choice: `< 0.4` selects the 40% outcome and `>= 0.4` selects the 60% outcome.
 - Added compact messenger-bubble placeholders for video/review images and split long messages into bubbles following document paragraph boundaries.
+- Applied the final author correction to Card 4 (`I never lie...`, `Gotta drop an honest video 😔`) and added the compact `Hate video screenshot` placeholder to Card 6.
 - Kept every Influencer choice resource effect empty and disabled passive cash burn inside this prototype branch.
 - Made both replies on all seven outcomes return through `SAVED_02_UPDATE`.
 - Regenerated `cards.bundle.js` and the full EN/RU editorial catalog; contextual Card 5/6 reply sets are included in the catalog.
@@ -61,6 +63,9 @@ The AI Influencer prototype story is implemented and verified. It reuses the exi
 | `node --check app.js`, `node --check cards.bundle.js` | passed |
 | `git diff --check` | passed |
 | Independent code review | no Critical, Important, or Minor findings |
+| Git push | feature branch, `main`, and Pages source `lean-opening` fast-forwarded without force-push |
+| Live HTTP audit | `index.html`, `cards.json`, `cards.bundle.js`, `app.js`, and `style.css` returned HTTP 200 |
+| Live file integrity | public `cards.json`, `cards.bundle.js`, `app.js`, and `style.css` are byte-for-byte identical to commit `bb5c68e` |
 
 ## Known issues and unverified assumptions
 
@@ -77,6 +82,5 @@ The AI Influencer prototype story is implemented and verified. It reuses the exi
 
 ## Next steps
 
-1. Let the user review the story feel and pacing in the local prototype.
-2. Commit or publish only after explicit user approval.
-3. Add real screenshots and resource consequences only in a separately approved pass.
+1. Let the user review the published story feel and pacing at `https://newsch8l.github.io/mistakery/`.
+2. Add real screenshots and resource consequences only in a separately approved pass.
