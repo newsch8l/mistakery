@@ -111,6 +111,10 @@
       "name": "@hustler",
       "role": "Cofounder"
     },
+    "@ai_evangelist": {
+      "name": "@ai_evangelist",
+      "role": "AI Influencer"
+    },
     "@hype_queen": {
       "name": "@hype_queen",
       "role": "Marketer"
@@ -121,6 +125,10 @@
     },
     "@error404": {
       "name": "@error404",
+      "role": "Dev"
+    },
+    "@error_404": {
+      "name": "@error_404",
       "role": "Dev"
     },
     "@pixel_perfect": {
@@ -380,8 +388,8 @@
           "setFlags": [
             "opening_done"
           ],
-          "startArc": "agents",
-          "next": "AGENT_01"
+          "startArc": "influencer",
+          "next": "INFLUENCER_01"
         },
         "right": {
           "label": "Team's too slow",
@@ -400,6 +408,450 @@
           ],
           "startArc": "padel",
           "next": "PADEL_01"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_01",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@hustler",
+          "avatar": "H",
+          "text": "Guys, huge play!!\nMy boy from that AI bootcamp is a top AI influencer now. Down to promote us for a symbolic % on each sale"
+        },
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "Yeah right, heard that one before."
+        },
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "20% max, anything higher and we're working for free"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "Let's go",
+          "effects": {},
+          "next": "INFLUENCER_02"
+        },
+        "right": {
+          "label": "Nah, cringe",
+          "effects": {},
+          "next": "INFLUENCER_OUTCOME_1"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_02",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "Hey\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 100% honest with my audience, gotta test it myself first.",
+      "choices": {
+        "left": {
+          "label": "Deal",
+          "effects": {},
+          "next": "INFLUENCER_03"
+        },
+        "right": {
+          "label": "Maybe 10%",
+          "effects": {},
+          "next": "INFLUENCER_02A"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_02A",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "Hahaha\nI like your style 😂\n\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this\n\nWe good? Drop the demo.",
+      "choices": {
+        "left": {
+          "label": "Deal. Just deliver",
+          "effects": {},
+          "next": "INFLUENCER_03"
+        },
+        "right": {
+          "label": "We need you in sales",
+          "effects": {},
+          "next": "INFLUENCER_03"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_03",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@error_404",
+      "continuation": "forced",
+      "text": "wtf??\nlooks like your blogger is trying to crash us\n\nthousands of requests right now:\nmake me $1B right now. make zero mistakes\n\nis he dumb or just playing dumb?",
+      "choices": {
+        "left": {
+          "label": "Cut his limits",
+          "effects": {},
+          "next": "INFLUENCER_04"
+        },
+        "right": {
+          "label": "More capacity",
+          "effects": {},
+          "next": "INFLUENCER_04"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_04",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "Aaand it's down. Knew it\n\nGuys, if you can't even handle my basic workflow, my traffic will literally destroy you.\nDon't wanna bury your launch, but I never lie to my community.\n\nGotta drop an honest video 😔",
+      "choices": {
+        "left": {
+          "label": "Have fun",
+          "effects": {},
+          "next": "INFLUENCER_06"
+        },
+        "right": {
+          "label": "Any other options?",
+          "effects": {},
+          "next": "INFLUENCER_05"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_05",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.",
+      "choices": {
+        "left": {
+          "label": "Just save the launch",
+          "effects": {},
+          "next": "INFLUENCER_07"
+        },
+        "right": {
+          "label": "That's insane",
+          "effects": {},
+          "next": "INFLUENCER_06"
+        }
+      },
+      "contextualChoices": {
+        "INFLUENCER_06": {
+          "left": {
+            "label": "My bad, let's do it",
+            "effects": {},
+            "next": "INFLUENCER_07"
+          },
+          "right": {
+            "label": "Shove it",
+            "effects": {},
+            "next": "INFLUENCER_08"
+          }
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_06",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "placeholder": "Hate video screenshot",
+      "text": "B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)\nCool. Dropping it tonight 🤷‍♂️",
+      "choices": {
+        "left": {
+          "label": "Alternatives?",
+          "effects": {},
+          "next": "INFLUENCER_05"
+        },
+        "right": {
+          "label": "Cool. Forget the deal",
+          "effects": {},
+          "next": "INFLUENCER_08"
+        }
+      },
+      "contextualChoices": {
+        "INFLUENCER_05": {
+          "left": {
+            "label": "Actually, 60% is ok",
+            "effects": {},
+            "next": "INFLUENCER_07"
+          },
+          "right": {
+            "label": "Try me, buddy",
+            "effects": {},
+            "next": "INFLUENCER_08"
+          }
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_07",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "placeholder": "Video preview screenshot",
+      "text": "Video’s live. Don’t screw this up, team!!!\n\nOr do. That’s just more views lol.",
+      "choices": {
+        "left": {
+          "label": "DELETE THIS!!!",
+          "effects": {},
+          "next": "INFLUENCER_OUTCOME_2"
+        },
+        "right": {
+          "label": "Anything for views",
+          "effects": {},
+          "next": "INFLUENCER_OUTCOME_2"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_08",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "placeholder": "Hate video screenshot"
+        },
+        {
+          "direction": "incoming",
+          "source": "@error404",
+          "avatar": "E4",
+          "text": "our traffic is 10x right now. the server is on fire.\nis this seriously from that clown's hate video?"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "Spam promos in comments!",
+          "effects": {},
+          "next": "INFLUENCER_OUTCOME_4"
+        },
+        "right": {
+          "label": "Double prices NOW!!",
+          "effects": {},
+          "next": "INFLUENCER_OUTCOME_6"
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_1",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@hustler",
+      "continuation": "forced",
+      "text": "Cringe is our bank account, bro.\nWith that mindset, we’re gonna stay broke.",
+      "choices": {
+        "left": {
+          "label": "Do your own shit",
+          "effects": {}
+        },
+        "right": {
+          "label": "Keep me posted",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_2",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@ai_evangelist",
+          "avatar": "AI",
+          "placeholder": "Positive review screenshot"
+        },
+        {
+          "direction": "incoming",
+          "source": "@ai_evangelist",
+          "avatar": "AI",
+          "text": "Team, episode 2 is live! Crushing it! 🔥"
+        },
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "Boss, you're a genius!\nWe finally have a real CEO 🙌"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "We're viral, baby! 🚀",
+          "effects": {}
+        },
+        "right": {
+          "label": "Wait... I'm that founder",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_3",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "placeholder": "Hate video screenshot"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "remind me why we thought this was a good idea?  💀"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "Back to work!",
+          "effects": {}
+        },
+        "right": {
+          "label": "Clout is clout 😎",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_4",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait\n\nLet's set up my 20% 💸",
+      "choices": {
+        "left": {
+          "label": "Get lost",
+          "effects": {}
+        },
+        "right": {
+          "label": "Now it's 3%",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_5",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "still zero sales…"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "and top comment: “Are they seriously trying to sell subscriptions under a scam expose? 💀”"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "Still alive. Already stronger",
+          "effects": {}
+        },
+        "right": {
+          "label": "That’s called marketing",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_6",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "@ai_evangelist",
+      "continuation": "forced",
+      "text": "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait\n\nLet's set up my 20% 💸",
+      "choices": {
+        "left": {
+          "label": "Get lost",
+          "effects": {}
+        },
+        "right": {
+          "label": "Now it's 3%",
+          "effects": {}
+        }
+      }
+    },
+    {
+      "id": "INFLUENCER_OUTCOME_7",
+      "kind": "story",
+      "arc": "influencer",
+      "source": "dream_team",
+      "mode": "team",
+      "continuation": "forced",
+      "messages": [
+        {
+          "direction": "incoming",
+          "source": "@bigdeals",
+          "avatar": "BD",
+          "text": "Zero sales.\nWho knew doubling prices on broken software was bad idea? 🙃"
+        },
+        {
+          "direction": "incoming",
+          "source": "@hype_queen",
+          "avatar": "HQ",
+          "text": "We're getting cooked so hard\nTop reply: “They got 5 minutes of clout and completely lost their minds 💀”"
+        }
+      ],
+      "choices": {
+        "left": {
+          "label": "Clout is clout 😎",
+          "effects": {}
+        },
+        "right": {
+          "label": "Blinded by greed",
+          "effects": {}
         }
       }
     },
@@ -617,7 +1069,7 @@
       "continuation": "forced",
       "location": "IRL · PADEL CLUB",
       "score": "YOU WON THE MATCH",
-      "text": "Relax, boy. It was only a warm-up.\nWatching you sweat and cheat for that win was painful to watch.\nHave fun begging for money!",
+      "text": "Relax, boy. It was only a warm-up.\nWatching you sweat and cheat for that win was painful.\nHave fun begging for money!",
       "actor_action": "The CEO dismisses the founder's win and rejects the business pitch.",
       "player_decision": "Plead or answer back; either reply ends the Padel branch.",
       "choices": {

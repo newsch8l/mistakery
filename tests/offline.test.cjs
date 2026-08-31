@@ -28,8 +28,30 @@ test('bilingual catalog contains every canonical card and its current English co
   const catalog = fs.readFileSync(catalogPath, 'utf8');
   canonical.cards.forEach((card) => {
     assert.match(catalog, new RegExp(`## ${card.id}\\b`), `Missing catalog entry ${card.id}`);
-    card.text.split('\n').forEach((line) => assert.ok(catalog.includes(line), `Catalog has stale copy for ${card.id}: ${line}`));
+    const visibleLines = [
+      ...(card.placeholder ? [card.placeholder] : []),
+      ...(typeof card.text === 'string' ? card.text.split('\n') : []),
+      ...(card.messages || []).flatMap((message) => [
+        ...(message.placeholder ? [message.placeholder] : []),
+        ...(typeof message.text === 'string' ? message.text.split('\n') : []),
+      ]),
+    ];
+    visibleLines.filter(Boolean).forEach((line) => {
+      assert.ok(catalog.includes(line), `Catalog has stale copy for ${card.id}: ${line}`);
+    });
   });
+});
+
+test('bilingual catalog includes contextual AI influencer reply choices', () => {
+  const canonical = JSON.parse(fs.readFileSync(path.join(root, 'cards.json'), 'utf8'));
+  const catalog = fs.readFileSync(catalogPath, 'utf8');
+  for (const id of ['INFLUENCER_05', 'INFLUENCER_06']) {
+    const card = canonical.cards.find((candidate) => candidate.id === id);
+    const contextualChoices = Object.values(card.contextualChoices || {}).flatMap(Object.values);
+    for (const choice of contextualChoices) {
+      assert.ok(catalog.includes(choice.label), `Missing contextual choice for ${id}: ${choice.label}`);
+    }
+  }
 });
 
 test('bilingual catalog keeps the approved AGENT_01 Russian copy', () => {

@@ -253,6 +253,277 @@ async function currentRuntimeState(page) {
   }));
 }
 
+async function setInfluencerRuntimeCard(page, id, previousCardId = null, randomValues = []) {
+  await page.evaluate(({ cardId, previous, values }) => {
+    const app = window.MistakeryApp;
+    window.clearTimeout(app.introTypingTimer);
+    app.state = window.MistakeryEngine.startRun(app.deck);
+    app.state.currentCardId = cardId;
+    app.influencerPreviousCardId = previous;
+    app.locked = false;
+    app.view = 'playing';
+    let randomIndex = 0;
+    window.__influencerRandomCalls = 0;
+    Math.random = () => {
+      window.__influencerRandomCalls += 1;
+      const value = values[randomIndex];
+      randomIndex += 1;
+      return value == null ? 0 : value;
+    };
+    app.render();
+  }, { cardId: id, previous: previousCardId, values: randomValues });
+  await waitForMessageSettled(page);
+}
+
+async function influencerRuntimeState(page) {
+  return page.evaluate(() => ({
+    cardId: document.querySelector('[data-card-id]')?.textContent,
+    previousCardId: window.MistakeryApp.influencerPreviousCardId,
+    resources: { ...window.MistakeryApp.state.resources },
+    randomCalls: window.__influencerRandomCalls,
+  }));
+}
+
+test('Investor choices split to Influencer on the left and preserve Padel on the right', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+
+    await setInfluencerRuntimeCard(page, 'OPEN_INVESTOR');
+    await chooseAndWaitForCard(page, 'left', 'INFLUENCER_01');
+    assert.equal((await influencerRuntimeState(page)).previousCardId, 'OPEN_INVESTOR');
+
+    await setInfluencerRuntimeCard(page, 'OPEN_INVESTOR');
+    await chooseAndWaitForCard(page, 'right', 'PADEL_INVITE');
+    assert.equal(await page.evaluate(() => window.MistakeryApp.padelCeoScore), 0);
+    assert.equal((await influencerRuntimeState(page)).previousCardId, null);
+  } finally {
+    await browser.close();
+  }
+});
+
+test('Cards 5 and 6 use contextual replies and never repeat on any Card 4 route', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const routes = [
+    { sides: ['right', 'left'], ids: ['INFLUENCER_04', 'INFLUENCER_05', 'INFLUENCER_07'] },
+    { sides: ['right', 'right', 'left'], ids: ['INFLUENCER_04', 'INFLUENCER_05', 'INFLUENCER_06', 'INFLUENCER_07'] },
+    { sides: ['right', 'right', 'right'], ids: ['INFLUENCER_04', 'INFLUENCER_05', 'INFLUENCER_06', 'INFLUENCER_08'] },
+    { sides: ['left', 'left', 'left'], ids: ['INFLUENCER_04', 'INFLUENCER_06', 'INFLUENCER_05', 'INFLUENCER_07'] },
+    { sides: ['left', 'left', 'right'], ids: ['INFLUENCER_04', 'INFLUENCER_06', 'INFLUENCER_05', 'INFLUENCER_08'] },
+    { sides: ['left', 'right'], ids: ['INFLUENCER_04', 'INFLUENCER_06', 'INFLUENCER_08'] },
+  ];
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+
+    for (const route of routes) {
+      await setInfluencerRuntimeCard(page, 'INFLUENCER_04', 'INFLUENCER_03');
+      const resources = (await influencerRuntimeState(page)).resources;
+      const rendered = ['INFLUENCER_04'];
+      for (let index = 0; index < route.sides.length; index += 1) {
+        await chooseAndWaitForCard(page, route.sides[index], route.ids[index + 1]);
+        rendered.push((await influencerRuntimeState(page)).cardId);
+      }
+      assert.deepEqual(rendered, route.ids);
+      assert.equal(new Set(rendered).size, rendered.length, route.ids.join(' -> '));
+      assert.deepEqual((await influencerRuntimeState(page)).resources, resources, route.ids.join(' -> '));
+    }
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_05', 'INFLUENCER_04');
+    assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ['Just save the launch', "That's insane"]);
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_05', 'INFLUENCER_06');
+    assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ["My bad, let's do it", 'Shove it']);
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_06', 'INFLUENCER_04');
+    assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ['Alternatives?', 'Cool. Forget the deal']);
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_06', 'INFLUENCER_05');
+    assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ['Actually, 60% is ok', 'Try me, buddy']);
+  } finally {
+    await browser.close();
+  }
+});
+
+test('Influencer outcomes use one exact 40/60 draw for every Card 7 and Card 8 choice', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const cases = [
+    { card: 'INFLUENCER_07', side: 'left', random: 0.399999, outcome: 2 },
+    { card: 'INFLUENCER_07', side: 'left', random: 0.4, outcome: 3 },
+    { card: 'INFLUENCER_07', side: 'right', random: 0.399999, outcome: 2 },
+    { card: 'INFLUENCER_07', side: 'right', random: 0.4, outcome: 3 },
+    { card: 'INFLUENCER_08', side: 'left', random: 0.399999, outcome: 4 },
+    { card: 'INFLUENCER_08', side: 'left', random: 0.4, outcome: 5 },
+    { card: 'INFLUENCER_08', side: 'right', random: 0.399999, outcome: 6 },
+    { card: 'INFLUENCER_08', side: 'right', random: 0.4, outcome: 7 },
+  ];
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+    for (const scenario of cases) {
+      await setInfluencerRuntimeCard(page, scenario.card, 'INFLUENCER_06', [scenario.random]);
+      const resources = (await influencerRuntimeState(page)).resources;
+      await chooseAndWaitForCard(page, scenario.side, `INFLUENCER_OUTCOME_${scenario.outcome}`);
+      const state = await influencerRuntimeState(page);
+      assert.equal(state.randomCalls, 1, JSON.stringify(scenario));
+      assert.deepEqual(state.resources, resources, JSON.stringify(scenario));
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
+test('both replies on every Influencer outcome return through Saved Messages', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+    for (let outcome = 1; outcome <= 7; outcome += 1) {
+      for (const side of ['left', 'right']) {
+        await setInfluencerRuntimeCard(page, `INFLUENCER_OUTCOME_${outcome}`, 'INFLUENCER_07');
+        const resources = (await influencerRuntimeState(page)).resources;
+        await page.locator(`[data-choice="${side}"]`).click();
+        await page.waitForFunction(() => document.querySelector('[data-card-id]')?.textContent === 'SAVED_02_UPDATE');
+        const state = await influencerRuntimeState(page);
+        assert.equal(state.previousCardId, null, `Outcome ${outcome} ${side}`);
+        assert.deepEqual(state.resources, resources, `Outcome ${outcome} ${side}`);
+      }
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
+test('Influencer paragraphs and screenshot placeholders render as compact messenger bubbles', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_02', 'INFLUENCER_01');
+    assert.equal(await page.locator('[data-chat] .message').count(), 3);
+    assert.deepEqual(
+      (await page.locator('[data-chat] .message').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ').trim()),
+      [
+        'HeyHeard about your tool. I feel like we got a huge future together.',
+        "Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.",
+        'Send over the demo. I keep it 100% honest with my audience, gotta test it myself first.',
+      ],
+    );
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_01', 'OPEN_INVESTOR');
+    assert.equal(
+      (await page.locator('.team-bubble').nth(1).textContent()).replace(/\s+/g, ' ').trim(),
+      '@bigdeals Yeah right, heard that one before.',
+    );
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_07', 'INFLUENCER_05');
+    assert.deepEqual(
+      (await page.locator('[data-chat] .message').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ').trim()),
+      ['Video preview screenshot', 'Video’s live. Don’t screw this up, team!!!', 'Or do. That’s just more views lol.'],
+    );
+    const personalPlaceholder = await page.locator('.media-placeholder').evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const style = getComputedStyle(node);
+      return {
+        width: rect.width,
+        height: rect.height,
+        radius: style.borderRadius,
+        borderStyle: style.borderStyle,
+        display: style.display,
+      };
+    });
+    assert.ok(personalPlaceholder.width <= 210, JSON.stringify(personalPlaceholder));
+    assert.ok(personalPlaceholder.height <= 80, JSON.stringify(personalPlaceholder));
+    assert.notEqual(personalPlaceholder.radius, '0px');
+    assert.equal(personalPlaceholder.borderStyle, 'dashed');
+    assert.equal(personalPlaceholder.display, 'grid');
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_04', 'INFLUENCER_03');
+    const cardFourBubbles = page.locator('[data-chat] .message');
+    assert.equal(await cardFourBubbles.count(), 3);
+    assert.deepEqual(await cardFourBubbles.nth(0).locator('p').allTextContents(), ["Aaand it's down. Knew it"]);
+    assert.deepEqual(
+      (await cardFourBubbles.nth(1).locator('p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
+      [
+        "Guys, if you can't even handle my basic workflow, my traffic will literally destroy you.",
+        "Don't wanna bury your launch, but I never lie to my community.",
+      ],
+    );
+    assert.deepEqual(
+      (await cardFourBubbles.nth(2).locator('p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
+      ['Gotta drop an honest video 😔'],
+    );
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_06', 'INFLUENCER_04');
+    assert.equal(await page.locator('.media-placeholder__label').textContent(), 'Hate video screenshot');
+    assert.equal(await page.locator('[data-chat] .message').count(), 2);
+    assert.deepEqual(
+      (await page.locator('[data-chat] .message:not(.media-placeholder) p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
+      ['B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)', 'Cool. Dropping it tonight 🤷‍♂️'],
+    );
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_2', 'INFLUENCER_07');
+    assert.equal(await page.locator('.team-bubble.media-placeholder').count(), 1);
+    assert.equal((await page.locator('.team-bubble.media-placeholder').textContent()).replace(/\s+/g, ' ').trim(), '@ai_evangelist Positive review screenshot');
+    assert.ok(await page.locator('.team-bubble.media-placeholder').evaluate((node) => node.getBoundingClientRect().height <= 80));
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_08', 'INFLUENCER_06');
+    assert.equal(await page.locator('.team-bubble.media-placeholder').count(), 1);
+    assert.equal(await page.locator('.media-placeholder__label').textContent(), 'Hate video screenshot');
+    assert.doesNotMatch(await page.locator('[data-chat]').textContent(), /undefined/);
+    assert.deepEqual(await page.evaluate(() => ({
+      x: document.documentElement.scrollWidth - innerWidth,
+      y: document.documentElement.scrollHeight - innerHeight,
+    })), { x: 0, y: 0 });
+  } finally {
+    await browser.close();
+  }
+});
+
+test('compact viewport keeps Influencer placeholders small and long bubble stacks readable', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 320, height: 650 } });
+
+  try {
+    await page.goto(fileUrl, { waitUntil: 'load' });
+    await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
+    for (const scenario of [
+      { id: 'INFLUENCER_07', previous: 'INFLUENCER_05' },
+      { id: 'INFLUENCER_08', previous: 'INFLUENCER_06' },
+      { id: 'INFLUENCER_OUTCOME_2', previous: 'INFLUENCER_07' },
+    ]) {
+      await setInfluencerRuntimeCard(page, scenario.id, scenario.previous);
+      const geometry = await page.evaluate(() => {
+        const chat = document.querySelector('[data-chat]');
+        const placeholder = document.querySelector('.media-placeholder').getBoundingClientRect();
+        return {
+          placeholderWidth: placeholder.width,
+          placeholderHeight: placeholder.height,
+          chatOverflowY: getComputedStyle(chat).overflowY,
+          pageX: document.documentElement.scrollWidth - innerWidth,
+          pageY: document.documentElement.scrollHeight - innerHeight,
+        };
+      });
+      assert.ok(geometry.placeholderWidth <= 210, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.placeholderHeight <= 80, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.chatOverflowY, 'auto', `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.pageX, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.pageY, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
 test('Feeling sick opens chat Outcome 0 without activating an IRL scene', async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -591,7 +862,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     const allowed = new Set(['OPEN_01', 'OPEN_02a', 'OPEN_02b', 'OPEN_BOSS', 'OPEN_DEV', 'OPEN_INVESTOR', 'PADEL_INVITE', 'DREAM_TEAM', 'IRL_PADEL_01', 'IRL_PADEL_03B', 'IRL_PADEL_04', 'IRL_PADEL_05', 'IRL_PADEL_06']);
     for (const id of rendered) assert.ok(allowed.has(id), `disabled card rendered: ${id}`);
 
-    await page.locator('[data-choice="left"]').click();
+    await page.locator('[data-choice="right"]').click();
     await page.waitForFunction(() => document.querySelector('[data-card-id]')?.textContent === 'PADEL_INVITE');
     rendered.push('PADEL_INVITE');
     await waitForMessageSettled(page);
@@ -904,6 +1175,34 @@ test('compact viewport keeps the right opening branch inside the approved runtim
       y: document.documentElement.scrollHeight - innerHeight,
     })), { x: 0, y: 0 });
     assert.deepEqual(errors, []);
+  } finally {
+    await browser.close();
+  }
+});
+
+test('touch devices ignore synthesized hover uplift on decision buttons', async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
+
+  try {
+    await page.goto(fileUrl);
+    await page.waitForFunction(() => (
+      window.MistakeryApp?.deck
+      && document.querySelector('[data-choices] .choice:not(:disabled)')
+    ));
+    assert.deepEqual(await page.evaluate(() => ({
+      hover: matchMedia('(hover: hover)').matches,
+      pointer: matchMedia('(pointer: fine)').matches,
+    })), { hover: false, pointer: false });
+
+    const choice = page.locator('[data-choices] .choice:not(:disabled)').first();
+    await choice.hover();
+    await page.waitForTimeout(200);
+    assert.equal(await choice.evaluate((node) => getComputedStyle(node).transform), 'none');
   } finally {
     await browser.close();
   }

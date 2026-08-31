@@ -68,7 +68,7 @@ function quote(lines, htmlBreaks = false) {
   if (htmlBreaks) {
     return lines.map((line, index) => `> ${line}${index < lines.length - 1 ? '<br>' : ''}`).join('\n');
   }
-  return lines.map((line) => `> ${line}`).join('  \n');
+  return lines.map((line, index) => `> ${line}${index < lines.length - 1 ? '<br>' : ''}`).join('\n');
 }
 
 function effects(choice) {
@@ -88,12 +88,25 @@ function route(choice) {
   return parts.join('; ');
 }
 
+function cardVisibleLines(card) {
+  return [
+    ...(card.placeholder ? [card.placeholder] : []),
+    ...(typeof card.text === 'string' ? card.text.split('\n') : []),
+    ...(card.messages || []).flatMap((message) => [
+      ...(message.placeholder ? [message.placeholder] : []),
+      ...(typeof message.text === 'string' ? message.text.split('\n') : []),
+    ]),
+  ].filter(Boolean);
+}
+
 const sections = [
   ['1. Стартовая последовательность', (card) => card.kind === 'opening'],
   ['2. SADBOT — первый клиент (@head_of_agile)', (card) => card.id === 'AGENT_01' || card.id.startsWith('SADBOT')],
   ['3. ClosedAI Padel', (card) => card.arc === 'padel'],
   ['4. Global side-stories', (card) => card.kind === 'sideStory'],
   ['5. Pressure cards', (card) => card.kind === 'pressure'],
+  ['6. AI Influencer prototype', (card) => card.arc === 'influencer'],
+  ['7. Other prototype cards', () => true],
 ];
 
 const lines = [
@@ -105,19 +118,34 @@ const lines = [
   '',
 ];
 
+const catalogued = new Set();
 for (const [title, predicate] of sections) {
+  const cards = deck.cards.filter((card) => predicate(card) && !catalogued.has(card.id));
+  if (!cards.length) continue;
   lines.push(`# ${title}`, '');
-  for (const card of deck.cards.filter(predicate)) {
-    const translation = ru[card.id] || null;
-    if (!translation) throw new Error(`Missing Russian translation for ${card.id}`);
+  for (const card of cards) {
+    catalogued.add(card.id);
+    const englishLines = cardVisibleLines(card);
+    const translation = ru[card.id] || {
+      text: englishLines,
+      left: card.choices.left.label,
+      right: card.choices.right.label,
+      exactEnglishOnly: true,
+    };
     const source = deck.sources[card.source];
     const translationHeading = translation.exactEnglishOnly
       ? '**RU — перевод не утверждён; сохранён точный EN**'
       : '**RU**';
-    lines.push(`## ${card.id} — ${source.role} ${source.name}`, '', '**EN**', '', quote(card.text.split('\n'), translation.exactEnglishOnly), '', translationHeading, '', quote(translation.text, translation.exactEnglishOnly), '');
+    lines.push(`## ${card.id} — ${source.role} ${source.name}`, '', '**EN**', '', quote(englishLines, translation.exactEnglishOnly), '', translationHeading, '', quote(translation.text, translation.exactEnglishOnly), '');
     for (const side of ['left', 'right']) {
       const choice = card.choices[side];
       lines.push(`- **${choice.label} — ${translation[side]}**: ${effects(choice)}; ${route(choice)}.`);
+    }
+    for (const [previousCardId, contextualChoices] of Object.entries(card.contextualChoices || {})) {
+      for (const side of ['left', 'right']) {
+        const choice = contextualChoices[side];
+        lines.push(`- **${choice.label} — ${choice.label}** (контекст после \`${previousCardId}\`; RU-перевод не утверждён): ${effects(choice)}; ${route(choice)}.`);
+      }
     }
     lines.push('');
   }

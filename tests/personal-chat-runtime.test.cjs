@@ -22,7 +22,7 @@ function activeCardIds() {
   return [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((entry) => entry[1]);
 }
 
-test('runtime exposes only the approved opening, Padel sequence, and eight outcomes', () => {
+test('runtime exposes only the approved opening, influencer, and Padel sequences', () => {
   assert.deepEqual(activeCardIds(), [
     'OPEN_01',
     'OPEN_02a',
@@ -30,6 +30,22 @@ test('runtime exposes only the approved opening, Padel sequence, and eight outco
     'OPEN_BOSS',
     'OPEN_DEV',
     'OPEN_INVESTOR',
+    'INFLUENCER_01',
+    'INFLUENCER_02',
+    'INFLUENCER_02A',
+    'INFLUENCER_03',
+    'INFLUENCER_04',
+    'INFLUENCER_05',
+    'INFLUENCER_06',
+    'INFLUENCER_07',
+    'INFLUENCER_08',
+    'INFLUENCER_OUTCOME_1',
+    'INFLUENCER_OUTCOME_2',
+    'INFLUENCER_OUTCOME_3',
+    'INFLUENCER_OUTCOME_4',
+    'INFLUENCER_OUTCOME_5',
+    'INFLUENCER_OUTCOME_6',
+    'INFLUENCER_OUTCOME_7',
     'PADEL_INVITE',
     'DREAM_TEAM',
     'IRL_PADEL_01',
@@ -48,6 +64,9 @@ test('runtime exposes only the approved opening, Padel sequence, and eight outco
   ]);
   assert.match(app, /ACTIVE_CARD_IDS\.includes\(card\.id\)/);
   assert.match(app, /card\.id\s*===\s*['"]OPEN_INVESTOR['"][\s\S]*continueFromInvestor/);
+  assert.match(app, /function\s+continueFromInfluencer[\s\S]*resolveInfluencerChoice/);
+  assert.match(app, /function\s+selectInfluencerOutcome[\s\S]*rng\(\)\s*<\s*0\.4/);
+  assert.match(app, /function\s+finishInfluencerOutcome[\s\S]*influencerPreviousCardId\s*=\s*null[\s\S]*startSaved\(1\)/);
   assert.match(app, /card\.id\s*===\s*['"]DREAM_TEAM['"][\s\S]*continueFromDreamTeam/);
   assert.match(app, /card\.id\s*===\s*['"]IRL_PADEL_06['"][\s\S]*continueFromPadelMatchPoint/);
   assert.match(app, /function\s+finishPadelOutcome[\s\S]*padelCeoScore\s*=\s*null[\s\S]*startSaved\(1\)/);
@@ -66,12 +85,130 @@ test('three active cards preserve the approved message boundaries and revised in
   assert.equal(cards.OPEN_INVESTOR.text, 'I DIDN’T DUMP MY CASH INTO THIS AI CRAP TO GET ZERO CLIENTS.\n\nWHERE THE HELL ARE THE BUYERS???\n\nIF I WANTED TO WASTE MONEY I’D BUY A YACHT FOR MY EX-WIFE.');
 });
 
+test('AI influencer cards preserve the English source copy, graph, and empty resource effects', () => {
+  const cards = Object.fromEntries(canonicalDeck.cards.map((card) => [card.id, card]));
+  const ids = [
+    'INFLUENCER_01',
+    'INFLUENCER_02',
+    'INFLUENCER_02A',
+    'INFLUENCER_03',
+    'INFLUENCER_04',
+    'INFLUENCER_05',
+    'INFLUENCER_06',
+    'INFLUENCER_07',
+    'INFLUENCER_08',
+    'INFLUENCER_OUTCOME_1',
+    'INFLUENCER_OUTCOME_2',
+    'INFLUENCER_OUTCOME_3',
+    'INFLUENCER_OUTCOME_4',
+    'INFLUENCER_OUTCOME_5',
+    'INFLUENCER_OUTCOME_6',
+    'INFLUENCER_OUTCOME_7',
+  ];
+
+  assert.equal(cards.OPEN_INVESTOR.choices.left.next, 'INFLUENCER_01');
+  assert.equal(cards.OPEN_INVESTOR.choices.right.next, 'PADEL_01');
+  assert.deepEqual(ids.filter((id) => cards[id]), ids);
+  assert.deepEqual(ids.filter((id) => !cards[id]), []);
+  assert.equal(canonicalDeck.sources['@ai_evangelist'].name, '@ai_evangelist');
+  assert.equal(canonicalDeck.sources['@error_404'].name, '@error_404');
+
+  assert.deepEqual(cards.INFLUENCER_01.messages, [
+    {
+      direction: 'incoming',
+      source: '@hustler',
+      avatar: 'H',
+      text: 'Guys, huge play!!\nMy boy from that AI bootcamp is a top AI influencer now. Down to promote us for a symbolic % on each sale',
+    },
+    {
+      direction: 'incoming',
+      source: '@bigdeals',
+      avatar: 'BD',
+      text: 'Yeah right, heard that one before.',
+    },
+    {
+      direction: 'incoming',
+      source: '@bigdeals',
+      avatar: 'BD',
+      text: "20% max, anything higher and we're working for free",
+    },
+    {
+      direction: 'incoming',
+      source: '@hype_queen',
+      avatar: 'HQ',
+      text: "major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him",
+    },
+  ]);
+  assert.deepEqual(cards.INFLUENCER_01.choices, {
+    left: { label: "Let's go", effects: {}, next: 'INFLUENCER_02' },
+    right: { label: 'Nah, cringe', effects: {}, next: 'INFLUENCER_OUTCOME_1' },
+  });
+
+  assert.equal(cards.INFLUENCER_02.text, "Hey\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 100% honest with my audience, gotta test it myself first.");
+  assert.deepEqual(cards.INFLUENCER_02.choices, {
+    left: { label: 'Deal', effects: {}, next: 'INFLUENCER_03' },
+    right: { label: 'Maybe 10%', effects: {}, next: 'INFLUENCER_02A' },
+  });
+
+  assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\n\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this\n\nWe good? Drop the demo.");
+  assert.deepEqual(cards.INFLUENCER_02A.choices, {
+    left: { label: 'Deal. Just deliver', effects: {}, next: 'INFLUENCER_03' },
+    right: { label: 'We need you in sales', effects: {}, next: 'INFLUENCER_03' },
+  });
+
+  assert.equal(cards.INFLUENCER_03.text, 'wtf??\nlooks like your blogger is trying to crash us\n\nthousands of requests right now:\nmake me $1B right now. make zero mistakes\n\nis he dumb or just playing dumb?');
+  assert.equal(cards.INFLUENCER_04.text, "Aaand it's down. Knew it\n\nGuys, if you can't even handle my basic workflow, my traffic will literally destroy you.\nDon't wanna bury your launch, but I never lie to my community.\n\nGotta drop an honest video 😔");
+  assert.deepEqual(cards.INFLUENCER_04.choices, {
+    left: { label: 'Have fun', effects: {}, next: 'INFLUENCER_06' },
+    right: { label: 'Any other options?', effects: {}, next: 'INFLUENCER_05' },
+  });
+
+  assert.equal(cards.INFLUENCER_05.text, "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
+  assert.deepEqual(cards.INFLUENCER_05.choices, {
+    left: { label: 'Just save the launch', effects: {}, next: 'INFLUENCER_07' },
+    right: { label: "That's insane", effects: {}, next: 'INFLUENCER_06' },
+  });
+  assert.deepEqual(cards.INFLUENCER_05.contextualChoices.INFLUENCER_06, {
+    left: { label: "My bad, let's do it", effects: {}, next: 'INFLUENCER_07' },
+    right: { label: 'Shove it', effects: {}, next: 'INFLUENCER_08' },
+  });
+
+  assert.equal(cards.INFLUENCER_06.text, 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)\nCool. Dropping it tonight 🤷‍♂️');
+  assert.equal(cards.INFLUENCER_06.placeholder, 'Hate video screenshot');
+  assert.deepEqual(cards.INFLUENCER_06.choices, {
+    left: { label: 'Alternatives?', effects: {}, next: 'INFLUENCER_05' },
+    right: { label: 'Cool. Forget the deal', effects: {}, next: 'INFLUENCER_08' },
+  });
+  assert.deepEqual(cards.INFLUENCER_06.contextualChoices.INFLUENCER_05, {
+    left: { label: 'Actually, 60% is ok', effects: {}, next: 'INFLUENCER_07' },
+    right: { label: 'Try me, buddy', effects: {}, next: 'INFLUENCER_08' },
+  });
+
+  assert.equal(cards.INFLUENCER_07.placeholder, 'Video preview screenshot');
+  assert.equal(cards.INFLUENCER_07.text, 'Video’s live. Don’t screw this up, team!!!\n\nOr do. That’s just more views lol.');
+  assert.deepEqual(Object.values(cards.INFLUENCER_07.choices).map((choice) => choice.label), ['DELETE THIS!!!', 'Anything for views']);
+  assert.equal(cards.INFLUENCER_08.messages[0].placeholder, 'Hate video screenshot');
+  assert.deepEqual(Object.values(cards.INFLUENCER_08.choices).map((choice) => choice.label), ['Spam promos in comments!', 'Double prices NOW!!']);
+
+  assert.equal(cards.INFLUENCER_OUTCOME_2.messages[0].placeholder, 'Positive review screenshot');
+  assert.equal(cards.INFLUENCER_OUTCOME_3.messages[0].placeholder, 'Hate video screenshot');
+  assert.equal(cards.INFLUENCER_OUTCOME_4.text, "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait\n\nLet's set up my 20% 💸");
+  assert.equal(cards.INFLUENCER_OUTCOME_6.text, cards.INFLUENCER_OUTCOME_4.text);
+
+  for (const id of ids) {
+    const choiceSets = [cards[id].choices, ...Object.values(cards[id].contextualChoices || {})];
+    for (const choices of choiceSets) {
+      assert.deepEqual(choices.left.effects, {}, `${id} left must not move resources`);
+      assert.deepEqual(choices.right.effects, {}, `${id} right must not move resources`);
+    }
+  }
+});
+
 test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canonical scoped Padel graph', () => {
-  const investorIndex = canonicalDeck.cards.findIndex((card) => card.id === 'OPEN_INVESTOR');
+  const padelIndex = canonicalDeck.cards.findIndex((card) => card.id === 'PADEL_INVITE');
   assert.deepEqual(
-    canonicalDeck.cards.slice(investorIndex, investorIndex + 17).map((card) => card.id),
+    canonicalDeck.cards.slice(padelIndex, padelIndex + 16).map((card) => card.id),
     [
-      'OPEN_INVESTOR',
       'PADEL_INVITE',
       'DREAM_TEAM',
       'IRL_PADEL_01',
@@ -92,7 +229,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   );
 
   const cards = Object.fromEntries(canonicalDeck.cards.map((card) => [card.id, card]));
-  assert.equal(cards.OPEN_INVESTOR.choices.left.next, 'AGENT_01');
+  assert.equal(cards.OPEN_INVESTOR.choices.left.next, 'INFLUENCER_01');
   assert.equal(cards.OPEN_INVESTOR.choices.right.next, 'PADEL_01');
   assert.deepEqual(cards.OPEN_INVESTOR.choices.left.effects, { cash: -2, founder: 1 });
   assert.deepEqual(cards.OPEN_INVESTOR.choices.right.effects, { cash: -2, team: -4, founder: 2 });
@@ -195,7 +332,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
       mode: 'irl',
       source: '@iclosedai',
       score: 'YOU WON THE MATCH',
-      text: 'Relax, boy. It was only a warm-up.\nWatching you sweat and cheat for that win was painful to watch.\nHave fun begging for money!',
+      text: 'Relax, boy. It was only a warm-up.\nWatching you sweat and cheat for that win was painful.\nHave fun begging for money!',
       labels: ['Please wait, sir!', 'Learn to lose'],
     },
     2: {
@@ -323,6 +460,9 @@ test('CSS matches the approved phone, typography, Quiet Glass, and shadow spacin
   assert.match(css, /\.reply-hint\s*\{[^}]*width:\s*100%;[^}]*height:\s*34px;[^}]*font-weight:\s*400;/s);
   assert.match(css, /\.reply-hint__arrow\s*\{[^}]*flex:\s*0 0 24px;[^}]*width:\s*24px;[^}]*height:\s*24px;/s);
   assert.match(css, /\.self-message p,\s*\.team-bubble p\s*\{[^}]*font-size:\s*12\.2px;/s);
+  assert.match(css, /\.choice\s*\{[^}]*font-size:\s*13px;/s);
+  assert.match(css, /\.team-scene \.choice\s*\{[^}]*font-size:\s*12\.2px;/s);
+  assert.match(css, /\.irl-scene \.choice\s*\{[^}]*font-size:\s*12\.2px;/s);
   assert.match(css, /\.pinned\s*\{[^}]*height:\s*48px;/s);
   assert.doesNotMatch(css, /\.irl-location\s+\.pin\s*\{/);
   assert.match(css, /\.irl-scene\s*\{[^}]*background:\s*#d2dbe1;/s);

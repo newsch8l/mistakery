@@ -7,6 +7,22 @@
     'OPEN_BOSS',
     'OPEN_DEV',
     'OPEN_INVESTOR',
+    'INFLUENCER_01',
+    'INFLUENCER_02',
+    'INFLUENCER_02A',
+    'INFLUENCER_03',
+    'INFLUENCER_04',
+    'INFLUENCER_05',
+    'INFLUENCER_06',
+    'INFLUENCER_07',
+    'INFLUENCER_08',
+    'INFLUENCER_OUTCOME_1',
+    'INFLUENCER_OUTCOME_2',
+    'INFLUENCER_OUTCOME_3',
+    'INFLUENCER_OUTCOME_4',
+    'INFLUENCER_OUTCOME_5',
+    'INFLUENCER_OUTCOME_6',
+    'INFLUENCER_OUTCOME_7',
     'PADEL_INVITE',
     'DREAM_TEAM',
     'IRL_PADEL_01',
@@ -33,6 +49,7 @@
     locked: false,
     introTypingTimer: null,
     padelCeoScore: null,
+    influencerPreviousCardId: null,
     activeCardIds: ACTIVE_CARD_IDS,
     render,
   };
@@ -171,6 +188,7 @@
 
   function setCardId(id) {
     $('[data-card-id]').textContent = id;
+    $('[data-scene]').dataset.activeCard = id;
   }
 
   function hidePinned() {
@@ -237,14 +255,19 @@
     )).join('');
   }
 
-  function messageLines(text) {
-    return withoutTerminalPeriod(text).split('\n').map((line) => `<p>${typography(line)}</p>`).join('');
+  function messageLines(text, preserveTerminalPeriod = false) {
+    const displayedText = preserveTerminalPeriod ? String(text) : withoutTerminalPeriod(text);
+    return displayedText.split('\n').map((line) => `<p>${typography(line)}</p>`).join('');
   }
 
-  function cardMessageMarkup(text) {
+  function cardMessageMarkup(text, preserveTerminalPeriod = false) {
     return text.split('\n\n').map((message) => (
-      `<div class="message is-pop">${messageLines(message)}</div>`
+      `<div class="message is-pop">${messageLines(message, preserveTerminalPeriod)}</div>`
     )).join('');
+  }
+
+  function mediaPlaceholderMarkup(label) {
+    return `<span class="media-placeholder__label">${typography(label)}</span>`;
   }
 
   function popMessage() {
@@ -349,6 +372,7 @@
   function beginRun() {
     app.state = engine.startRun(app.deck);
     app.padelCeoScore = null;
+    app.influencerPreviousCardId = null;
     app.locked = false;
     app.view = 'playing';
     renderCard();
@@ -365,10 +389,10 @@
     });
   }
 
-  function bindCardChoices(card, disabled) {
+  function bindCardChoices(card, choices, disabled) {
     document.querySelectorAll('[data-choice]').forEach((button) => {
       const side = button.dataset.choice;
-      const choice = card.choices[side];
+      const choice = choices[side];
       if (disabled) return;
       button.addEventListener('mouseenter', () => previewChoice(choice));
       button.addEventListener('focus', () => previewChoice(choice));
@@ -380,12 +404,15 @@
 
   function renderPersonalCard(card) {
     setThread(card.source, 'typing...');
-    const messages = cardMessageMarkup(card.text);
+    const placeholder = card.placeholder
+      ? `<div class="message media-placeholder is-pop">${mediaPlaceholderMarkup(card.placeholder)}</div>`
+      : '';
+    const messages = cardMessageMarkup(card.text, card.id.startsWith('INFLUENCER_'));
     const avatar = sourceFor(card.source).name.replace('@', '').slice(0, 1).toUpperCase();
     $('[data-chat]').innerHTML = `<span class="sr-only" data-card-id>${card.id}</span>
       <div class="message-row">
         <div class="mini-avatar message-avatar" data-message-avatar aria-hidden="true">${avatar}</div>
-        <div class="message-stack" data-message-stack>${messages}</div>
+        <div class="message-stack" data-message-stack>${placeholder}${messages}</div>
       </div>
       <div class="message-clearance" aria-hidden="true"></div>`;
   }
@@ -394,14 +421,17 @@
     const thread = sourceFor(card.source);
     setContact({ name: thread.name, role: thread.role, avatar: thread.avatar || 'DT' });
     const messages = card.messages.map((message) => {
-      const body = messageLines(message.text);
+      const body = message.placeholder
+        ? mediaPlaceholderMarkup(message.placeholder)
+        : messageLines(message.text, card.id.startsWith('INFLUENCER_'));
+      const placeholderClass = message.placeholder ? ' media-placeholder' : '';
       if (message.direction === 'outgoing') {
-        return `<div class="self-message is-pop">${body}</div>`;
+        return `<div class="self-message${placeholderClass} is-pop">${body}</div>`;
       }
       const member = sourceFor(message.source);
       return `<div class="team-row is-pop" data-source="${message.source}">
         <div class="member-avatar" aria-hidden="true">${message.avatar}</div>
-        <div class="team-bubble">
+        <div class="team-bubble${placeholderClass}">
           <span class="team-meta">${member.name}</span>
           ${body}
         </div>
@@ -440,10 +470,19 @@
     else if (card.mode === 'team') renderTeamCard(card);
     else renderPersonalCard(card);
 
-    const left = engine.getChoiceLabel(card.choices.left, app.state.resources.founder);
-    const right = engine.getChoiceLabel(card.choices.right, app.state.resources.founder);
+    const choices = influencerChoicesFor(card);
+    const left = engine.getChoiceLabel(choices.left, app.state.resources.founder);
+    const right = engine.getChoiceLabel(choices.right, app.state.resources.founder);
     setChoices([left, right], () => {}, { disabled: complete });
-    bindCardChoices(card, complete);
+    bindCardChoices(card, choices, complete);
+  }
+
+  function influencerChoicesFor(card) {
+    if (!['INFLUENCER_05', 'INFLUENCER_06'].includes(card.id)) return card.choices;
+    if (app.influencerPreviousCardId === 'INFLUENCER_04') return card.choices;
+    const contextual = card.contextualChoices?.[app.influencerPreviousCardId];
+    if (contextual) return contextual;
+    throw new Error(`Invalid previous Influencer card for ${card.id}: ${app.influencerPreviousCardId}`);
   }
 
   function continueFromInvestor(side) {
@@ -451,8 +490,15 @@
     clearPreview();
     const result = engine.resolveChoice(app.deck, app.state, side, { rng: () => 0 });
     app.state = result.state;
-    app.padelCeoScore = 0;
-    app.state.currentCardId = 'PADEL_INVITE';
+    if (side === 'left') {
+      app.padelCeoScore = null;
+      app.influencerPreviousCardId = 'OPEN_INVESTOR';
+      app.state.currentCardId = 'INFLUENCER_01';
+    } else {
+      app.padelCeoScore = 0;
+      app.influencerPreviousCardId = null;
+      app.state.currentCardId = 'PADEL_INVITE';
+    }
     renderCard();
     window.setTimeout(() => { app.locked = false; }, 280);
   }
@@ -473,6 +519,50 @@
       meta: { ...app.deck.meta, baseCashBurn: 0 },
     };
     return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
+  }
+
+  function resolveInfluencerChoice(side) {
+    const deckWithoutBurn = {
+      ...app.deck,
+      meta: { ...app.deck.meta, baseCashBurn: 0 },
+    };
+    return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
+  }
+
+  function selectInfluencerOutcome(cardId, side, rng = Math.random) {
+    const won = rng() < 0.4;
+    if (cardId === 'INFLUENCER_07') return won ? 'INFLUENCER_OUTCOME_2' : 'INFLUENCER_OUTCOME_3';
+    if (cardId === 'INFLUENCER_08' && side === 'left') {
+      return won ? 'INFLUENCER_OUTCOME_4' : 'INFLUENCER_OUTCOME_5';
+    }
+    if (cardId === 'INFLUENCER_08' && side === 'right') {
+      return won ? 'INFLUENCER_OUTCOME_6' : 'INFLUENCER_OUTCOME_7';
+    }
+    throw new Error(`Influencer outcome requested from ${cardId} ${side}`);
+  }
+
+  function continueFromInfluencer(card, side) {
+    app.locked = true;
+    clearPreview();
+    const choices = influencerChoicesFor(card);
+    const result = resolveInfluencerChoice(side);
+    app.state = result.state;
+    app.influencerPreviousCardId = card.id;
+    app.state.currentCardId = ['INFLUENCER_07', 'INFLUENCER_08'].includes(card.id)
+      ? selectInfluencerOutcome(card.id, side)
+      : choices[side].next;
+    renderCard();
+    window.setTimeout(() => { app.locked = false; }, 280);
+  }
+
+  function finishInfluencerOutcome(side) {
+    app.locked = true;
+    clearPreview();
+    const result = resolveInfluencerChoice(side);
+    app.state = result.state;
+    app.influencerPreviousCardId = null;
+    startSaved(1);
+    app.locked = false;
   }
 
   function continueFromPadelInvite(side) {
@@ -540,6 +630,8 @@
     if (app.locked || app.view !== 'playing') return;
     const card = engine.cardById(app.deck, app.state.currentCardId);
     if (card.id === 'OPEN_INVESTOR') return continueFromInvestor(side);
+    if (card.id.startsWith('INFLUENCER_OUTCOME_')) return finishInfluencerOutcome(side);
+    if (card.id.startsWith('INFLUENCER_')) return continueFromInfluencer(card, side);
     if (card.id === 'PADEL_INVITE') return continueFromPadelInvite(side);
     if (card.id === 'DREAM_TEAM') return continueFromDreamTeam(side);
     if (card.id === 'IRL_PADEL_06') return continueFromPadelMatchPoint(side);
@@ -573,6 +665,7 @@
     if (app.view === 'onboarding') return;
     app.state = engine.startRun(app.deck);
     app.padelCeoScore = null;
+    app.influencerPreviousCardId = null;
     app.locked = false;
     startSaved(0);
   });

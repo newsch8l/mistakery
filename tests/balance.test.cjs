@@ -24,7 +24,7 @@ function simulate(seed) {
   return state;
 }
 
-test('ten thousand seeded full runs terminate after entering one of the two routes', () => {
+test('ten thousand seeded full runs terminate after entering an approved route', () => {
   const runs = Array.from({ length: 10000 }, (_, index) => simulate(index + 1));
   const endings = runs.reduce((counts, state) => {
     counts[state.endingId] = (counts[state.endingId] || 0) + 1;
@@ -36,7 +36,7 @@ test('ten thousand seeded full runs terminate after entering one of the two rout
     assert.ok(state.history.length > 6);
     assert.equal(state.gameOver, true);
     assert.equal(['onboarding_enterprise', 'onboarding_whale'].includes(state.endingId), false);
-    assert.ok(ids.includes('AGENT_01') || ids.includes('PADEL_01'));
+    assert.ok(['AGENT_01', 'PADEL_01', 'INFLUENCER_01'].some((id) => ids.includes(id)));
   });
   assert.equal(endings.onboarding_enterprise, undefined);
   assert.equal(endings.onboarding_whale, undefined);
