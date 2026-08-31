@@ -491,7 +491,7 @@
 > Guys, huge play!!<br>
 > My boy from that AI bootcamp is a top AI influencer now. Down to promote us for a symbolic % on each sale<br>
 > Yeah right, heard that one before.<br>
-> 20% max, anything higher and we're working for free<br>
+> 20% max, anything higher and, we'll lose our shirts.<br>
 > major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him
 
 **RU — перевод не утверждён; сохранён точный EN**
@@ -499,7 +499,7 @@
 > Guys, huge play!!<br>
 > My boy from that AI bootcamp is a top AI influencer now. Down to promote us for a symbolic % on each sale<br>
 > Yeah right, heard that one before.<br>
-> 20% max, anything higher and we're working for free<br>
+> 20% max, anything higher and, we'll lose our shirts.<br>
 > major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him
 
 - **Let's go — Let's go**: без отдельного эффекта; → `INFLUENCER_02`.
@@ -590,14 +590,14 @@
 **EN**
 
 > Weell, there is an option.<br>
-> I don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.<br>
+> I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
 > 60% revshare + Co-Founder status to oversee product quality.
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > Weell, there is an option.<br>
-> I don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.<br>
+> I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
 > 60% revshare + Co-Founder status to oversee product quality.
 

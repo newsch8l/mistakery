@@ -435,7 +435,7 @@
           "direction": "incoming",
           "source": "@bigdeals",
           "avatar": "BD",
-          "text": "20% max, anything higher and we're working for free"
+          "text": "20% max, anything higher and, we'll lose our shirts."
         },
         {
           "direction": "incoming",
@@ -543,7 +543,7 @@
       "arc": "influencer",
       "source": "@ai_evangelist",
       "continuation": "forced",
-      "text": "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.",
+      "text": "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.",
       "choices": {
         "left": {
           "label": "Just save the launch",

@@ -130,7 +130,7 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
       direction: 'incoming',
       source: '@bigdeals',
       avatar: 'BD',
-      text: "20% max, anything higher and we're working for free",
+      text: "20% max, anything higher and, we'll lose our shirts.",
     },
     {
       direction: 'incoming',
@@ -163,7 +163,7 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Any other options?', effects: {}, next: 'INFLUENCER_05' },
   });
 
-  assert.equal(cards.INFLUENCER_05.text, "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can cut the crash and just focus on the core features.\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
+  assert.equal(cards.INFLUENCER_05.text, "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
   assert.deepEqual(cards.INFLUENCER_05.choices, {
     left: { label: 'Just save the launch', effects: {}, next: 'INFLUENCER_07' },
     right: { label: "That's insane", effects: {}, next: 'INFLUENCER_06' },
