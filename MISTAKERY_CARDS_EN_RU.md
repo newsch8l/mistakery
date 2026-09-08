@@ -611,12 +611,10 @@
 **EN**
 
 > B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > Cool. Dropping it tonight 🤷‍♂️
 

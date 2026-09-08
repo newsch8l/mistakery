@@ -474,9 +474,10 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
     assert.equal(await page.locator('.media-placeholder').count(), 0);
     assert.equal(await page.locator('[data-chat] .message').count(), 2);
     assert.deepEqual(
-      (await page.locator('[data-chat] .message:not(.media-placeholder) p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
-      ['B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)', 'Cool. Dropping it tonight 🤷‍♂️'],
+      (await page.locator('[data-chat] .message p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
+      ['Cool. Dropping it tonight 🤷‍♂️'],
     );
+    assert.doesNotMatch(await page.locator('[data-chat]').textContent(), /Another AI Wrapper Scam/);
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_2', 'INFLUENCER_07');
     assert.equal(await page.locator('.team-bubble.media-placeholder').count(), 1);

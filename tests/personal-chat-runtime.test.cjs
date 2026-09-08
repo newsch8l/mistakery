@@ -179,7 +179,7 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Shove it', effects: {}, next: 'INFLUENCER_08' },
   });
 
-  assert.equal(cards.INFLUENCER_06.text, 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)\nCool. Dropping it tonight 🤷‍♂️');
+  assert.equal(cards.INFLUENCER_06.text, 'Cool. Dropping it tonight 🤷‍♂️');
   assert.deepEqual(cards.INFLUENCER_06.image, negativeReviewImage);
   assert.equal(Object.hasOwn(cards.INFLUENCER_06, 'placeholder'), false);
   assert.deepEqual(cards.INFLUENCER_06.choices, {
