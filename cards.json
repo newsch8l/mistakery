@@ -577,7 +577,12 @@
       "arc": "influencer",
       "source": "@ai_evangelist",
       "continuation": "forced",
-      "placeholder": "Hate video screenshot",
+      "image": {
+        "src": "assets/ai-influencer-hate-review.webp",
+        "alt": "B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)",
+        "width": 960,
+        "height": 540
+      },
       "text": "B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)\nCool. Dropping it tonight 🤷‍♂️",
       "choices": {
         "left": {
@@ -639,7 +644,12 @@
           "direction": "incoming",
           "source": "@bigdeals",
           "avatar": "BD",
-          "placeholder": "Hate video screenshot"
+          "image": {
+            "src": "assets/ai-influencer-hate-review.webp",
+            "alt": "B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)",
+            "width": 960,
+            "height": 540
+          }
         },
         {
           "direction": "incoming",
@@ -735,7 +745,12 @@
           "direction": "incoming",
           "source": "@hype_queen",
           "avatar": "HQ",
-          "placeholder": "Hate video screenshot"
+          "image": {
+            "src": "assets/ai-influencer-hate-review.webp",
+            "alt": "B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)",
+            "width": 960,
+            "height": 540
+          }
         },
         {
           "direction": "incoming",

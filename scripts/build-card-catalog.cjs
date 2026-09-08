@@ -91,9 +91,11 @@ function route(choice) {
 function cardVisibleLines(card) {
   return [
     ...(card.placeholder ? [card.placeholder] : []),
+    ...(card.image ? [card.image.alt] : []),
     ...(typeof card.text === 'string' ? card.text.split('\n') : []),
     ...(card.messages || []).flatMap((message) => [
       ...(message.placeholder ? [message.placeholder] : []),
+      ...(message.image ? [message.image.alt] : []),
       ...(typeof message.text === 'string' ? message.text.split('\n') : []),
     ]),
   ].filter(Boolean);

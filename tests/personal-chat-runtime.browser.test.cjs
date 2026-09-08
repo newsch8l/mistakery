@@ -400,7 +400,7 @@ test('both replies on every Influencer outcome return through Saved Messages', a
   }
 });
 
-test('Influencer paragraphs and screenshot placeholders render as compact messenger bubbles', async () => {
+test('Influencer paragraphs, screenshots, and remaining placeholders render as compact messenger bubbles', async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 
@@ -464,7 +464,14 @@ test('Influencer paragraphs and screenshot placeholders render as compact messen
     );
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_06', 'INFLUENCER_04');
-    assert.equal(await page.locator('.media-placeholder__label').textContent(), 'Hate video screenshot');
+    const personalReviewImage = page.locator('.message.image-bubble .message-image');
+    assert.equal(await personalReviewImage.count(), 1);
+    assert.equal(await personalReviewImage.getAttribute('src'), 'assets/ai-influencer-hate-review.webp');
+    assert.equal(await personalReviewImage.getAttribute('alt'), 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)');
+    assert.equal(await personalReviewImage.getAttribute('width'), '960');
+    assert.equal(await personalReviewImage.getAttribute('height'), '540');
+    assert.equal(await personalReviewImage.evaluate((node) => node.complete && node.naturalWidth === 960 && node.naturalHeight === 540), true);
+    assert.equal(await page.locator('.media-placeholder').count(), 0);
     assert.equal(await page.locator('[data-chat] .message').count(), 2);
     assert.deepEqual(
       (await page.locator('[data-chat] .message:not(.media-placeholder) p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
@@ -477,13 +484,19 @@ test('Influencer paragraphs and screenshot placeholders render as compact messen
     assert.ok(await page.locator('.team-bubble.media-placeholder').evaluate((node) => node.getBoundingClientRect().height <= 80));
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_08', 'INFLUENCER_06');
-    assert.equal(await page.locator('.team-bubble.media-placeholder').count(), 1);
-    assert.equal(await page.locator('.media-placeholder__label').textContent(), 'Hate video screenshot');
+    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').count(), 1);
+    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').evaluate((node) => node.complete && node.naturalWidth === 960), true);
+    assert.equal(await page.locator('.media-placeholder').count(), 0);
     assert.doesNotMatch(await page.locator('[data-chat]').textContent(), /undefined/);
     assert.deepEqual(await page.evaluate(() => ({
       x: document.documentElement.scrollWidth - innerWidth,
       y: document.documentElement.scrollHeight - innerHeight,
     })), { x: 0, y: 0 });
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_3', 'INFLUENCER_07');
+    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').count(), 1);
+    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').evaluate((node) => node.complete && node.naturalWidth === 960), true);
+    assert.equal(await page.locator('.media-placeholder').count(), 0);
   } finally {
     await browser.close();
   }
@@ -498,7 +511,6 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
     await page.waitForFunction(() => Boolean(window.MistakeryApp?.deck));
     for (const scenario of [
       { id: 'INFLUENCER_07', previous: 'INFLUENCER_05' },
-      { id: 'INFLUENCER_08', previous: 'INFLUENCER_06' },
       { id: 'INFLUENCER_OUTCOME_2', previous: 'INFLUENCER_07' },
     ]) {
       await setInfluencerRuntimeCard(page, scenario.id, scenario.previous);
@@ -515,6 +527,33 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
       });
       assert.ok(geometry.placeholderWidth <= 210, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.ok(geometry.placeholderHeight <= 80, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.chatOverflowY, 'auto', `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.pageX, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.equal(geometry.pageY, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
+    }
+
+    for (const scenario of [
+      { id: 'INFLUENCER_06', previous: 'INFLUENCER_04' },
+      { id: 'INFLUENCER_08', previous: 'INFLUENCER_06' },
+      { id: 'INFLUENCER_OUTCOME_3', previous: 'INFLUENCER_07' },
+    ]) {
+      await setInfluencerRuntimeCard(page, scenario.id, scenario.previous);
+      const geometry = await page.evaluate(() => {
+        const chat = document.querySelector('[data-chat]');
+        const image = document.querySelector('.message-image');
+        const rect = image.getBoundingClientRect();
+        return {
+          loaded: image.complete && image.naturalWidth === 960 && image.naturalHeight === 540,
+          imageWidth: rect.width,
+          imageHeight: rect.height,
+          chatOverflowY: getComputedStyle(chat).overflowY,
+          pageX: document.documentElement.scrollWidth - innerWidth,
+          pageY: document.documentElement.scrollHeight - innerHeight,
+        };
+      });
+      assert.equal(geometry.loaded, true, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.imageWidth <= 280, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(Math.abs((geometry.imageWidth / geometry.imageHeight) - (16 / 9)) < 0.02, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.chatOverflowY, 'auto', `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageX, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageY, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);

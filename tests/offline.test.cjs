@@ -9,6 +9,7 @@ const bundlePath = path.join(root, 'cards.bundle.js');
 const catalogPath = path.join(root, 'MISTAKERY_CARDS_EN_RU.md');
 const appSource = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
 const indexSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const negativeReviewImagePath = path.join(root, 'assets', 'ai-influencer-hate-review.webp');
 
 test('includes a browser-ready deck before the application script', () => {
   assert.ok(fs.existsSync(bundlePath), 'cards.bundle.js must exist for double-click launch');
@@ -23,6 +24,14 @@ test('offline bundle contains exactly the canonical JSON deck', () => {
   assert.deepEqual(bundled, canonical);
 });
 
+test('negative review screenshot is a compact cacheable WebP asset', () => {
+  assert.ok(fs.existsSync(negativeReviewImagePath), 'missing optimized negative review screenshot');
+  const image = fs.readFileSync(negativeReviewImagePath);
+  assert.ok(image.length <= 100 * 1024, `negative review screenshot is too large: ${image.length} bytes`);
+  assert.equal(image.subarray(0, 4).toString('ascii'), 'RIFF');
+  assert.equal(image.subarray(8, 12).toString('ascii'), 'WEBP');
+});
+
 test('bilingual catalog contains every canonical card and its current English copy', () => {
   const canonical = JSON.parse(fs.readFileSync(path.join(root, 'cards.json'), 'utf8'));
   const catalog = fs.readFileSync(catalogPath, 'utf8');
@@ -30,9 +39,11 @@ test('bilingual catalog contains every canonical card and its current English co
     assert.match(catalog, new RegExp(`## ${card.id}\\b`), `Missing catalog entry ${card.id}`);
     const visibleLines = [
       ...(card.placeholder ? [card.placeholder] : []),
+      ...(card.image ? [card.image.alt] : []),
       ...(typeof card.text === 'string' ? card.text.split('\n') : []),
       ...(card.messages || []).flatMap((message) => [
         ...(message.placeholder ? [message.placeholder] : []),
+        ...(message.image ? [message.image.alt] : []),
         ...(typeof message.text === 'string' ? message.text.split('\n') : []),
       ]),
     ];

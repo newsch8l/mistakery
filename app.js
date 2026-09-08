@@ -270,6 +270,18 @@
     return `<span class="media-placeholder__label">${typography(label)}</span>`;
   }
 
+  function htmlAttribute(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function mediaImageMarkup(image) {
+    return `<img class="message-image" src="${htmlAttribute(image.src)}" alt="${htmlAttribute(image.alt)}" width="${Number(image.width)}" height="${Number(image.height)}" decoding="async" fetchpriority="high" draggable="false">`;
+  }
+
   function popMessage() {
     const message = $('[data-chat] .message-stack .message:last-child');
     if (!message) return;
@@ -404,15 +416,17 @@
 
   function renderPersonalCard(card) {
     setThread(card.source, 'typing...');
-    const placeholder = card.placeholder
-      ? `<div class="message media-placeholder is-pop">${mediaPlaceholderMarkup(card.placeholder)}</div>`
-      : '';
+    const media = card.image
+      ? `<div class="message image-bubble is-pop">${mediaImageMarkup(card.image)}</div>`
+      : card.placeholder
+        ? `<div class="message media-placeholder is-pop">${mediaPlaceholderMarkup(card.placeholder)}</div>`
+        : '';
     const messages = cardMessageMarkup(card.text, card.id.startsWith('INFLUENCER_'));
     const avatar = sourceFor(card.source).name.replace('@', '').slice(0, 1).toUpperCase();
     $('[data-chat]').innerHTML = `<span class="sr-only" data-card-id>${card.id}</span>
       <div class="message-row">
         <div class="mini-avatar message-avatar" data-message-avatar aria-hidden="true">${avatar}</div>
-        <div class="message-stack" data-message-stack>${placeholder}${messages}</div>
+        <div class="message-stack" data-message-stack>${media}${messages}</div>
       </div>
       <div class="message-clearance" aria-hidden="true"></div>`;
   }
@@ -421,17 +435,19 @@
     const thread = sourceFor(card.source);
     setContact({ name: thread.name, role: thread.role, avatar: thread.avatar || 'DT' });
     const messages = card.messages.map((message) => {
-      const body = message.placeholder
-        ? mediaPlaceholderMarkup(message.placeholder)
-        : messageLines(message.text, card.id.startsWith('INFLUENCER_'));
-      const placeholderClass = message.placeholder ? ' media-placeholder' : '';
+      const body = message.image
+        ? mediaImageMarkup(message.image)
+        : message.placeholder
+          ? mediaPlaceholderMarkup(message.placeholder)
+          : messageLines(message.text, card.id.startsWith('INFLUENCER_'));
+      const mediaClass = message.image ? ' image-bubble' : message.placeholder ? ' media-placeholder' : '';
       if (message.direction === 'outgoing') {
-        return `<div class="self-message${placeholderClass} is-pop">${body}</div>`;
+        return `<div class="self-message${mediaClass} is-pop">${body}</div>`;
       }
       const member = sourceFor(message.source);
       return `<div class="team-row is-pop" data-source="${message.source}">
         <div class="member-avatar" aria-hidden="true">${message.avatar}</div>
-        <div class="team-bubble${placeholderClass}">
+        <div class="team-bubble${mediaClass}">
           <span class="team-meta">${member.name}</span>
           ${body}
         </div>

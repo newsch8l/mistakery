@@ -11,6 +11,12 @@ const html = read('index.html');
 const css = read('style.css');
 const canonicalDeck = require('../cards.json');
 const bundledDeck = require('../cards.bundle.js');
+const negativeReviewImage = {
+  src: 'assets/ai-influencer-hate-review.webp',
+  alt: 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)',
+  width: 960,
+  height: 540,
+};
 
 function sha256(name) {
   return crypto.createHash('sha256').update(fs.readFileSync(path.join(root, name))).digest('hex');
@@ -174,7 +180,8 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
   });
 
   assert.equal(cards.INFLUENCER_06.text, 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)\nCool. Dropping it tonight 🤷‍♂️');
-  assert.equal(cards.INFLUENCER_06.placeholder, 'Hate video screenshot');
+  assert.deepEqual(cards.INFLUENCER_06.image, negativeReviewImage);
+  assert.equal(Object.hasOwn(cards.INFLUENCER_06, 'placeholder'), false);
   assert.deepEqual(cards.INFLUENCER_06.choices, {
     left: { label: 'Alternatives?', effects: {}, next: 'INFLUENCER_05' },
     right: { label: 'Cool. Forget the deal', effects: {}, next: 'INFLUENCER_08' },
@@ -187,11 +194,13 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
   assert.equal(cards.INFLUENCER_07.placeholder, 'Video preview screenshot');
   assert.equal(cards.INFLUENCER_07.text, 'Video’s live. Don’t screw this up, team!!!\n\nOr do. That’s just more views lol.');
   assert.deepEqual(Object.values(cards.INFLUENCER_07.choices).map((choice) => choice.label), ['DELETE THIS!!!', 'Anything for views']);
-  assert.equal(cards.INFLUENCER_08.messages[0].placeholder, 'Hate video screenshot');
+  assert.deepEqual(cards.INFLUENCER_08.messages[0].image, negativeReviewImage);
+  assert.equal(Object.hasOwn(cards.INFLUENCER_08.messages[0], 'placeholder'), false);
   assert.deepEqual(Object.values(cards.INFLUENCER_08.choices).map((choice) => choice.label), ['Spam promos in comments!', 'Double prices NOW!!']);
 
   assert.equal(cards.INFLUENCER_OUTCOME_2.messages[0].placeholder, 'Positive review screenshot');
-  assert.equal(cards.INFLUENCER_OUTCOME_3.messages[0].placeholder, 'Hate video screenshot');
+  assert.deepEqual(cards.INFLUENCER_OUTCOME_3.messages[0].image, negativeReviewImage);
+  assert.equal(Object.hasOwn(cards.INFLUENCER_OUTCOME_3.messages[0], 'placeholder'), false);
   assert.equal(cards.INFLUENCER_OUTCOME_4.text, "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait\n\nLet's set up my 20% 💸");
   assert.equal(cards.INFLUENCER_OUTCOME_6.text, cards.INFLUENCER_OUTCOME_4.text);
 

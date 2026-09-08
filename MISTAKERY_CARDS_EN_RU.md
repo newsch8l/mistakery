@@ -610,13 +610,13 @@
 
 **EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
@@ -646,14 +646,14 @@
 
 **EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > our traffic is 10x right now. the server is on fire.<br>
 > is this seriously from that clown's hate video?<br>
 > yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > our traffic is 10x right now. the server is on fire.<br>
 > is this seriously from that clown's hate video?<br>
 > yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭
@@ -699,12 +699,12 @@
 
 **EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > remind me why we thought this was a good idea?  💀
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Hate video screenshot<br>
+> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
 > remind me why we thought this was a good idea?  💀
 
 - **Back to work! — Back to work!**: без отдельного эффекта; возврат к основной ветке.
