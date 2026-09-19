@@ -2,16 +2,16 @@
 
 ## Verified snapshot
 
-- Updated: 2026-09-20, publication preparation after all requested story and image edits.
+- Updated: 2026-09-20, published and verified both public links after all requested story and image edits.
 - Active repository/worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
-- Branch: `design/personal-chat-runtime`; pre-publication base: `8e1c77c737d061a5d0824d58517a462567dfefaf`.
+- Branch: `design/personal-chat-runtime`; deployed game commit: `e3276890b35a25857d643090b8493ff3be6a79e7`.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Work in the worktree above, not the parent.
 - User authorized committing/pushing the current game and publishing separate main/test links. No cleanup or discard requested.
 - Preview server confirmed listening at `http://127.0.0.1:8765/?story=live-agent`. Plain URL starts onboarding.
 
 ## Current objective
 
-Publish the verified current game via the existing GitHub Pages setup. Normal URL: https://newsch8l.github.io/mistakery/ ; direct story test: https://newsch8l.github.io/mistakery/?story=live-agent . Both share the same build. Pages deploys `lean-opening` at root; `main` and `design/personal-chat-runtime` are also being synchronized by fast-forward. Verify the public build after pushing.
+Publication is complete; continue user-directed playtesting when requested. Normal URL: https://newsch8l.github.io/mistakery/ ; direct story test: https://newsch8l.github.io/mistakery/?story=live-agent . Both share the same build. Pages deploys `lean-opening` at root; `main` and `design/personal-chat-runtime` were synchronized by fast-forward. The public build was verified in Chromium.
 
 ## Completed work and accepted behavior
 
@@ -146,7 +146,7 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 - Both additional failures fixed: filled invisible `effect_reason` metadata for Live Agent choices (no effect values changed), and updated the Padel onboarding browser assertion for the approved 💪 emoji.
 - Fresh reruns: editorial effect-reason check 1/1; offline + personal runtime + Live Agent unit tests 22/22; complete onboarding/Personal Chat browser route 1/1.
 - All other current browser tests passed in the full run: Live Agent routes/probabilities, test-mode Back/Restart, continuation fitting, chat history, both typing stages, forwarding, all 20 styled outcomes, Influencer/Padel paths and responsive layouts.
-- Canonical deck/catalog rebuilt; content hashes synchronized; `git diff --check` passed. Public deployment verification follows the push.
+- Canonical deck/catalog rebuilt; content hashes synchronized; `git diff --check` passed. GitHub Pages reports the deployed game commit built successfully. Both public URLs return 200 and expose the exact canonical deck; normal URL starts onboarding, test URL starts LIVE_AGENT_01. Back/Restart work, all ten new image assets match local bytes, and no page errors or HTTP errors were observed.
 
 ## Known issues and failed approaches
 
@@ -163,6 +163,6 @@ Minimize token overhead without reducing quality. Copy/color edits: targeted cha
 
 ## Next steps
 
-1. Finish the authorized push, wait for GitHub Pages to build, and verify normal onboarding and the direct story-test link on the public URL.
+1. Both public links are ready to share. After future pushes, check Pages build status; this push needed an explicit `POST /repos/newsch8l/mistakery/pages/builds` to trigger the branch build.
 2. Continue user-directed playtesting; all supplied Live Agent and Influencer images are integrated. Preserve approved copy and narrow chat-continuity scope.
 3. Modernize legacy deck/scheduler tests only as a separately scoped task; do not restore obsolete stories to make those tests pass.
