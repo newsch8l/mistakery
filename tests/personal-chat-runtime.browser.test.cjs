@@ -145,7 +145,7 @@ async function assertIrlPadelScene(page) {
   assert.deepEqual(await page.locator('[data-chat] .irl-dialog p + p').evaluateAll((paragraphs) => (
     paragraphs.map((paragraph) => getComputedStyle(paragraph).marginTop)
   )), ['0px', '0px']);
-  assert.equal(await dialogLines.first().evaluate((node) => getComputedStyle(node).fontSize), '14px');
+  assert.equal(await dialogLines.first().evaluate((node) => getComputedStyle(node).fontSize), '12.2px');
   assert.equal(await dialogLines.first().evaluate((node) => getComputedStyle(node).fontWeight), '400');
   assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), [
     'Mouth shut, game on',
@@ -413,44 +413,42 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
     assert.deepEqual(
       (await page.locator('[data-chat] .message').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ').trim()),
       [
-        'HeyHeard about your tool. I feel like we got a huge future together.',
-        "Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.",
-        'Send over the demo. I keep it 100% honest with my audience, gotta test it myself first.',
+        'Hey 👋Heard about your tool. I feel like we got a huge future together.',
+        "Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!Usually I take 20%, but you guys are cool, we'll work out the terms.",
+        'Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.',
       ],
     );
+
+    assert.equal(await page.locator('[data-chat] .message').nth(1).locator('p').count(), 2);
+    await page.screenshot({ path: '/tmp/mistakery-influencer-intro.png', animations: 'disabled' });
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_03', 'INFLUENCER_02');
+    const prompt = page.locator('[data-chat] strong');
+    assert.equal((await prompt.innerText()).replace(/\u00a0/g, ' '), 'make me $1B right now. make zero mistakes');
+    assert.ok(await prompt.evaluate(node => Number(getComputedStyle(node).fontWeight) >= 600));
+    await page.screenshot({ path: '/tmp/mistakery-influencer-prompt.png', animations: 'disabled' });
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_01', 'OPEN_INVESTOR');
     assert.equal(
       (await page.locator('.team-bubble').nth(1).textContent()).replace(/\s+/g, ' ').trim(),
-      '@bigdeals Yeah right, heard that one before.',
+      '@bigdeals · Sales Yeah right, heard that one before.',
     );
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_07', 'INFLUENCER_05');
     assert.deepEqual(
       (await page.locator('[data-chat] .message').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ').trim()),
-      ['Video preview screenshot', 'Video’s live. Don’t screw this up, team!!!', 'Or do. That’s just more views lol.'],
+      ['', 'Video’s live. Don’t screw this up, team!!!', 'Or do. That’s just more views lol 😂'],
     );
-    const personalPlaceholder = await page.locator('.media-placeholder').evaluate((node) => {
-      const rect = node.getBoundingClientRect();
-      const style = getComputedStyle(node);
-      return {
-        width: rect.width,
-        height: rect.height,
-        radius: style.borderRadius,
-        borderStyle: style.borderStyle,
-        display: style.display,
-      };
-    });
-    assert.ok(personalPlaceholder.width <= 210, JSON.stringify(personalPlaceholder));
-    assert.ok(personalPlaceholder.height <= 80, JSON.stringify(personalPlaceholder));
-    assert.notEqual(personalPlaceholder.radius, '0px');
-    assert.equal(personalPlaceholder.borderStyle, 'dashed');
-    assert.equal(personalPlaceholder.display, 'grid');
+    const challengeImage = page.locator('.image-bubble .message-image');
+    assert.equal(await challengeImage.getAttribute('src'), 'assets/ai-influencer-unicorn-challenge.webp');
+    await challengeImage.evaluate(node => node.decode());
+    assert.deepEqual(await challengeImage.evaluate(node => [node.naturalWidth, node.naturalHeight]), [1200, 676]);
+    assert.equal(await page.locator('.media-placeholder').count(), 0);
+    await page.screenshot({ path: '/tmp/mistakery-influencer-unicorn-challenge.png', animations: 'disabled' });
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_04', 'INFLUENCER_03');
     const cardFourBubbles = page.locator('[data-chat] .message');
     assert.equal(await cardFourBubbles.count(), 3);
-    assert.deepEqual(await cardFourBubbles.nth(0).locator('p').allTextContents(), ["Aaand it's down. Knew it"]);
+    assert.deepEqual((await cardFourBubbles.nth(0).locator('p').allTextContents()).map(text => text.replace(/\u00a0/g, ' ')), ["Aaand it's down. Knew it 👏👏"]);
     assert.deepEqual(
       (await cardFourBubbles.nth(1).locator('p').allTextContents()).map((text) => text.replace(/\u00a0/g, ' ')),
       [
@@ -466,11 +464,12 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
     await setInfluencerRuntimeCard(page, 'INFLUENCER_06', 'INFLUENCER_04');
     const personalReviewImage = page.locator('.message.image-bubble .message-image');
     assert.equal(await personalReviewImage.count(), 1);
-    assert.equal(await personalReviewImage.getAttribute('src'), 'assets/ai-influencer-hate-review.webp');
-    assert.equal(await personalReviewImage.getAttribute('alt'), 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)');
-    assert.equal(await personalReviewImage.getAttribute('width'), '960');
-    assert.equal(await personalReviewImage.getAttribute('height'), '540');
-    assert.equal(await personalReviewImage.evaluate((node) => node.complete && node.naturalWidth === 960 && node.naturalHeight === 540), true);
+    assert.equal(await personalReviewImage.getAttribute('src'), 'assets/ai-influencer-scheduled-review.webp');
+    assert.equal(await personalReviewImage.getAttribute('alt'), 'Creator Studio: B2BuyerSpyer hate review scheduled for publication today at 6:00 PM');
+    assert.equal(await personalReviewImage.getAttribute('width'), '1200');
+    assert.equal(await personalReviewImage.getAttribute('height'), '676');
+    assert.equal(await personalReviewImage.evaluate((node) => node.complete && node.naturalWidth === 1200 && node.naturalHeight === 676), true);
+    await page.screenshot({ path: '/tmp/mistakery-influencer-scheduled-review.png', animations: 'disabled' });
     assert.equal(await page.locator('.media-placeholder').count(), 0);
     assert.equal(await page.locator('[data-chat] .message').count(), 2);
     assert.deepEqual(
@@ -480,13 +479,31 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
     assert.doesNotMatch(await page.locator('[data-chat]').textContent(), /Another AI Wrapper Scam/);
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_2', 'INFLUENCER_07');
-    assert.equal(await page.locator('.team-bubble.media-placeholder').count(), 1);
-    assert.equal((await page.locator('.team-bubble.media-placeholder').textContent()).replace(/\s+/g, ' ').trim(), '@ai_evangelist Positive review screenshot');
-    assert.ok(await page.locator('.team-bubble.media-placeholder').evaluate((node) => node.getBoundingClientRect().height <= 80));
+    const episodeImage = page.locator('.team-bubble.image-bubble .message-image');
+    assert.equal(await episodeImage.getAttribute('src'), 'assets/ai-influencer-episode-two.webp');
+    await episodeImage.evaluate(node => node.decode());
+    assert.deepEqual(await episodeImage.evaluate(node => [node.naturalWidth, node.naturalHeight]), [1200, 676]);
+    assert.equal(await page.locator('.media-placeholder').count(), 0);
+    assert.equal((await page.locator('.team-bubble.image-bubble .team-meta').innerText()).replace(/\s+/g, ' ').trim(), '@ai_evangelist · AI Influencer');
+    await page.screenshot({ path: '/tmp/mistakery-influencer-episode-two.png', animations: 'disabled' });
+
+    await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_4', 'INFLUENCER_08');
+    const analyticsBubble = page.locator('.image-bubble.has-caption');
+    assert.equal(await page.locator('[data-chat] .message').count(), 2);
+    assert.equal(await analyticsBubble.locator('img').getAttribute('src'), 'assets/ai-influencer-viral-analytics.webp');
+    await analyticsBubble.locator('img').evaluate(node => node.decode());
+    assert.deepEqual(await analyticsBubble.locator('img').evaluate(node => [node.naturalWidth, node.naturalHeight]), [1000, 1000]);
+    assert.equal((await analyticsBubble.locator('.message-caption').innerText()).replace(/\u00a0/g, ' '), "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait");
+    assert.equal((await page.locator('[data-chat] .message').last().innerText()).replace(/\u00a0/g, ' '), "Let's set up my 20% 💸");
+    await page.screenshot({ path: '/tmp/mistakery-influencer-viral-analytics.png', animations: 'disabled' });
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_08', 'INFLUENCER_06');
     assert.equal(await page.locator('.team-bubble.image-bubble .message-image').count(), 1);
-    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').evaluate((node) => node.complete && node.naturalWidth === 960), true);
+    const trafficImage = page.locator('.team-bubble.image-bubble .message-image');
+    await trafficImage.evaluate(node => node.decode());
+    assert.equal(await trafficImage.getAttribute('src'), 'assets/ai-influencer-traffic-review.webp');
+    assert.equal(await trafficImage.evaluate((node) => node.complete && node.naturalWidth === 1200 && node.naturalHeight === 676), true);
+    await page.screenshot({ path: '/tmp/mistakery-influencer-traffic-review.png', animations: 'disabled' });
     assert.equal(await page.locator('.media-placeholder').count(), 0);
     assert.doesNotMatch(await page.locator('[data-chat]').textContent(), /undefined/);
     assert.deepEqual(await page.evaluate(() => ({
@@ -496,7 +513,11 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_OUTCOME_3', 'INFLUENCER_07');
     assert.equal(await page.locator('.team-bubble.image-bubble .message-image').count(), 1);
-    assert.equal(await page.locator('.team-bubble.image-bubble .message-image').evaluate((node) => node.complete && node.naturalWidth === 960), true);
+    const failedImage = page.locator('.team-bubble.image-bubble .message-image');
+    assert.equal(await failedImage.getAttribute('src'), 'assets/ai-influencer-challenge-failed.webp');
+    await failedImage.evaluate(node => node.decode());
+    assert.deepEqual(await failedImage.evaluate(node => [node.naturalWidth, node.naturalHeight]), [1200, 567]);
+    await page.screenshot({ path: '/tmp/mistakery-influencer-challenge-failed.png', animations: 'disabled' });
     assert.equal(await page.locator('.media-placeholder').count(), 0);
   } finally {
     await browser.close();
@@ -515,10 +536,15 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
       { id: 'INFLUENCER_OUTCOME_2', previous: 'INFLUENCER_07' },
     ]) {
       await setInfluencerRuntimeCard(page, scenario.id, scenario.previous);
+      await page.locator('[data-scene]').evaluate(async node => {
+        await Promise.all(node.getAnimations({ subtree: true }).map(animation => animation.finished));
+      });
       const geometry = await page.evaluate(() => {
         const chat = document.querySelector('[data-chat]');
-        const placeholder = document.querySelector('.media-placeholder').getBoundingClientRect();
+        const media = document.querySelector('.media-placeholder, .image-bubble');
+        const placeholder = media.getBoundingClientRect();
         return {
+          image: media.classList.contains('image-bubble'),
           placeholderWidth: placeholder.width,
           placeholderHeight: placeholder.height,
           chatOverflowY: getComputedStyle(chat).overflowY,
@@ -526,8 +552,8 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
           pageY: document.documentElement.scrollHeight - innerHeight,
         };
       });
-      assert.ok(geometry.placeholderWidth <= 210, `${scenario.id}: ${JSON.stringify(geometry)}`);
-      assert.ok(geometry.placeholderHeight <= 80, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.placeholderWidth <= (geometry.image ? 280 : 210), `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(geometry.placeholderHeight <= (geometry.image ? 180 : 80), `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.chatOverflowY, 'auto', `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageX, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageY, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
@@ -539,14 +565,17 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
       { id: 'INFLUENCER_OUTCOME_3', previous: 'INFLUENCER_07' },
     ]) {
       await setInfluencerRuntimeCard(page, scenario.id, scenario.previous);
+      await page.locator('.message-image').evaluate(node => node.decode());
       const geometry = await page.evaluate(() => {
         const chat = document.querySelector('[data-chat]');
         const image = document.querySelector('.message-image');
         const rect = image.getBoundingClientRect();
         return {
-          loaded: image.complete && image.naturalWidth === 960 && image.naturalHeight === 540,
+          loaded: image.complete && image.naturalWidth === Number(image.getAttribute('width'))
+            && image.naturalHeight === Number(image.getAttribute('height')),
           imageWidth: rect.width,
           imageHeight: rect.height,
+          imageRatio: image.naturalWidth / image.naturalHeight,
           chatOverflowY: getComputedStyle(chat).overflowY,
           pageX: document.documentElement.scrollWidth - innerWidth,
           pageY: document.documentElement.scrollHeight - innerHeight,
@@ -554,7 +583,7 @@ test('compact viewport keeps Influencer placeholders small and long bubble stack
       });
       assert.equal(geometry.loaded, true, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.ok(geometry.imageWidth <= 280, `${scenario.id}: ${JSON.stringify(geometry)}`);
-      assert.ok(Math.abs((geometry.imageWidth / geometry.imageHeight) - (16 / 9)) < 0.02, `${scenario.id}: ${JSON.stringify(geometry)}`);
+      assert.ok(Math.abs((geometry.imageWidth / geometry.imageHeight) - geometry.imageRatio) < 0.02, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.chatOverflowY, 'auto', `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageX, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
       assert.equal(geometry.pageY, 0, `${scenario.id}: ${JSON.stringify(geometry)}`);
@@ -579,9 +608,10 @@ test('Feeling sick opens chat Outcome 0 without activating an IRL scene', async 
     assert.equal(await page.locator('[data-sender]').textContent(), '@padel_pro');
     assert.equal(await page.locator('[data-avatar]').textContent(), 'P');
     assert.equal(await page.locator('[data-avatar] img').count(), 0);
+    assert.equal(await page.locator('[data-chat-history]').count(), 0);
     assert.deepEqual(
-      (await page.locator('[data-chat] .message p').allTextContents()).map((line) => line.replace(/\u00a0/g, ' ')),
-      ['Man... for real?', 'I risked my own reputation to give you a golden ticket and you backed out.', 'You just clowned both of us'],
+      (await page.locator('[data-chat-current] p').allTextContents()).map((line) => line.replace(/\u00a0/g, ' ')),
+      ['Man... for real?', 'I risked my own reputation to give you a golden ticket and you backed out.', 'You just clowned both of us 🤡'],
     );
     assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ['I have a fever!', '😔😔😔']);
     assert.deepEqual((await currentRuntimeState(page)).resources, resources);
@@ -864,7 +894,8 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     await page.waitForFunction(() => document.querySelector('[data-card-id]')?.textContent === 'OPEN_02a');
     rendered.push('OPEN_02a');
     await assertNoMessagesEndWithPeriod(page);
-    let cardMessages = page.locator('[data-chat] .message');
+    assert.equal(await page.locator('[data-chat-history]').count(), 0);
+    let cardMessages = page.locator('[data-chat-current]');
     assert.equal(await cardMessages.count(), 2);
     assert.match(await cardMessages.nth(0).textContent(), /Competitor analysis complete/);
     assert.doesNotMatch(await cardMessages.nth(0).textContent(), /motivational quote/);
@@ -876,7 +907,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
       const cardId = await page.locator('[data-card-id]').textContent();
       rendered.push(cardId);
       await assertNoMessagesEndWithPeriod(page);
-      cardMessages = page.locator('[data-chat] .message');
+      cardMessages = page.locator('[data-chat-current]');
       if (cardId === 'OPEN_DEV') {
         assert.equal(await cardMessages.count(), 2);
         assert.match((await cardMessages.nth(0).textContent()).trim(), /^payroll\s+is\s+friday$/);
@@ -916,7 +947,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     const padelMessages = page.locator('[data-chat] .message');
     assert.equal(await padelMessages.count(), 2);
     assert.match(await padelMessages.nth(0).textContent(), /Yo\s+champ,\s+anyone\s+in\s+the\s+club[\s\S]*Tomorrow\s+7\s+AM\s+vs\s+ClosedAI\s+CEO$/);
-    assert.match(await padelMessages.nth(1).textContent(), /That’s\s+your\s+dream\s+client,\s+man\.\s+Remember\s+who\s+opened\s+this\s+door\s+for\s+you$/);
+    assert.match(await padelMessages.nth(1).textContent(), /That’s\s+your\s+dream\s+client,\s+man\.\s+Remember\s+who\s+opened\s+this\s+door\s+for\s+you\s+💪$/);
     assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ["I'm in", 'Feeling sick, pass']);
     assert.deepEqual(await padelMessages.evaluateAll((messages) => messages.map((message) => message.classList.contains('is-pop'))), [true, true]);
     await assertNoMessagesEndWithPeriod(page);
@@ -951,13 +982,13 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
       {
         source: '@bigdeals',
         avatar: 'BD',
-        meta: '@bigdeals',
+        meta: '@bigdeals · Sales',
         text: 'Insane pull, boss! 🎯\nNow let him win. Stroke his ego and we close this easily',
       },
       {
         source: '@hype_queen',
         avatar: 'HQ',
-        meta: '@hype_queen',
+        meta: '@hype_queen · Marketer',
         text: 'nah, smoke him. pure clout for us\nimagine the feed: no-name startup founder violates ClosedAI CEO in 4K 💀',
       },
     ]);

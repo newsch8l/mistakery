@@ -74,11 +74,17 @@ function quote(lines, htmlBreaks = false) {
 function effects(choice) {
   const labels = { cash: 'Cash', team: 'Team', customers: 'Customers', founder: 'Founder' };
   const values = Object.entries(choice.effects || {}).filter(([, value]) => Number(value) !== 0);
-  return values.length ? values.map(([key, value]) => `${labels[key]} ${value > 0 ? '+' : ''}${value}`).join(', ') : 'без отдельного эффекта';
+  const parts = values.map(([key, value]) => `${labels[key]} ${value > 0 ? '+' : ''}${value}`);
+  if (choice.botScore) parts.push(`hidden bot score ${choice.botScore > 0 ? '+' : ''}${choice.botScore}`);
+  return parts.length ? parts.join(', ') : 'без отдельного эффекта';
 }
 
 function route(choice) {
   const parts = [];
+  if (choice.outcomeRoll) {
+    const roll = choice.outcomeRoll;
+    return `0–5 ${roll.count}: ${roll.chances.map(chance => `${Math.round(chance * 100)}%`).join(' / ')} → \`${roll.win}\`; иначе → \`${roll.lose}\``;
+  }
   if (choice.startArc) parts.push(`выбирает ветку ${choice.startArc}`);
   if (choice.switchArc) parts.push(`переходит в ветку ${choice.switchArc}`);
   if (choice.next) parts.push(`→ \`${Array.isArray(choice.next) ? choice.next.join(' / ') : choice.next}\``);
@@ -94,6 +100,8 @@ function cardVisibleLines(card) {
     ...(card.image ? [card.image.alt] : []),
     ...(typeof card.text === 'string' ? card.text.split('\n') : []),
     ...(card.messages || []).flatMap((message) => [
+      ...(message.forwardedFrom ? [`Forwarded from ${deck.sources[message.forwardedFrom].name}`] : []),
+      ...(message.imageRef ? [deck.images[message.imageRef].placeholder || deck.images[message.imageRef].alt] : []),
       ...(message.placeholder ? [message.placeholder] : []),
       ...(message.image ? [message.image.alt] : []),
       ...(typeof message.text === 'string' ? message.text.split('\n') : []),
@@ -108,7 +116,8 @@ const sections = [
   ['4. Global side-stories', (card) => card.kind === 'sideStory'],
   ['5. Pressure cards', (card) => card.kind === 'pressure'],
   ['6. AI Influencer prototype', (card) => card.arc === 'influencer'],
-  ['7. Other prototype cards', () => true],
+  ['7. Live AI Agent prototype', (card) => card.arc === 'live_agent'],
+  ['8. Other prototype cards', () => true],
 ];
 
 const lines = [
@@ -116,7 +125,7 @@ const lines = [
   '',
   'Числовые эффекты ниже предназначены только для редакторской проверки. В самой игре игрок видит текущие проценты и подсветку затрагиваемых ресурсов, но не видит `+N/−N`.',
   '',
-  'Каждое решение дополнительно списывает 1 Cash как постоянный burn rate.',
+  'В основном движке решение дополнительно списывает 1 Cash. В прототипных ветках Padel, AI Influencer и Live AI Agent пассивное списание отключено.',
   '',
 ];
 
@@ -142,6 +151,9 @@ for (const [title, predicate] of sections) {
     for (const side of ['left', 'right']) {
       const choice = card.choices[side];
       lines.push(`- **${choice.label} — ${translation[side]}**: ${effects(choice)}; ${route(choice)}.`);
+    }
+    if (card.outcome) {
+      lines.push('', `Эффект при входе в исход, ровно один раз: ${card.resetResources === 0 ? 'Cash = Team = Customers = Founder = 0' : effects({ effects: card.outcomeEffects })}. Оба ответа декоративные и возвращают к Investor.`);
     }
     for (const [previousCardId, contextualChoices] of Object.entries(card.contextualChoices || {})) {
       for (const side of ['left', 'right']) {

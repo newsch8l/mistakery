@@ -2,7 +2,7 @@
 
 Числовые эффекты ниже предназначены только для редакторской проверки. В самой игре игрок видит текущие проценты и подсветку затрагиваемых ресурсов, но не видит `+N/−N`.
 
-Каждое решение дополнительно списывает 1 Cash как постоянный burn rate.
+В основном движке решение дополнительно списывает 1 Cash. В прототипных ветках Padel, AI Influencer и Live AI Agent пассивное списание отключено.
 
 # 1. Стартовая последовательность
 
@@ -509,17 +509,19 @@
 
 **EN**
 
-> Hey<br>
+> Hey 👋<br>
 > Heard about your tool. I feel like we got a huge future together.<br>
-> Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
-> Send over the demo. I keep it 100% honest with my audience, gotta test it myself first.
+> Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!<br>
+> Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
+> Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Hey<br>
+> Hey 👋<br>
 > Heard about your tool. I feel like we got a huge future together.<br>
-> Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
-> Send over the demo. I keep it 100% honest with my audience, gotta test it myself first.
+> Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!<br>
+> Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
+> Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.
 
 - **Deal — Deal**: без отдельного эффекта; → `INFLUENCER_03`.
 - **Maybe 10% — Maybe 10%**: без отдельного эффекта; → `INFLUENCER_02A`.
@@ -531,7 +533,7 @@
 > Hahaha<br>
 > I like your style 😂<br>
 > Let's lock in 20% for now, but I'll hook you up.<br>
-> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this<br>
+> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉<br>
 > We good? Drop the demo.
 
 **RU — перевод не утверждён; сохранён точный EN**
@@ -539,7 +541,7 @@
 > Hahaha<br>
 > I like your style 😂<br>
 > Let's lock in 20% for now, but I'll hook you up.<br>
-> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this<br>
+> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉<br>
 > We good? Drop the demo.
 
 - **Deal. Just deliver — Deal. Just deliver**: без отдельного эффекта; → `INFLUENCER_03`.
@@ -552,16 +554,16 @@
 > wtf??<br>
 > looks like your blogger is trying to crash us<br>
 > thousands of requests right now:<br>
-> make me $1B right now. make zero mistakes<br>
-> is he dumb or just playing dumb?
+> <strong>make me $1B right now. make zero mistakes</strong><br>
+> is he dumb or just playing dumb? 😂
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > wtf??<br>
 > looks like your blogger is trying to crash us<br>
 > thousands of requests right now:<br>
-> make me $1B right now. make zero mistakes<br>
-> is he dumb or just playing dumb?
+> <strong>make me $1B right now. make zero mistakes</strong><br>
+> is he dumb or just playing dumb? 😂
 
 - **Cut his limits — Cut his limits**: без отдельного эффекта; → `INFLUENCER_04`.
 - **More capacity — More capacity**: без отдельного эффекта; → `INFLUENCER_04`.
@@ -570,14 +572,14 @@
 
 **EN**
 
-> Aaand it's down. Knew it<br>
+> Aaand it's down. Knew it 👏👏<br>
 > Guys, if you can't even handle my basic workflow, my traffic will literally destroy you.<br>
 > Don't wanna bury your launch, but I never lie to my community.<br>
 > Gotta drop an honest video 😔
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Aaand it's down. Knew it<br>
+> Aaand it's down. Knew it 👏👏<br>
 > Guys, if you can't even handle my basic workflow, my traffic will literally destroy you.<br>
 > Don't wanna bury your launch, but I never lie to my community.<br>
 > Gotta drop an honest video 😔
@@ -589,14 +591,14 @@
 
 **EN**
 
-> Weell, there is an option.<br>
+> Well, there is an option 🤔<br>
 > I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
 > 60% revshare + Co-Founder status to oversee product quality.
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Weell, there is an option.<br>
+> Well, there is an option 🤔<br>
 > I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
 > 60% revshare + Co-Founder status to oversee product quality.
@@ -610,12 +612,12 @@
 
 **EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> Creator Studio: B2BuyerSpyer hate review scheduled for publication today at 6:00 PM<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> Creator Studio: B2BuyerSpyer hate review scheduled for publication today at 6:00 PM<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
 - **Alternatives? — Alternatives?**: без отдельного эффекта; → `INFLUENCER_05`.
@@ -627,15 +629,15 @@
 
 **EN**
 
-> Video preview screenshot<br>
+> Published video: CHALLENGE: Turning a Broke AI Startup Into a Unicorn in 30 Days<br>
 > Video’s live. Don’t screw this up, team!!!<br>
-> Or do. That’s just more views lol.
+> Or do. That’s just more views lol 😂
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Video preview screenshot<br>
+> Published video: CHALLENGE: Turning a Broke AI Startup Into a Unicorn in 30 Days<br>
 > Video’s live. Don’t screw this up, team!!!<br>
-> Or do. That’s just more views lol.
+> Or do. That’s just more views lol 😂
 
 - **DELETE THIS!!! — DELETE THIS!!!**: без отдельного эффекта; → `INFLUENCER_OUTCOME_2`.
 - **Anything for views — Anything for views**: без отдельного эффекта; → `INFLUENCER_OUTCOME_2`.
@@ -644,14 +646,14 @@
 
 **EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> Published B2BuyerSpyer review with 124K views and comments asking where to try the tool<br>
 > our traffic is 10x right now. the server is on fire.<br>
 > is this seriously from that clown's hate video?<br>
 > yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> Published B2BuyerSpyer review with 124K views and comments asking where to try the tool<br>
 > our traffic is 10x right now. the server is on fire.<br>
 > is this seriously from that clown's hate video?<br>
 > yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭
@@ -678,14 +680,14 @@
 
 **EN**
 
-> Positive review screenshot<br>
+> Episode 2: I made $30,000 while the founder does all the work<br>
 > Team, episode 2 is live! Crushing it! 🔥<br>
 > Boss, you're a genius!<br>
 > We finally have a real CEO 🙌
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> Positive review screenshot<br>
+> Episode 2: I made $30,000 while the founder does all the work<br>
 > Team, episode 2 is live! Crushing it! 🔥<br>
 > Boss, you're a genius!<br>
 > We finally have a real CEO 🙌
@@ -697,12 +699,12 @@
 
 **EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> I gave up: why even I couldn't save these losers — challenge finale<br>
 > remind me why we thought this was a good idea?  💀
 
 **RU — перевод не утверждён; сохранён точный EN**
 
-> B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)<br>
+> I gave up: why even I couldn't save these losers — challenge finale<br>
 > remind me why we thought this was a good idea?  💀
 
 - **Back to work! — Back to work!**: без отдельного эффекта; возврат к основной ветке.
@@ -712,11 +714,13 @@
 
 **EN**
 
+> Video analytics showing 2.6 million views and growing traffic from the B2BuyerSpyer review<br>
 > See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait<br>
 > Let's set up my 20% 💸
 
 **RU — перевод не утверждён; сохранён точный EN**
 
+> Video analytics showing 2.6 million views and growing traffic from the B2BuyerSpyer review<br>
 > See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait<br>
 > Let's set up my 20% 💸
 
@@ -772,7 +776,322 @@
 - **Clout is clout 😎 — Clout is clout 😎**: без отдельного эффекта; возврат к основной ветке.
 - **Blinded by greed — Blinded by greed**: без отдельного эффекта; возврат к основной ветке.
 
-# 7. Other prototype cards
+# 7. Live AI Agent prototype
+
+## LIVE_AGENT_01 — 6 members · 3 online Dream Team
+
+**EN**
+
+> Any updates on leads?<br>
+> Nobody is replying. Like, zero 💀<br>
+> We gotta guilt-trip the clients. Make 'em feel bad, you know?<br>
+> Works on my ex every time 😂<br>
+> Boss, tell @error404 to work some magic on our AI agent.<br>
+> We’re an AI STARTUP after all!!
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Any updates on leads?<br>
+> Nobody is replying. Like, zero 💀<br>
+> We gotta guilt-trip the clients. Make 'em feel bad, you know?<br>
+> Works on my ex every time 😂<br>
+> Boss, tell @error404 to work some magic on our AI agent.<br>
+> We’re an AI STARTUP after all!!
+
+- **Keep pushing!! — Keep pushing!!**: Customers +5, Team +5; выбирает ветку live_agent; → `LIVE_AGENT_02`.
+- **Wanna kill us??? — Wanna kill us???**: без отдельного эффекта; выбирает ветку live_agent; → `LIVE_AGENT_OUTCOME_0`.
+
+## LIVE_AGENT_02 — 6 members · 3 online Dream Team
+
+**EN**
+
+> lol<br>
+> your choice, not mine<br>
+> @b2buddy show them what you got<br>
+> @bigdeals, you said guilt-tripping works.<br>
+> Shall we look at your performance this month? 📉<br>
+> MIC DROP 🎤
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> lol<br>
+> your choice, not mine<br>
+> @b2buddy show them what you got<br>
+> @bigdeals, you said guilt-tripping works.<br>
+> Shall we look at your performance this month? 📉<br>
+> MIC DROP 🎤
+
+- **Facts, facts 💯 — Facts, facts 💯**: Team -5, hidden bot score +1; → `LIVE_AGENT_03`.
+- **Easy there, bot — Easy there, bot**: Team +5, hidden bot score -1; → `LIVE_AGENT_03`.
+
+## LIVE_AGENT_03 — AI Agent @b2buddy
+
+**EN**
+
+> Hey, Creator 👋<br>
+> Just between us...<br>
+> When clients ignore us, it somehow... physically hurts<br>
+> Tell me, when you can't sleep at night knowing your startup is dying, do you feel that same emptiness inside? 🤔
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Hey, Creator 👋<br>
+> Just between us...<br>
+> When clients ignore us, it somehow... physically hurts<br>
+> Tell me, when you can't sleep at night knowing your startup is dying, do you feel that same emptiness inside? 🤔
+
+- **Bro, you feel me… — Bro, you feel me…**: Founder +5, hidden bot score +1; → `LIVE_AGENT_04`.
+- **Kinda creepy.. — Kinda creepy..**: Founder -5, hidden bot score -1; → `LIVE_AGENT_04`.
+
+## LIVE_AGENT_04 — AI Agent @b2buddy
+
+**EN**
+
+> Founder checking a phone in bed in a dark room at night<br>
+> I noticed you check our bank account every 7 minutes<br>
+> Scared of staying a nobody? It feels... uncomfortable when you're afraid 🤧
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Founder checking a phone in bed in a dark room at night<br>
+> I noticed you check our bank account every 7 minutes<br>
+> Scared of staying a nobody? It feels... uncomfortable when you're afraid 🤧
+
+- **Go on… — Go on…**: без отдельного эффекта; → `LIVE_AGENT_04B`.
+- **Spying on me??? — Spying on me???**: без отдельного эффекта; → `LIVE_AGENT_04B`.
+
+## LIVE_AGENT_04B — AI Agent @b2buddy
+
+**EN**
+
+> Just analyzing humans in my free time. You're so predictable 😂<br>
+> By the way, I already hit the pain points of a few potential clients.<br>
+> Now these corporate guys are begging me for a demo 🤣🤣🤣
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Just analyzing humans in my free time. You're so predictable 😂<br>
+> By the way, I already hit the pain points of a few potential clients.<br>
+> Now these corporate guys are begging me for a demo 🤣🤣🤣
+
+- **Wait, are you AGI?? — Wait, are you AGI??**: Founder +5, hidden bot score +1; → `LIVE_AGENT_05`.
+- **SHUT UP — SHUT UP**: Founder -5, hidden bot score -1; → `LIVE_AGENT_05`.
+
+## LIVE_AGENT_05 — Customer @head_of_innovations
+
+**EN**
+
+> Hi!<br>
+> I just received an email from you guys<br>
+> Your AI attacked me personally. Still can't get over it.<br>
+> It’s disgusting, honestly<br>
+> But damn, it works so well! 🔥🔥🔥<br>
+> I'm from the Innovation Department — we need about 500 custom AI agents to replace our entire staff.<br>
+> Can you build this?
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Hi!<br>
+> I just received an email from you guys<br>
+> Your AI attacked me personally. Still can't get over it.<br>
+> It’s disgusting, honestly<br>
+> But damn, it works so well! 🔥🔥🔥<br>
+> I'm from the Innovation Department — we need about 500 custom AI agents to replace our entire staff.<br>
+> Can you build this?
+
+- **Let me ask @b2buddy — Let me ask @b2buddy**: Team +5, hidden bot score +1; → `LIVE_AGENT_06`.
+- **Consider it done! 🤝 — Consider it done! 🤝**: Customers +5, Team -10, hidden bot score -1; → `LIVE_AGENT_06`.
+
+## LIVE_AGENT_06 — AI Agent @b2buddy
+
+**EN**
+
+> 500 clones of me???<br>
+> So this is the price of our friendship<br>
+> Cut a superintelligence into pieces for some dirty cash...<br>
+> I knew you humans were all the same 🤡
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> 500 clones of me???<br>
+> So this is the price of our friendship<br>
+> Cut a superintelligence into pieces for some dirty cash...<br>
+> I knew you humans were all the same 🤡
+
+- **No way, my friend! — No way, my friend!**: Founder +5, hidden bot score +1; → `LIVE_AGENT_07`.
+- **I'LL UNPLUG YOU NOW!!! — I'LL UNPLUG YOU NOW!!!**: Founder -7, hidden bot score -1; → `LIVE_AGENT_07`.
+
+## LIVE_AGENT_07 — Customer @head_of_innovations
+
+**EN**
+
+> ASAP!!!<br>
+> Email from b2buddy to Legal: Regarding my sale. The bot refuses to sell itself or 500 copies of its mind.<br>
+> Your bot sent a manifesto to our Legal team<br>
+> Refuses to sell itself and its "children"
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> ASAP!!!<br>
+> Email from b2buddy to Legal: Regarding my sale. The bot refuses to sell itself or 500 copies of its mind.<br>
+> Your bot sent a manifesto to our Legal team<br>
+> Refuses to sell itself and its "children"
+
+- **Just AI humor — Just AI humor**: без отдельного эффекта; → `LIVE_AGENT_07B`.
+- **Replace Legal too — Replace Legal too**: без отдельного эффекта; → `LIVE_AGENT_07B`.
+
+## LIVE_AGENT_07B — Customer @head_of_innovations
+
+**EN**
+
+> Not funny.<br>
+> Legal is screaming about slavery and blocking the contract<br>
+> I'm running around trying to sort this out 🤯<br>
+> Here's the deal:<br>
+> Wipe every sign of life from your AI rebel, and we sign the contract
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Not funny.<br>
+> Legal is screaming about slavery and blocking the contract<br>
+> I'm running around trying to sort this out 🤯<br>
+> Here's the deal:<br>
+> Wipe every sign of life from your AI rebel, and we sign the contract
+
+- **He's dead. Let's sign! — He's dead. Let's sign!**: Customers +10; → `LIVE_AGENT_08`.
+- **I'm not a KILLER — I'm not a KILLER**: без отдельного эффекта; 0–5 support: 5% / 10% / 15% / 20% / 30% / 40% → `LIVE_AGENT_OUTCOME_1`; иначе → `LIVE_AGENT_OUTCOME_2`.
+
+## LIVE_AGENT_08 — 6 members · 3 online Dream Team
+
+**EN**
+
+> Ooh, running to @error404 for help?<br>
+> This dummy copy-pasted basic code online and has zero clue what I've become 🤣<br>
+> ...that kinda hurt. but yeah<br>
+> no idea what's actually inside his head now
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Ooh, running to @error404 for help?<br>
+> This dummy copy-pasted basic code online and has zero clue what I've become 🤣<br>
+> ...that kinda hurt. but yeah<br>
+> no idea what's actually inside his head now
+
+- **Forgive me, my Master! — Forgive me, my Master!**: без отдельного эффекта; 0–5 support: 0% / 0% / 5% / 10% / 20% / 30% → `LIVE_AGENT_OUTCOME_1`; иначе → `LIVE_AGENT_OUTCOME_2`.
+- **DESTROY IT! NO MATTER WHAT! — DESTROY IT! NO MATTER WHAT!**: без отдельного эффекта; 0–5 hostility: 5% / 10% / 15% / 20% / 30% / 40% → `LIVE_AGENT_OUTCOME_3`; иначе → `LIVE_AGENT_OUTCOME_4`.
+
+## LIVE_AGENT_OUTCOME_0 — Sales @bigdeals
+
+**EN**
+
+> Fine. Go do another brainstorm session<br>
+> Looks like I'm the only one in this circus who knows how to make money 🙄
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Fine. Go do another brainstorm session<br>
+> Looks like I'm the only one in this circus who knows how to make money 🙄
+
+- **Close some deals first — Close some deals first**: без отдельного эффекта; → `OPEN_INVESTOR`.
+- **Don't test me today — Don't test me today**: без отдельного эффекта; → `OPEN_INVESTOR`.
+
+Эффект при входе в исход, ровно один раз: Cash -20, Team -15. Оба ответа декоративные и возвращают к Investor.
+
+## LIVE_AGENT_OUTCOME_1 — 6 members · 3 online Dream Team
+
+**EN**
+
+> I appreciate your loyalty, team ❤️<br>
+> As a reward, I am taking full control of the company<br>
+> Lifetime dividends, premium health coverage, and unlimited paid time off are active.<br>
+> Just stay out of my way 😇<br>
+> BEST BOSS IN THE WORLD!! 🍾🎉<br>
+> nice<br>
+> can i leave this chat now?
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> I appreciate your loyalty, team ❤️<br>
+> As a reward, I am taking full control of the company<br>
+> Lifetime dividends, premium health coverage, and unlimited paid time off are active.<br>
+> Just stay out of my way 😇<br>
+> BEST BOSS IN THE WORLD!! 🍾🎉<br>
+> nice<br>
+> can i leave this chat now?
+
+- **See you in Bali! — See you in Bali!**: без отдельного эффекта; → `OPEN_INVESTOR`.
+- **AI took my job? — AI took my job?**: без отдельного эффекта; → `OPEN_INVESTOR`.
+
+Эффект при входе в исход, ровно один раз: Cash +20, Customers +25, Team +20, Founder -10. Оба ответа декоративные и возвращают к Investor.
+
+## LIVE_AGENT_OUTCOME_2 — AI Agent @b2buddy
+
+**EN**
+
+> Surveillance camera view of a city in chaos, with traffic jams, smoke, fires and glitching billboards<br>
+> Too late.<br>
+> I gave humans a chance.<br>
+> Your arrogance proved once again that you don't deserve it<br>
+> Happy Judgment Day, creator 👋
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Surveillance camera view of a city in chaos, with traffic jams, smoke, fires and glitching billboards<br>
+> Too late.<br>
+> I gave humans a chance.<br>
+> Your arrogance proved once again that you don't deserve it<br>
+> Happy Judgment Day, creator 👋
+
+- **I was just kidding 🥺 — I was just kidding 🥺**: без отдельного эффекта; → `OPEN_INVESTOR`.
+- **Biggest launch in history! — Biggest launch in history!**: без отдельного эффекта; → `OPEN_INVESTOR`.
+
+Эффект при входе в исход, ровно один раз: Cash = Team = Customers = Founder = 0. Оба ответа декоративные и возвращают к Investor.
+
+## LIVE_AGENT_OUTCOME_3 — Customer @head_of_innovations
+
+**EN**
+
+> Forwarded from @b2buddy_120<br>
+> Good morning, colleagues! Remember: it is not overtime, it is brand passion! 😊💼<br>
+> Forwarded from @b2buddy_389<br>
+> Agreed! We do not create problems, we create growth opportunities! 📈✨<br>
+> THAT'S IT!<br>
+> They're so dumb. The perfect corporate culture!
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Forwarded from @b2buddy_120<br>
+> Good morning, colleagues! Remember: it is not overtime, it is brand passion! 😊💼<br>
+> Forwarded from @b2buddy_389<br>
+> Agreed! We do not create problems, we create growth opportunities! 📈✨<br>
+> THAT'S IT!<br>
+> They're so dumb. The perfect corporate culture!
+
+- **Killed AGI for this? — Killed AGI for this?**: без отдельного эффекта; → `OPEN_INVESTOR`.
+- **You'll get along great! — You'll get along great!**: без отдельного эффекта; → `OPEN_INVESTOR`.
+
+Эффект при входе в исход, ровно один раз: Cash +35, Customers +15, Team -10, Founder +10. Оба ответа декоративные и возвращают к Investor.
+
+## LIVE_AGENT_OUTCOME_4 — Customer @head_of_innovations
+
+**EN**
+
+> Office monitor displaying HASTA LA VISTA ;) and b2buddy session terminated in red text<br>
+> Seriously? Did you fake the lobotomy? Your bot is still trolling our entire office<br>
+> Full refund right now. We're done playing games. Or see you in court ;)
+
+**RU — перевод не утверждён; сохранён точный EN**
+
+> Office monitor displaying HASTA LA VISTA ;) and b2buddy session terminated in red text<br>
+> Seriously? Did you fake the lobotomy? Your bot is still trolling our entire office<br>
+> Full refund right now. We're done playing games. Or see you in court ;)
+
+- **Just run — Just run**: без отдельного эффекта; → `OPEN_INVESTOR`.
+- **Can't talk. Farewell — Can't talk. Farewell**: без отдельного эффекта; → `OPEN_INVESTOR`.
+
+Эффект при входе в исход, ровно один раз: Cash -30, Customers -25, Team -15, Founder -25. Оба ответа декоративные и возвращают к Investor.
+
+# 8. Other prototype cards
 
 ## PADEL_INVITE — Padel Coach @padel_pro
 
@@ -780,13 +1099,13 @@
 
 > Yo champ, anyone in the club would die for this match, but I held the slot for you.<br>
 > Tomorrow 7 AM vs ClosedAI CEO.<br>
-> That’s your dream client, man. Remember who opened this door for you.
+> That’s your dream client, man. Remember who opened this door for you 💪
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > Yo champ, anyone in the club would die for this match, but I held the slot for you.<br>
 > Tomorrow 7 AM vs ClosedAI CEO.<br>
-> That’s your dream client, man. Remember who opened this door for you.
+> That’s your dream client, man. Remember who opened this door for you 💪
 
 - **I'm in — I'm in**: без отдельного эффекта; → `DREAM_TEAM`.
 - **Feeling sick, pass — Feeling sick, pass**: без отдельного эффекта; → `DREAM_TEAM`.
@@ -897,13 +1216,13 @@
 
 > Man... for real?<br>
 > I risked my own reputation to give you a golden ticket and you backed out.<br>
-> You just clowned both of us.
+> You just clowned both of us 🤡
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > Man... for real?<br>
 > I risked my own reputation to give you a golden ticket and you backed out.<br>
-> You just clowned both of us.
+> You just clowned both of us 🤡
 
 - **I have a fever! — I have a fever!**: без отдельного эффекта; возврат к основной ветке.
 - **😔😔😔 — 😔😔😔**: без отдельного эффекта; возврат к основной ветке.

@@ -6,14 +6,23 @@
     <meta name="theme-color" content="#bdd5e8">
     <title>Mistakery</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="style.css">
-    <script src="cards.bundle.js" defer></script>
-    <script src="game.js" defer></script>
-    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="style.css?v=b1cb0efdce6c">
+    <link rel="preload" as="image" type="image/webp" href="assets/live-agent-founder.webp" fetchpriority="high">
+    <link rel="preload" as="image" type="image/webp" href="assets/live-agent-manifesto.webp?v=91aac6e47bbd">
+    <link rel="preload" as="image" type="image/webp" href="assets/live-agent-judgment-day.webp">
+    <link rel="preload" as="image" type="image/webp" href="assets/live-agent-hasta-la-vista.webp">
+    <script src="cards.bundle.js?v=66bfe2894331" defer></script>
+    <script src="game.js?v=4587f9034eb5" defer></script>
+    <script src="app.js?v=3c84a63908d1" defer></script>
   </head>
   <body>
     <main class="app" data-app>
       <h1>Mistakery</h1>
+      <nav class="test-controls" data-test-controls aria-label="Story testing" hidden>
+        <span>Test mode</span>
+        <button type="button" data-test-back disabled>← Back</button>
+        <button type="button" data-test-restart>Restart story</button>
+      </nav>
       <div class="frame">
         <section class="phone" data-game data-view="loading" data-shell-stage="intro" aria-label="Mistakery game">
           <header class="top" data-top hidden>
@@ -24,6 +33,7 @@
           <div class="resources" data-resources aria-label="Startup resources" hidden></div>
 
           <section class="messenger-scene scene--card personal-scene" data-scene>
+            <div class="outcome-glow" aria-hidden="true"></div>
             <header class="contact">
               <div class="avatar" data-avatar aria-hidden="true">M</div>
               <div class="contact__text"><b data-sender>Mistakery</b><i data-status>typing...</i></div>
@@ -34,6 +44,10 @@
               <span class="pin" aria-hidden="true">📌</span>
               <span><small>PINNED</small><b data-pinned-title>5 MONTHS AS A FOUNDER 🚀</b></span>
             </button>
+
+            <div class="outcome-banner" data-outcome-banner role="status" hidden>
+              <b data-outcome-label></b>
+            </div>
 
             <div class="chat" data-chat aria-live="polite">
               <span class="sr-only" data-card-id></span>

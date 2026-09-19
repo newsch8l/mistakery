@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 
 const root = path.resolve(__dirname, '..');
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
@@ -22,6 +23,13 @@ test('offline bundle contains exactly the canonical JSON deck', () => {
   const canonical = JSON.parse(fs.readFileSync(path.join(root, 'cards.json'), 'utf8'));
   const bundled = require(bundlePath);
   assert.deepEqual(bundled, canonical);
+});
+
+test('runtime asset URLs track file content so cached scripts cannot hide new card captions', () => {
+  for (const file of ['style.css', 'cards.bundle.js', 'game.js', 'app.js']) {
+    const version = createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex').slice(0, 12);
+    assert.ok(index.includes(`${file}?v=${version}`), `Stale runtime URL for ${file}: rebuild the offline deck`);
+  }
 });
 
 test('negative review screenshot is a compact cacheable WebP asset', () => {

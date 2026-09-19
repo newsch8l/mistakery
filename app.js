@@ -7,6 +7,21 @@
     'OPEN_BOSS',
     'OPEN_DEV',
     'OPEN_INVESTOR',
+    'LIVE_AGENT_01',
+    'LIVE_AGENT_02',
+    'LIVE_AGENT_03',
+    'LIVE_AGENT_04',
+    'LIVE_AGENT_04B',
+    'LIVE_AGENT_05',
+    'LIVE_AGENT_06',
+    'LIVE_AGENT_07',
+    'LIVE_AGENT_07B',
+    'LIVE_AGENT_08',
+    'LIVE_AGENT_OUTCOME_0',
+    'LIVE_AGENT_OUTCOME_1',
+    'LIVE_AGENT_OUTCOME_2',
+    'LIVE_AGENT_OUTCOME_3',
+    'LIVE_AGENT_OUTCOME_4',
     'INFLUENCER_01',
     'INFLUENCER_02',
     'INFLUENCER_02A',
@@ -48,14 +63,21 @@
     noteIndex: 0,
     locked: false,
     introTypingTimer: null,
+    cardDelivery: null,
     padelCeoScore: null,
     influencerPreviousCardId: null,
+    liveAgentScore: 0,
     activeCardIds: ACTIVE_CARD_IDS,
     render,
   };
   window.MistakeryApp = app;
 
   const $ = (selector) => document.querySelector(selector);
+  const storyTestEnabled = new URLSearchParams(window.location.search).get('story') === 'live-agent';
+  const testHistory = [];
+  const presentedOutcomes = new WeakSet();
+  let choiceUnlockTimer = null;
+  let cardTypingTimer = null;
   const INITIAL_RESOURCES = Object.freeze({ cash: 25, team: 60, customers: 15, founder: 65 });
   const OPTIMISTIC_RESOURCES = Object.freeze({ cash: 100, team: 100, customers: 100, founder: 100 });
   const INTRO_TYPING_MS = 620;
@@ -121,19 +143,82 @@
     return String(text)
       .replace(/~/g, NBSP)
       .split(/(<[^>]*>)/)
-      .map((part) => (part.startsWith('<') ? part : glueShortWords(part)))
+      .map((part) => (part.startsWith('<') ? part : glueShortWords(part)
+        .replace(/(^|[^\w@])(@[A-Za-z0-9_]+)/g, '$1<strong class="mention">$2</strong>')))
       .join('');
   }
 
+  let continuationResizeObserver;
+
   function setView(view, shellStage = 'real') {
+    window.clearTimeout(cardTypingTimer);
+    continuationResizeObserver?.disconnect();
     app.view = view;
     const phone = $('[data-game]');
+    delete phone.dataset.outcome;
+    phone.classList.remove('is-outcome-entering');
+    $('[data-outcome-banner]').hidden = true;
     phone.dataset.view = view;
     phone.dataset.shellStage = shellStage;
     $('[data-top]').hidden = shellStage === 'intro';
     $('[data-resources]').hidden = shellStage === 'intro';
     $('[data-restart-run]').disabled = view === 'onboarding';
     $('[data-scene]').classList.toggle('is-onboarding', view === 'onboarding');
+    $('[data-app]').classList.toggle('is-story-test', storyTestEnabled);
+    $('[data-test-controls]').hidden = !storyTestEnabled;
+    $('[data-test-back]').disabled = testHistory.length === 0;
+  }
+
+  function recordTestStep() {
+    if (!storyTestEnabled) return;
+    testHistory.push({
+      state: structuredClone(app.state),
+      view: app.view,
+      noteIndex: app.noteIndex,
+      padelCeoScore: app.padelCeoScore,
+      influencerPreviousCardId: app.influencerPreviousCardId,
+      liveAgentScore: app.liveAgentScore,
+      cardDelivery: app.cardDelivery ? { ...app.cardDelivery } : null,
+      scrollTop: $('[data-chat]').scrollTop,
+    });
+  }
+
+  function unlockAfterChoice() {
+    window.clearTimeout(choiceUnlockTimer);
+    choiceUnlockTimer = window.setTimeout(() => { app.locked = false; }, 280);
+  }
+
+  function backInStoryTest() {
+    if (!storyTestEnabled || !testHistory.length) return;
+    window.clearTimeout(choiceUnlockTimer);
+    window.clearTimeout(app.introTypingTimer);
+    const { scrollTop, ...saved } = testHistory.pop();
+    Object.assign(app, structuredClone(saved), { locked: false });
+    // Restored outcomes retain their styling but never replay their entrance.
+    presentedOutcomes.add(app.state);
+    $('[data-pin-sheet]').hidden = true;
+    clearPreview();
+    render();
+    $('[data-chat]').scrollTop = scrollTop;
+  }
+
+  function startStoryTest() {
+    if (!storyTestEnabled) return;
+    window.clearTimeout(choiceUnlockTimer);
+    window.clearTimeout(app.introTypingTimer);
+    testHistory.length = 0;
+    app.cardDelivery = null;
+    app.state = engine.startRun(app.deck);
+    app.state.currentCardId = 'LIVE_AGENT_01';
+    app.state.flags = ['met_boss', 'met_dev', 'live_agent_pending'];
+    app.liveAgentScore = 0;
+    app.padelCeoScore = null;
+    app.influencerPreviousCardId = null;
+    app.locked = false;
+    app.view = 'playing';
+    $('[data-pin-sheet]').hidden = true;
+    clearPreview();
+    renderCard();
   }
 
   function setSceneMode(mode) {
@@ -141,6 +226,7 @@
     const team = resolvedMode === 'team';
     const irl = resolvedMode === 'irl';
     const scene = $('[data-scene]');
+    $('[data-chat]').classList.remove('has-chat-history');
     scene.dataset.mode = resolvedMode;
     scene.classList.toggle('team-scene', team);
     scene.classList.toggle('irl-scene', irl);
@@ -257,7 +343,9 @@
 
   function messageLines(text, preserveTerminalPeriod = false) {
     const displayedText = preserveTerminalPeriod ? String(text) : withoutTerminalPeriod(text);
-    return displayedText.split('\n').map((line) => `<p>${typography(line)}</p>`).join('');
+    return displayedText.split('\n').map((line, index, lines) => line
+      ? `<p${index > 0 && lines[index - 1] === '' ? ' class="message-paragraph-start"' : ''}>${typography(line)}</p>`
+      : '').join('');
   }
 
   function cardMessageMarkup(text, preserveTerminalPeriod = false) {
@@ -278,8 +366,18 @@
       .replace(/>/g, '&gt;');
   }
 
-  function mediaImageMarkup(image) {
-    return `<img class="message-image" src="${htmlAttribute(image.src)}" alt="${htmlAttribute(image.alt)}" width="${Number(image.width)}" height="${Number(image.height)}" decoding="async" fetchpriority="high" draggable="false">`;
+  function mediaImageMarkup(image, decoding = 'async') {
+    return `<img class="message-image" src="${htmlAttribute(image.src)}" alt="${htmlAttribute(image.alt)}" width="${Number(image.width)}" height="${Number(image.height)}" style="--image-ratio: ${Number(image.width)} / ${Number(image.height)}" decoding="${decoding}" fetchpriority="high" draggable="false">`;
+  }
+
+  // References resolve to the same media renderers used by existing cards.
+  // Replace the referenced placeholder with { src, alt, width, height } later.
+  function referencedMediaMarkup(message, preserveTerminalPeriod = false) {
+    const asset = app.deck.images?.[message.imageRef];
+    if (!asset) throw new Error(`Missing image reference: ${message.imageRef}`);
+    const isImage = Boolean(asset.src);
+    const caption = message.text ? `<div class="message-caption">${messageLines(message.text, preserveTerminalPeriod)}</div>` : '';
+    return `<div class="message ${isImage ? 'image-bubble' : 'media-placeholder'}${caption ? ' has-caption' : ''} is-pop" data-asset-reference="${htmlAttribute(message.imageRef)}">${isImage ? mediaImageMarkup(asset, caption ? 'sync' : 'async') : mediaPlaceholderMarkup(asset.placeholder)}${caption}</div>`;
   }
 
   function popMessage() {
@@ -376,6 +474,7 @@
       </div>
       <div class="message-clearance" aria-hidden="true"></div>`;
     setChoices(note.buttons, () => {
+      recordTestStep();
       if (app.noteIndex === 0) startSaved(1);
       else beginRun();
     });
@@ -385,6 +484,7 @@
     app.state = engine.startRun(app.deck);
     app.padelCeoScore = null;
     app.influencerPreviousCardId = null;
+    app.liveAgentScore = 0;
     app.locked = false;
     app.view = 'playing';
     renderCard();
@@ -414,32 +514,51 @@
     });
   }
 
-  function renderPersonalCard(card) {
-    setThread(card.source, 'typing...');
+  function personalCardMessagesMarkup(card) {
     const media = card.image
       ? `<div class="message image-bubble is-pop">${mediaImageMarkup(card.image)}</div>`
       : card.placeholder
         ? `<div class="message media-placeholder is-pop">${mediaPlaceholderMarkup(card.placeholder)}</div>`
         : '';
-    const messages = cardMessageMarkup(card.text, card.id.startsWith('INFLUENCER_'));
+    const preserve = card.preservePunctuation || card.id.startsWith('INFLUENCER_');
+    const messages = card.messages
+      ? card.messages.map(message => message.imageRef
+        ? referencedMediaMarkup(message, preserve)
+        : message.forwardedFrom
+          ? forwardedMessageMarkup(message, preserve)
+          : cardMessageMarkup(message.text, preserve)).join('')
+      : cardMessageMarkup(card.text, preserve);
+    return media + messages;
+  }
+
+  function forwardedMessageMarkup(message, preserve) {
+    const author = sourceFor(message.forwardedFrom).name;
+    return `<div class="message is-pop" data-forwarded-from="${htmlAttribute(message.forwardedFrom)}">
+      <div class="forwarded-content">
+        <span class="forwarded-label">Forwarded from ${htmlAttribute(author)}</span>
+        ${messageLines(message.text, preserve)}
+      </div>
+    </div>`;
+  }
+
+  function renderPersonalCard(card) {
+    setThread(card.source, 'typing...');
     const avatar = sourceFor(card.source).name.replace('@', '').slice(0, 1).toUpperCase();
     $('[data-chat]').innerHTML = `<span class="sr-only" data-card-id>${card.id}</span>
       <div class="message-row">
         <div class="mini-avatar message-avatar" data-message-avatar aria-hidden="true">${avatar}</div>
-        <div class="message-stack" data-message-stack>${media}${messages}</div>
+        <div class="message-stack" data-message-stack>${personalCardMessagesMarkup(card)}</div>
       </div>
       <div class="message-clearance" aria-hidden="true"></div>`;
   }
 
-  function renderTeamCard(card) {
-    const thread = sourceFor(card.source);
-    setContact({ name: thread.name, role: thread.role, avatar: thread.avatar || 'DT' });
-    const messages = card.messages.map((message) => {
+  function teamCardMessagesMarkup(card) {
+    return card.messages.map((message) => {
       const body = message.image
         ? mediaImageMarkup(message.image)
         : message.placeholder
           ? mediaPlaceholderMarkup(message.placeholder)
-          : messageLines(message.text, card.id.startsWith('INFLUENCER_'));
+          : messageLines(message.text, card.preservePunctuation || card.id.startsWith('INFLUENCER_'));
       const mediaClass = message.image ? ' image-bubble' : message.placeholder ? ' media-placeholder' : '';
       if (message.direction === 'outgoing') {
         return `<div class="self-message${mediaClass} is-pop">${body}</div>`;
@@ -448,14 +567,62 @@
       return `<div class="team-row is-pop" data-source="${message.source}">
         <div class="member-avatar" aria-hidden="true">${message.avatar}</div>
         <div class="team-bubble${mediaClass}">
-          <span class="team-meta">${member.name}</span>
+          <span class="team-meta">${member.name}${member.role ? `<span class="team-role"> · ${member.role}</span>` : ''}</span>
           ${body}
         </div>
       </div>`;
     }).join('');
+  }
+
+  function renderTeamCard(card) {
+    const thread = sourceFor(card.source);
+    setContact({ name: thread.name, role: thread.role, avatar: thread.avatar || 'DT' });
     $('[data-chat]').innerHTML = `<span class="sr-only" data-card-id>${card.id}</span>
-      ${messages}
+      ${teamCardMessagesMarkup(card)}
       <div class="message-clearance" aria-hidden="true"></div>`;
+  }
+
+  function prependPreviousChatMessages(card) {
+    if (card.mode === 'irl') return null;
+    const chat = $('[data-chat]');
+    const host = card.mode === 'team' ? chat : chat.querySelector('[data-message-stack]');
+    const current = Array.from(host.children).filter(node => node.matches('.message, .team-row, .self-message'));
+    current.forEach(node => { node.dataset.chatCurrent = ''; });
+
+    // Derive context from resolved choices so rerenders and Back stay deterministic.
+    const answered = app.state.history.at(-1);
+    const previousId = answered?.cardId;
+    const approvedPrevious = {
+      LIVE_AGENT_02: 'LIVE_AGENT_01',
+      LIVE_AGENT_04: 'LIVE_AGENT_03',
+      LIVE_AGENT_04B: 'LIVE_AGENT_04',
+      LIVE_AGENT_07B: 'LIVE_AGENT_07',
+    }[card.id];
+    if (!approvedPrevious || previousId !== approvedPrevious) return null;
+    const previous = previousId && engine.cardById(app.deck, previousId);
+    if (!previous || previous.id === card.id || previous.source !== card.source
+      || (previous.mode || 'personal') !== (card.mode || 'personal')) return null;
+    const template = document.createElement('template');
+    template.innerHTML = card.mode === 'team'
+      ? teamCardMessagesMarkup(previous)
+      : personalCardMessagesMarkup(previous);
+    const retained = Array.from(template.content.children).slice(-2);
+    retained.forEach(node => {
+      node.classList.remove('is-pop');
+      node.dataset.chatHistory = '';
+    });
+    host.prepend(...retained);
+    chat.classList.toggle('has-chat-history', retained.length > 0);
+    if (!retained.length || !current.length) return null;
+    const reply = document.createElement('div');
+    reply.className = 'self-message chat-player-reply';
+    reply.dataset.playerReply = '';
+    const text = document.createElement('p');
+    const previousFounder = app.state.resources.founder - (answered.deltas.founder || 0);
+    text.textContent = engine.getChoiceLabel(previous.choices[answered.side], previousFounder);
+    reply.append(text);
+    host.insertBefore(reply, current[0]);
+    return reply;
   }
 
   function renderIrlCard(card) {
@@ -485,12 +652,131 @@
     if (card.mode === 'irl') renderIrlCard(card);
     else if (card.mode === 'team') renderTeamCard(card);
     else renderPersonalCard(card);
+    const playerReply = prependPreviousChatMessages(card);
+
+    if (card.arc === 'live_agent' || playerReply) {
+      $('[data-chat]').scrollTop = 0;
+      $('[data-chat]').querySelectorAll('[data-chat-current]').forEach((bubble, index) => {
+        bubble.style.animationDelay = `${index * 90}ms`;
+      });
+    }
 
     const choices = influencerChoicesFor(card);
     const left = engine.getChoiceLabel(choices.left, app.state.resources.founder);
     const right = engine.getChoiceLabel(choices.right, app.state.resources.founder);
     setChoices([left, right], () => {}, { disabled: complete });
     bindCardChoices(card, choices, complete);
+    stageCardMessages(card);
+    if (playerReply) {
+      focusContinuation();
+      const chat = $('[data-chat]');
+      let size = `${chat.clientWidth}:${chat.clientHeight}`;
+      continuationResizeObserver = new ResizeObserver(() => {
+        const nextSize = `${chat.clientWidth}:${chat.clientHeight}`;
+        if (size === nextSize) return;
+        size = nextSize;
+        focusContinuation();
+      });
+      continuationResizeObserver.observe(chat);
+    }
+    if (card.typingPauses) keepDeliveryVisible($('[data-chat] .typing-bubble'));
+    presentOutcome(card);
+  }
+
+  function presentOutcome(card) {
+    if (!card.outcomeTone) return;
+    const phone = $('[data-game]');
+    phone.dataset.outcome = card.outcomeTone;
+    if (card.outcomeBanner !== false) {
+      $('[data-pinned]').hidden = true;
+      $('[data-pin-sheet]').hidden = true;
+      $('[data-outcome-label]').textContent = card.outcomeTone === 'success' ? 'SUCCESS' : 'FAILURE';
+      $('[data-outcome-banner]').hidden = false;
+    }
+    if (presentedOutcomes.has(app.state)) return;
+    presentedOutcomes.add(app.state);
+    // Flush the cleared class so consecutive outcomes also get one entrance.
+    void phone.offsetWidth;
+    phone.classList.add('is-outcome-entering');
+  }
+
+  function keepDeliveryVisible(node) {
+    if (!node) return;
+    const chat = $('[data-chat]');
+    const overflow = node.getBoundingClientRect().bottom - chat.getBoundingClientRect().bottom + 12;
+    if (overflow > 0) chat.scrollTop += overflow;
+  }
+
+  function focusContinuation() {
+    const chat = $('[data-chat]');
+    const current = Array.from(chat.querySelectorAll('[data-chat-current], .typing-bubble'));
+    const media = current.filter(node => node.matches('.image-bubble'));
+    media.forEach(bubble => { bubble.style.width = ''; });
+    // Measure layout boxes, not the translated/scaled entrance animation.
+    const gap = parseFloat(getComputedStyle(current[0].parentElement).gap) || 0;
+    const contentHeight = () => current.reduce((height, node) => height + node.offsetHeight, 0)
+      + gap * (current.length - 1);
+    // Shrink the entire media bubble, leaving the image's intrinsic ratio intact.
+    // Recheck the caption at each width because its line wrapping changes too.
+    media.forEach(bubble => {
+      let width = bubble.offsetWidth;
+      let bestWidth = width;
+      let bestHeight = contentHeight();
+      while (contentHeight() > chat.clientHeight - 16 && width > 128) {
+        width = Math.max(128, width - 4);
+        bubble.style.width = `${width}px`;
+        const height = contentHeight();
+        if (height < bestHeight) { bestWidth = width; bestHeight = height; }
+      }
+      bubble.style.width = `${bestWidth}px`;
+    });
+    // New content takes priority; the reply and earlier messages remain in history.
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function stageCardMessages(card) {
+    const pauses = card.typingPauses || (card.typingPause ? [card.typingPause] : []);
+    if (!pauses.length) {
+      app.cardDelivery = null;
+      return;
+    }
+    const key = `${card.id}:${app.state.history.length}`;
+    if (app.cardDelivery?.key !== key) {
+      app.cardDelivery = { key, delivered: false, pauseIndex: 0, deadline: Date.now() + pauses[0].durationMs };
+    }
+    const delivery = app.cardDelivery;
+    if (delivery.delivered) return;
+    const stack = $('[data-message-stack]');
+    const pending = Array.from(stack.querySelectorAll('[data-chat-current]')).slice(pauses[delivery.pauseIndex].after);
+    pending.forEach(node => node.remove());
+    const typing = document.createElement('div');
+    typing.className = 'typing-bubble';
+    typing.setAttribute('aria-label', `${sourceFor(card.source).name} is typing`);
+    typing.innerHTML = '<i></i><i></i><i></i>';
+    stack.append(typing);
+    const buttons = Array.from(document.querySelectorAll('[data-choice]'));
+    buttons.forEach(button => { button.disabled = true; });
+    function deliverNext() {
+      const previousPause = pauses[delivery.pauseIndex];
+      const nextPause = pauses[++delivery.pauseIndex];
+      typing.remove();
+      const count = nextPause ? nextPause.after - previousPause.after : pending.length;
+      pending.splice(0, count).forEach((node, index) => {
+        node.style.animationDelay = `${index * 90}ms`;
+        stack.append(node);
+      });
+      if (nextPause) {
+        stack.append(typing);
+        delivery.deadline = Date.now() + nextPause.durationMs;
+        cardTypingTimer = window.setTimeout(deliverNext, nextPause.durationMs);
+      } else {
+        delivery.delivered = true;
+        buttons.forEach(button => { button.disabled = false; });
+      }
+      if ($('[data-chat]').classList.contains('has-chat-history')) focusContinuation();
+      else if (pauses.length > 1) keepDeliveryVisible(nextPause ? typing : stack.lastElementChild);
+    }
+    cardTypingTimer = window.setTimeout(deliverNext, Math.max(0, delivery.deadline - Date.now()));
   }
 
   function influencerChoicesFor(card) {
@@ -504,7 +790,7 @@
   function continueFromInvestor(side) {
     app.locked = true;
     clearPreview();
-    const result = engine.resolveChoice(app.deck, app.state, side, { rng: () => 0 });
+    const result = engine.resolveChoice(prototypeDeck(), app.state, side, { rng: () => 0 });
     app.state = result.state;
     if (side === 'left') {
       app.padelCeoScore = null;
@@ -516,7 +802,7 @@
       app.state.currentCardId = 'PADEL_INVITE';
     }
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function continueFromDreamTeam(side) {
@@ -526,21 +812,23 @@
     app.state = result.state;
     app.state.currentCardId = 'IRL_PADEL_01';
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function resolvePadelChoice(side) {
+    const deck = prototypeDeck();
     const deckWithoutBurn = {
-      ...app.deck,
-      meta: { ...app.deck.meta, baseCashBurn: 0 },
+      ...deck,
+      meta: { ...deck.meta, baseCashBurn: 0 },
     };
     return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
   }
 
   function resolveInfluencerChoice(side) {
+    const deck = prototypeDeck();
     const deckWithoutBurn = {
-      ...app.deck,
-      meta: { ...app.deck.meta, baseCashBurn: 0 },
+      ...deck,
+      meta: { ...deck.meta, baseCashBurn: 0 },
     };
     return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
   }
@@ -568,7 +856,7 @@
       ? selectInfluencerOutcome(card.id, side)
       : choices[side].next;
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function finishInfluencerOutcome(side) {
@@ -591,7 +879,7 @@
       app.state.currentCardId = 'PADEL_OUTCOME_0';
     }
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function continueFromPadelScoreCard(card, side) {
@@ -604,7 +892,7 @@
       app.state.currentCardId = 'PADEL_OUTCOME_7';
     }
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function selectPadelOutcome(side, ceoScore, rng = Math.random) {
@@ -629,7 +917,7 @@
     app.state = result.state;
     app.state.currentCardId = outcomeId;
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function finishPadelOutcome(side) {
@@ -642,9 +930,61 @@
     app.locked = false;
   }
 
+  function prototypeDeck() {
+    const inLiveAgent = app.state.currentCardId.startsWith('LIVE_AGENT_');
+    if (!inLiveAgent && !app.state.flags.includes('live_agent_completed')) return app.deck;
+    // This iteration loops back to Investor, including after Judgment Day.
+    // Keep the displayed resources, but don't freeze the prototype at a boundary.
+    return { ...app.deck, crises: {}, meta: { ...app.deck.meta, maxTurns: Number.MAX_SAFE_INTEGER } };
+  }
+
+  function selectLiveAgentOutcome(roll, rng = Math.random) {
+    const score = app.liveAgentScore;
+    if (!Number.isInteger(score) || Math.abs(score) > 5 || (score + 5) % 2 !== 0) {
+      throw new Error(`Invalid bot score after five decisions: ${score}`);
+    }
+    const count = roll.count === 'support' ? (5 + score) / 2 : (5 - score) / 2;
+    return rng() < roll.chances[count] ? roll.win : roll.lose;
+  }
+
+  function continueFromLiveAgent(card, side) {
+    app.locked = true;
+    clearPreview();
+    if (card.id === 'LIVE_AGENT_01') app.liveAgentScore = 0;
+    const choice = card.choices[side];
+    const next = choice.outcomeRoll ? selectLiveAgentOutcome(choice.outcomeRoll) : choice.next;
+    const target = engine.cardById(app.deck, next);
+    const effects = { ...choice.effects };
+    if (target.outcome) {
+      for (const key of engine.RESOURCE_KEYS) {
+        effects[key] = target.resetResources === 0
+          ? -app.state.resources[key]
+          : (effects[key] || 0) + (target.outcomeEffects[key] || 0);
+      }
+    }
+    // One resolution records the local or selected outcome effect exactly once.
+    const resolvedCard = { ...card, choices: { ...card.choices, [side]: { ...choice, next, effects } } };
+    const deck = prototypeDeck();
+    const scopedDeck = {
+      ...deck,
+      meta: { ...deck.meta, baseCashBurn: 0 },
+      cards: deck.cards.map(item => item.id === card.id ? resolvedCard : item),
+    };
+    app.state = engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 }).state;
+    app.liveAgentScore += choice.botScore || 0;
+    if (card.outcome) {
+      app.liveAgentScore = 0;
+      app.state.activeArc = null;
+    }
+    renderCard();
+    unlockAfterChoice();
+  }
+
   function choose(side) {
     if (app.locked || app.view !== 'playing') return;
     const card = engine.cardById(app.deck, app.state.currentCardId);
+    recordTestStep();
+    if (card.arc === 'live_agent') return continueFromLiveAgent(card, side);
     if (card.id === 'OPEN_INVESTOR') return continueFromInvestor(side);
     if (card.id.startsWith('INFLUENCER_OUTCOME_')) return finishInfluencerOutcome(side);
     if (card.id.startsWith('INFLUENCER_')) return continueFromInfluencer(card, side);
@@ -656,10 +996,10 @@
 
     app.locked = true;
     clearPreview();
-    const result = engine.resolveChoice(app.deck, app.state, side);
+    const result = engine.resolveChoice(prototypeDeck(), app.state, side);
     app.state = result.state;
     renderCard();
-    window.setTimeout(() => { app.locked = false; }, 280);
+    unlockAfterChoice();
   }
 
   function render() {
@@ -673,15 +1013,20 @@
     if ($('[data-pinned]').classList.contains('irl-location')) return;
     $('[data-pin-sheet]').hidden = false;
   });
+  $('[data-test-back]').addEventListener('click', backInStoryTest);
+  $('[data-test-restart]').addEventListener('click', startStoryTest);
   $('[data-pin-close]').addEventListener('click', () => { $('[data-pin-sheet]').hidden = true; });
   $('[data-pin-sheet]').addEventListener('click', (event) => {
     if (event.target === $('[data-pin-sheet]')) $('[data-pin-sheet]').hidden = true;
   });
   $('[data-restart-run]').addEventListener('click', () => {
     if (app.view === 'onboarding') return;
+    recordTestStep();
+    window.clearTimeout(choiceUnlockTimer);
     app.state = engine.startRun(app.deck);
     app.padelCeoScore = null;
     app.influencerPreviousCardId = null;
+    app.liveAgentScore = 0;
     app.locked = false;
     startSaved(0);
   });
@@ -705,6 +1050,10 @@
       const errors = engine.validateDeck(deck);
       if (errors.length) throw new Error(errors.join('\n'));
       app.deck = deck;
+      if (storyTestEnabled) {
+        startStoryTest();
+        return;
+      }
       app.state = engine.startRun(deck);
       app.onboardingIndex = 0;
       deliverOnboardingMessage();

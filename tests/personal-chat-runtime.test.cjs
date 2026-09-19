@@ -11,11 +11,11 @@ const html = read('index.html');
 const css = read('style.css');
 const canonicalDeck = require('../cards.json');
 const bundledDeck = require('../cards.bundle.js');
-const negativeReviewImage = {
-  src: 'assets/ai-influencer-hate-review.webp',
-  alt: 'B2BuyerSpyer: Another AI Wrapper Scam? (Honest Review)',
-  width: 960,
-  height: 540,
+const failedChallengeImage = {
+  src: 'assets/ai-influencer-challenge-failed.webp',
+  alt: "I gave up: why even I couldn't save these losers — challenge finale",
+  width: 1200,
+  height: 567,
 };
 
 function sha256(name) {
@@ -28,7 +28,7 @@ function activeCardIds() {
   return [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((entry) => entry[1]);
 }
 
-test('runtime exposes only the approved opening, influencer, and Padel sequences', () => {
+test('runtime exposes only the approved opening, live agent, influencer, and Padel sequences', () => {
   assert.deepEqual(activeCardIds(), [
     'OPEN_01',
     'OPEN_02a',
@@ -36,6 +36,21 @@ test('runtime exposes only the approved opening, influencer, and Padel sequences
     'OPEN_BOSS',
     'OPEN_DEV',
     'OPEN_INVESTOR',
+    'LIVE_AGENT_01',
+    'LIVE_AGENT_02',
+    'LIVE_AGENT_03',
+    'LIVE_AGENT_04',
+    'LIVE_AGENT_04B',
+    'LIVE_AGENT_05',
+    'LIVE_AGENT_06',
+    'LIVE_AGENT_07',
+    'LIVE_AGENT_07B',
+    'LIVE_AGENT_08',
+    'LIVE_AGENT_OUTCOME_0',
+    'LIVE_AGENT_OUTCOME_1',
+    'LIVE_AGENT_OUTCOME_2',
+    'LIVE_AGENT_OUTCOME_3',
+    'LIVE_AGENT_OUTCOME_4',
     'INFLUENCER_01',
     'INFLUENCER_02',
     'INFLUENCER_02A',
@@ -150,26 +165,26 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Nah, cringe', effects: {}, next: 'INFLUENCER_OUTCOME_1' },
   });
 
-  assert.equal(cards.INFLUENCER_02.text, "Hey\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win! Usually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 100% honest with my audience, gotta test it myself first.");
+  assert.equal(cards.INFLUENCER_02.text, "Hey 👋\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!\nUsually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 💯% honest with my audience, gotta test it myself first.");
   assert.deepEqual(cards.INFLUENCER_02.choices, {
     left: { label: 'Deal', effects: {}, next: 'INFLUENCER_03' },
     right: { label: 'Maybe 10%', effects: {}, next: 'INFLUENCER_02A' },
   });
 
-  assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\n\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this\n\nWe good? Drop the demo.");
+  assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\n\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉\n\nWe good? Drop the demo.");
   assert.deepEqual(cards.INFLUENCER_02A.choices, {
     left: { label: 'Deal. Just deliver', effects: {}, next: 'INFLUENCER_03' },
     right: { label: 'We need you in sales', effects: {}, next: 'INFLUENCER_03' },
   });
 
-  assert.equal(cards.INFLUENCER_03.text, 'wtf??\nlooks like your blogger is trying to crash us\n\nthousands of requests right now:\nmake me $1B right now. make zero mistakes\n\nis he dumb or just playing dumb?');
-  assert.equal(cards.INFLUENCER_04.text, "Aaand it's down. Knew it\n\nGuys, if you can't even handle my basic workflow, my traffic will literally destroy you.\nDon't wanna bury your launch, but I never lie to my community.\n\nGotta drop an honest video 😔");
+  assert.equal(cards.INFLUENCER_03.text, 'wtf??\nlooks like your blogger is trying to crash us\n\nthousands of requests right now:\n<strong>make me $1B right now. make zero mistakes</strong>\n\nis he dumb or just playing dumb? 😂');
+  assert.equal(cards.INFLUENCER_04.text, "Aaand it's down. Knew it 👏👏\n\nGuys, if you can't even handle my basic workflow, my traffic will literally destroy you.\nDon't wanna bury your launch, but I never lie to my community.\n\nGotta drop an honest video 😔");
   assert.deepEqual(cards.INFLUENCER_04.choices, {
     left: { label: 'Have fun', effects: {}, next: 'INFLUENCER_06' },
     right: { label: 'Any other options?', effects: {}, next: 'INFLUENCER_05' },
   });
 
-  assert.equal(cards.INFLUENCER_05.text, "Weell, there is an option.\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
+  assert.equal(cards.INFLUENCER_05.text, "Well, there is an option 🤔\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
   assert.deepEqual(cards.INFLUENCER_05.choices, {
     left: { label: 'Just save the launch', effects: {}, next: 'INFLUENCER_07' },
     right: { label: "That's insane", effects: {}, next: 'INFLUENCER_06' },
@@ -180,7 +195,12 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
   });
 
   assert.equal(cards.INFLUENCER_06.text, 'Cool. Dropping it tonight 🤷‍♂️');
-  assert.deepEqual(cards.INFLUENCER_06.image, negativeReviewImage);
+  assert.deepEqual(cards.INFLUENCER_06.image, {
+    src: 'assets/ai-influencer-scheduled-review.webp',
+    alt: 'Creator Studio: B2BuyerSpyer hate review scheduled for publication today at 6:00 PM',
+    width: 1200,
+    height: 676,
+  });
   assert.equal(Object.hasOwn(cards.INFLUENCER_06, 'placeholder'), false);
   assert.deepEqual(cards.INFLUENCER_06.choices, {
     left: { label: 'Alternatives?', effects: {}, next: 'INFLUENCER_05' },
@@ -191,18 +211,45 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Try me, buddy', effects: {}, next: 'INFLUENCER_08' },
   });
 
-  assert.equal(cards.INFLUENCER_07.placeholder, 'Video preview screenshot');
-  assert.equal(cards.INFLUENCER_07.text, 'Video’s live. Don’t screw this up, team!!!\n\nOr do. That’s just more views lol.');
+  assert.equal(Object.hasOwn(cards.INFLUENCER_07, 'placeholder'), false);
+  assert.deepEqual(cards.INFLUENCER_07.image, {
+    src: 'assets/ai-influencer-unicorn-challenge.webp',
+    alt: 'Published video: CHALLENGE: Turning a Broke AI Startup Into a Unicorn in 30 Days',
+    width: 1200,
+    height: 676,
+  });
+  assert.equal(cards.INFLUENCER_07.text, 'Video’s live. Don’t screw this up, team!!!\n\nOr do. That’s just more views lol 😂');
   assert.deepEqual(Object.values(cards.INFLUENCER_07.choices).map((choice) => choice.label), ['DELETE THIS!!!', 'Anything for views']);
-  assert.deepEqual(cards.INFLUENCER_08.messages[0].image, negativeReviewImage);
+  assert.deepEqual(cards.INFLUENCER_08.messages[0].image, {
+    src: 'assets/ai-influencer-traffic-review.webp',
+    alt: 'Published B2BuyerSpyer review with 124K views and comments asking where to try the tool',
+    width: 1200,
+    height: 676,
+  });
   assert.equal(Object.hasOwn(cards.INFLUENCER_08.messages[0], 'placeholder'), false);
   assert.deepEqual(Object.values(cards.INFLUENCER_08.choices).map((choice) => choice.label), ['Spam promos in comments!', 'Double prices NOW!!']);
 
-  assert.equal(cards.INFLUENCER_OUTCOME_2.messages[0].placeholder, 'Positive review screenshot');
-  assert.deepEqual(cards.INFLUENCER_OUTCOME_3.messages[0].image, negativeReviewImage);
+  assert.equal(Object.hasOwn(cards.INFLUENCER_OUTCOME_2.messages[0], 'placeholder'), false);
+  assert.deepEqual(cards.INFLUENCER_OUTCOME_2.messages[0].image, {
+    src: 'assets/ai-influencer-episode-two.webp',
+    alt: 'Episode 2: I made $30,000 while the founder does all the work',
+    width: 1200,
+    height: 676,
+  });
+  assert.deepEqual(cards.INFLUENCER_OUTCOME_3.messages[0].image, failedChallengeImage);
   assert.equal(Object.hasOwn(cards.INFLUENCER_OUTCOME_3.messages[0], 'placeholder'), false);
-  assert.equal(cards.INFLUENCER_OUTCOME_4.text, "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait\n\nLet's set up my 20% 💸");
-  assert.equal(cards.INFLUENCER_OUTCOME_6.text, cards.INFLUENCER_OUTCOME_4.text);
+  assert.deepEqual(cards.INFLUENCER_OUTCOME_4.messages.map(message => message.text), [
+    "See the numbers? I dropped that hate video on purpose to get you attention. In marketing it's called rage-bait",
+    "Let's set up my 20% 💸",
+  ]);
+  assert.equal(cards.INFLUENCER_OUTCOME_4.messages[0].imageRef, 'influencer_viral_analytics');
+  assert.deepEqual(canonicalDeck.images.influencer_viral_analytics, {
+    src: 'assets/ai-influencer-viral-analytics.webp',
+    alt: 'Video analytics showing 2.6 million views and growing traffic from the B2BuyerSpyer review',
+    width: 1000,
+    height: 1000,
+  });
+  assert.equal(cards.INFLUENCER_OUTCOME_6.text, cards.INFLUENCER_OUTCOME_4.messages.map(message => message.text).join('\n\n'));
 
   for (const id of ids) {
     const choiceSets = [cards[id].choices, ...Object.values(cards[id].contextualChoices || {})];
@@ -244,7 +291,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   assert.deepEqual(cards.OPEN_INVESTOR.choices.right.effects, { cash: -2, team: -4, founder: 2 });
 
   assert.equal(cards.PADEL_INVITE.source, '@padel_pro');
-  assert.equal(cards.PADEL_INVITE.text, 'Yo champ, anyone in the club would die for this match, but I held the slot for you.\nTomorrow 7 AM vs ClosedAI CEO.\n\nThat’s your dream client, man. Remember who opened this door for you.');
+  assert.equal(cards.PADEL_INVITE.text, 'Yo champ, anyone in the club would die for this match, but I held the slot for you.\nTomorrow 7 AM vs ClosedAI CEO.\n\nThat’s your dream client, man. Remember who opened this door for you 💪');
   assert.deepEqual(cards.PADEL_INVITE.choices, {
     left: { label: "I'm in", effects: {}, next: 'DREAM_TEAM' },
     right: { label: 'Feeling sick, pass', effects: {}, next: 'DREAM_TEAM' },
@@ -334,7 +381,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
       mode: 'personal',
       source: '@padel_pro',
       score: undefined,
-      text: 'Man... for real?\nI risked my own reputation to give you a golden ticket and you backed out.\nYou just clowned both of us.',
+      text: 'Man... for real?\nI risked my own reputation to give you a golden ticket and you backed out.\nYou just clowned both of us 🤡',
       labels: ['I have a fever!', '😔😔😔'],
     },
     1: {
@@ -461,14 +508,15 @@ test('index uses one Screen 13 Personal Chat shell in semantic row order', () =>
 test('CSS matches the approved phone, typography, Quiet Glass, and shadow spacing', () => {
   assert.match(css, /\.frame\s*\{[^}]*width:\s*340px;[^}]*height:\s*700px;/s);
   assert.match(css, /\.phone\s*\{[^}]*background:\s*linear-gradient\(180deg,\s*#bdd5e8 0%,\s*#d4e4f0 100%\);/s);
-  assert.match(css, /\.message p\s*\{[^}]*font-size:\s*13\.5px;[^}]*line-height:\s*1\.42;/s);
+  assert.match(css, /--message-font-size:\s*12\.2px;/);
+  assert.match(css, /\.message p\s*\{[^}]*font-size:\s*var\(--message-font-size\);[^}]*line-height:\s*1\.42;/s);
   assert.match(css, /--message-clearance:\s*4px;/);
   assert.match(css, /\.chat\s*\{[^}]*gap:\s*8px;[^}]*overflow:\s*visible;[^}]*z-index:\s*2;/s);
   assert.match(css, /\.message-clearance\s*\{[^}]*height:\s*var\(--message-clearance\);[^}]*flex:\s*0 0 var\(--message-clearance\);/s);
   assert.match(css, /\.reply-hint-dock\s*\{[^}]*padding:\s*4px 10px 8px;[^}]*z-index:\s*3;/s);
   assert.match(css, /\.reply-hint\s*\{[^}]*width:\s*100%;[^}]*height:\s*34px;[^}]*font-weight:\s*400;/s);
   assert.match(css, /\.reply-hint__arrow\s*\{[^}]*flex:\s*0 0 24px;[^}]*width:\s*24px;[^}]*height:\s*24px;/s);
-  assert.match(css, /\.self-message p,\s*\.team-bubble p\s*\{[^}]*font-size:\s*12\.2px;/s);
+  assert.match(css, /\.self-message p,\s*\.team-bubble p\s*\{[^}]*font-size:\s*var\(--message-font-size\);/s);
   assert.match(css, /\.choice\s*\{[^}]*font-size:\s*13px;/s);
   assert.match(css, /\.team-scene \.choice\s*\{[^}]*font-size:\s*12\.2px;/s);
   assert.match(css, /\.irl-scene \.choice\s*\{[^}]*font-size:\s*12\.2px;/s);
@@ -479,5 +527,5 @@ test('CSS matches the approved phone, typography, Quiet Glass, and shadow spacin
   assert.match(css, /url\(["']assets\/irl-padel-court\.png["']\)/);
   assert.match(css, /\.irl-scene::after\s*\{[^}]*inset:\s*1px;[^}]*background:\s*linear-gradient\(180deg,\s*rgba\(7,\s*20,\s*32,\s*\.12\),\s*rgba\(7,\s*20,\s*32,\s*\.22\)\s*48%,\s*rgba\(7,\s*20,\s*32,\s*\.38\)\),\s*url\(["']assets\/irl-padel-court\.png["']\)\s*center\s*54%\s*\/\s*cover\s*no-repeat;[^}]*filter:\s*blur\(1\.8px\)\s*saturate\(\.88\);[^}]*clip-path:\s*inset\(0\s*round\s*25px\);/s);
   assert.doesNotMatch(css, /\.irl-scene::after\s*\{[^}]*(?:border-radius:\s*24px|box-shadow:)/s);
-  assert.match(css, /\.irl-dialog p\s*\{[^}]*font-size:\s*14px;[^}]*font-weight:\s*400;[^}]*line-height:\s*1\.38;/s);
+  assert.match(css, /\.irl-dialog p\s*\{[^}]*font-size:\s*var\(--message-font-size\);[^}]*font-weight:\s*400;[^}]*line-height:\s*1\.38;/s);
 });
