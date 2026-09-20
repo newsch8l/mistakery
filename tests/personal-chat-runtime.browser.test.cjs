@@ -1,3 +1,4 @@
+const { decision: influencerEffect, outcomes: influencerOutcomes, sum: sumInfluencerEffects } = require('./influencer-resources.fixture.cjs');
 const { decisions: padelEffects, outcomes: padelOutcomes } = require('./padel-resources.fixture.cjs');
 function padelResourcesAfter(resources, id, side, outcome) {
   const effects = padelEffects[id][side === 'left' ? 0 : 1];
@@ -331,14 +332,16 @@ test('Cards 5 and 6 use contextual replies and never repeat on any Card 4 route'
     for (const route of routes) {
       await setInfluencerRuntimeCard(page, 'INFLUENCER_04', 'INFLUENCER_03');
       const resources = (await influencerRuntimeState(page)).resources;
+      let expected = resources;
       const rendered = ['INFLUENCER_04'];
       for (let index = 0; index < route.sides.length; index += 1) {
+        expected = sumInfluencerEffects(expected, influencerEffect(route.ids[index], route.sides[index], route.ids[index - 1]));
         await chooseAndWaitForCard(page, route.sides[index], route.ids[index + 1]);
         rendered.push((await influencerRuntimeState(page)).cardId);
       }
       assert.deepEqual(rendered, route.ids);
       assert.equal(new Set(rendered).size, rendered.length, route.ids.join(' -> '));
-      assert.deepEqual((await influencerRuntimeState(page)).resources, resources, route.ids.join(' -> '));
+      assert.deepEqual((await influencerRuntimeState(page)).resources, expected, route.ids.join(' -> '));
     }
 
     await setInfluencerRuntimeCard(page, 'INFLUENCER_05', 'INFLUENCER_04');
@@ -377,7 +380,7 @@ test('Influencer outcomes use one exact 40/60 draw for every Card 7 and Card 8 c
       await chooseAndWaitForCard(page, scenario.side, `INFLUENCER_OUTCOME_${scenario.outcome}`);
       const state = await influencerRuntimeState(page);
       assert.equal(state.randomCalls, 1, JSON.stringify(scenario));
-      assert.deepEqual(state.resources, resources, JSON.stringify(scenario));
+      assert.deepEqual(state.resources, sumInfluencerEffects(resources, influencerEffect(scenario.card, scenario.side), influencerOutcomes[scenario.outcome]), JSON.stringify(scenario));
     }
   } finally {
     await browser.close();

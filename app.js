@@ -509,10 +509,12 @@
     clearPreview();
     const affected = new Set(engine.getAffectedResources(choice));
     const padel = card.id === 'PADEL_INVITE' || card.id.startsWith('IRL_PADEL_');
-    if (card.arc === 'live_agent' || padel) {
+    const influencer = card.arc === 'influencer';
+    if (card.arc === 'live_agent' || padel || influencer) {
       // Outcomes apply their effects on entry. Preview all candidate resources
       // without drawing an outcome or changing the current game state.
-      const targets = padel ? padelChoiceTargets(card, side) : choice.outcomeRoll
+      const targets = influencer ? influencerChoiceTargets(card, side)
+        : padel ? padelChoiceTargets(card, side) : choice.outcomeRoll
         ? [choice.outcomeRoll.win, choice.outcomeRoll.lose]
         : [choice.next];
       for (const id of targets) {
@@ -889,13 +891,38 @@
     return engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 });
   }
 
-  function resolveInfluencerChoice(side) {
-    const deck = prototypeDeck();
-    const deckWithoutBurn = {
-      ...deck,
-      meta: { ...deck.meta, baseCashBurn: 0 },
+  function resolveInfluencerChoice(side, nextId) {
+    const card = engine.cardById(app.deck, app.state.currentCardId);
+    const choices = influencerChoicesFor(card);
+    const choice = choices[side];
+    const next = nextId || choice.next || 'OPEN_INVESTOR';
+    const target = engine.cardById(app.deck, next);
+    const effects = { ...choice.effects };
+    if (next.startsWith('INFLUENCER_OUTCOME_')) {
+      for (const [key, amount] of Object.entries(target.outcomeEffects || {})) {
+        effects[key] = (effects[key] || 0) + amount;
+      }
+    }
+    // Resolve the displayed contextual choice and selected outcome together.
+    // Renders and decorative replies cannot charge these entry effects again.
+    const resolvedCard = { ...card, continuation: 'forced', choices: {
+      ...choices, [side]: { ...choice, next, effects },
+    } };
+    const scopedDeck = {
+      ...app.deck,
+      crises: {},
+      meta: { ...app.deck.meta, baseCashBurn: 0, maxTurns: Number.MAX_SAFE_INTEGER },
+      cards: app.deck.cards.map(item => item.id === card.id ? resolvedCard : item),
     };
-    return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
+    return engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 });
+  }
+
+  function influencerChoiceTargets(card, side) {
+    if (card.id === 'INFLUENCER_07') return ['INFLUENCER_OUTCOME_2', 'INFLUENCER_OUTCOME_3'];
+    if (card.id === 'INFLUENCER_08') {
+      return (side === 'left' ? [4, 5] : [6, 7]).map(n => `INFLUENCER_OUTCOME_${n}`);
+    }
+    return [influencerChoicesFor(card)[side].next];
   }
 
   function selectInfluencerOutcome(cardId, side, rng = Math.random) {
@@ -914,12 +941,12 @@
     app.locked = true;
     clearPreview();
     const choices = influencerChoicesFor(card);
-    const result = resolveInfluencerChoice(side);
-    app.state = result.state;
-    app.influencerPreviousCardId = card.id;
-    app.state.currentCardId = ['INFLUENCER_07', 'INFLUENCER_08'].includes(card.id)
+    const next = ['INFLUENCER_07', 'INFLUENCER_08'].includes(card.id)
       ? selectInfluencerOutcome(card.id, side)
       : choices[side].next;
+    const result = resolveInfluencerChoice(side, next);
+    app.state = result.state;
+    app.influencerPreviousCardId = card.id;
     renderCard();
     unlockAfterChoice();
   }

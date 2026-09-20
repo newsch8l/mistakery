@@ -504,8 +504,8 @@
 > 20% max, anything higher and, we'll lose our shirts.<br>
 > major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him
 
-- **Let's go — Let's go**: без отдельного эффекта; → `INFLUENCER_02`.
-- **Nah, cringe — Nah, cringe**: без отдельного эффекта; → `INFLUENCER_OUTCOME_1`.
+- **Let's go — Let's go**: Customers +5; → `INFLUENCER_02`.
+- **Nah, cringe — Nah, cringe**: Cash -25; → `INFLUENCER_OUTCOME_1`.
 
 ## INFLUENCER_02 — AI Influencer @ai_evangelist
 
@@ -525,8 +525,8 @@
 > Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
 > Send over the demo. I keep it 💯 honest with my audience, gotta test it myself first.
 
-- **Deal — Deal**: без отдельного эффекта; → `INFLUENCER_03`.
-- **Maybe 10% — Maybe 10%**: без отдельного эффекта; → `INFLUENCER_02A`.
+- **Deal — Deal**: Customers +5; → `INFLUENCER_03`.
+- **Maybe 10% — Maybe 10%**: Founder +3; → `INFLUENCER_02A`.
 
 ## INFLUENCER_02A — AI Influencer @ai_evangelist
 
@@ -544,8 +544,8 @@
 > Let's lock in 20% for now, but I'll hook you up.<br>
 > I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉
 
-- **Deal. Just deliver — Deal. Just deliver**: без отдельного эффекта; → `INFLUENCER_03`.
-- **We need you in sales — We need you in sales**: без отдельного эффекта; → `INFLUENCER_03`.
+- **Deal. Just deliver — Deal. Just deliver**: Customers +5; → `INFLUENCER_03`.
+- **We need you in sales — We need you in sales**: Customers +5, Founder +2; → `INFLUENCER_03`.
 
 ## INFLUENCER_03 — Dev @error_404
 
@@ -565,8 +565,8 @@
 > <strong>make me $1B right now. make zero mistakes</strong><br>
 > is he dumb or just playing dumb? 😂
 
-- **Cut his limits — Cut his limits**: без отдельного эффекта; → `INFLUENCER_04`.
-- **More capacity — More capacity**: без отдельного эффекта; → `INFLUENCER_04`.
+- **Cut his limits — Cut his limits**: Team +5; → `INFLUENCER_04`.
+- **More capacity — More capacity**: Cash -10, Team -5; → `INFLUENCER_04`.
 
 ## INFLUENCER_04 — AI Influencer @ai_evangelist
 
@@ -584,8 +584,8 @@
 > Don't wanna bury your launch, but I never lie to my community.<br>
 > Gotta drop an honest video 😔
 
-- **Have fun — Have fun**: без отдельного эффекта; → `INFLUENCER_06`.
-- **Any other options? — Any other options?**: без отдельного эффекта; → `INFLUENCER_05`.
+- **Have fun — Have fun**: Founder +5; → `INFLUENCER_06`.
+- **Any other options? — Any other options?**: Founder -5; → `INFLUENCER_05`.
 
 ## INFLUENCER_05 — AI Influencer @ai_evangelist
 
@@ -603,10 +603,10 @@
 > Since I'm risking my reputation for an unstable product though:<br>
 > 60% revshare + Co-Founder status to oversee product quality 🤝
 
-- **Just save the launch — Just save the launch**: без отдельного эффекта; → `INFLUENCER_07`.
-- **That's insane — That's insane**: без отдельного эффекта; → `INFLUENCER_06`.
-- **My bad, let's do it — My bad, let's do it** (контекст после `INFLUENCER_06`; RU-перевод не утверждён): без отдельного эффекта; → `INFLUENCER_07`.
-- **Shove it — Shove it** (контекст после `INFLUENCER_06`; RU-перевод не утверждён): без отдельного эффекта; → `INFLUENCER_08`.
+- **Just save the launch — Just save the launch**: Founder -10, Team -5; → `INFLUENCER_07`.
+- **That's insane — That's insane**: Founder +5; → `INFLUENCER_06`.
+- **My bad, let's do it — My bad, let's do it** (контекст после `INFLUENCER_06`; RU-перевод не утверждён): Founder -15, Team -5; → `INFLUENCER_07`.
+- **Shove it — Shove it** (контекст после `INFLUENCER_06`; RU-перевод не утверждён): Founder +7; → `INFLUENCER_08`.
 
 ## INFLUENCER_06 — AI Influencer @ai_evangelist
 
@@ -620,10 +620,10 @@
 > Creator Studio: B2BuyerSpyer hate review scheduled for publication today at 6:00 PM<br>
 > Cool. Dropping it tonight 🤷‍♂️
 
-- **Alternatives? — Alternatives?**: без отдельного эффекта; → `INFLUENCER_05`.
-- **Cool. Forget the deal — Cool. Forget the deal**: без отдельного эффекта; → `INFLUENCER_08`.
-- **Actually, 60% is ok — Actually, 60% is ok** (контекст после `INFLUENCER_05`; RU-перевод не утверждён): без отдельного эффекта; → `INFLUENCER_07`.
-- **Try me, buddy — Try me, buddy** (контекст после `INFLUENCER_05`; RU-перевод не утверждён): без отдельного эффекта; → `INFLUENCER_08`.
+- **Alternatives? — Alternatives?**: Founder -5; → `INFLUENCER_05`.
+- **Cool. Forget the deal — Cool. Forget the deal**: Founder +5; → `INFLUENCER_08`.
+- **Actually, 60% is ok — Actually, 60% is ok** (контекст после `INFLUENCER_05`; RU-перевод не утверждён): Founder -15, Team -5; → `INFLUENCER_07`.
+- **Try me, buddy — Try me, buddy** (контекст после `INFLUENCER_05`; RU-перевод не утверждён): Founder +7; → `INFLUENCER_08`.
 
 ## INFLUENCER_07 — AI Influencer @ai_evangelist
 
@@ -658,8 +658,8 @@
 > is this seriously from that clown's hate video?<br>
 > yep. the comments are wild: “anyone got the link?”, “where do i test this?”. people are literally searching for us manually 😭
 
-- **Spam promos in comments! — Spam promos in comments!**: без отдельного эффекта; → `INFLUENCER_OUTCOME_4`.
-- **Double prices NOW!! — Double prices NOW!!**: без отдельного эффекта; → `INFLUENCER_OUTCOME_6`.
+- **Spam promos in comments! — Spam promos in comments!**: Customers +5; → `INFLUENCER_OUTCOME_4`.
+- **Double prices NOW!! — Double prices NOW!!**: Founder +5; → `INFLUENCER_OUTCOME_6`.
 
 ## INFLUENCER_OUTCOME_1 — Cofounder @hustler
 
@@ -675,6 +675,8 @@
 
 - **Do your own shit — Do your own shit**: без отдельного эффекта; возврат к основной ветке.
 - **Keep me posted — Keep me posted**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Founder -5. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## INFLUENCER_OUTCOME_2 — 6 members · 3 online Dream Team
 
@@ -695,6 +697,8 @@
 - **We're viral, baby! 🚀 — We're viral, baby! 🚀**: без отдельного эффекта; возврат к основной ветке.
 - **Wait... I'm that founder — Wait... I'm that founder**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Cash +15, Customers +25, Team -10, Founder -10. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## INFLUENCER_OUTCOME_3 — 6 members · 3 online Dream Team
 
 **EN**
@@ -709,6 +713,8 @@
 
 - **Back to work! — Back to work!**: без отдельного эффекта; возврат к основной ветке.
 - **Clout is clout 😎 — Clout is clout 😎**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Cash -15, Customers -10, Team -15, Founder -25. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## INFLUENCER_OUTCOME_4 — AI Influencer @ai_evangelist
 
@@ -727,6 +733,8 @@
 - **Get lost — Get lost**: без отдельного эффекта; возврат к основной ветке.
 - **Now it's 3% — Now it's 3%**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Cash +15, Customers +25, Team -8, Founder +10. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## INFLUENCER_OUTCOME_5 — 6 members · 3 online Dream Team
 
 **EN**
@@ -742,6 +750,8 @@
 - **Still alive. Already stronger — Still alive. Already stronger**: без отдельного эффекта; возврат к основной ветке.
 - **That’s called marketing — That’s called marketing**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Cash -10, Customers -15, Team -10, Founder -15. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## INFLUENCER_OUTCOME_6 — AI Influencer @ai_evangelist
 
 **EN**
@@ -756,6 +766,8 @@
 
 - **Get lost — Get lost**: без отдельного эффекта; возврат к основной ветке.
 - **Now it's 3% — Now it's 3%**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Cash +30, Customers +15, Team -8, Founder +15. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## INFLUENCER_OUTCOME_7 — 6 members · 3 online Dream Team
 
@@ -775,6 +787,8 @@
 
 - **Clout is clout 😎 — Clout is clout 😎**: без отдельного эффекта; возврат к основной ветке.
 - **Blinded by greed — Blinded by greed**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Cash -15, Customers -20, Team -12, Founder -20. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 # 7. Live AI Agent prototype
 

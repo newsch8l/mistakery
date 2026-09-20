@@ -1,3 +1,4 @@
+const { decisions: influencerEffects, contextual: influencerContext, outcomes: influencerOutcomes } = require('./influencer-resources.fixture.cjs');
 const { decisions: padelEffects, outcomes: padelOutcomes } = require('./padel-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -107,7 +108,8 @@ test('three active cards preserve the approved message boundaries and revised in
   assert.equal(cards.OPEN_INVESTOR.text, 'I DIDN’T DUMP MY CASH INTO THIS AI CRAP TO GET ZERO CLIENTS.\n\nWHERE THE HELL ARE THE BUYERS???\n\nIF I WANTED TO WASTE MONEY I’D BUY A YACHT FOR MY EX-WIFE.');
 });
 
-test('AI influencer cards preserve the English source copy, graph, and empty resource effects', () => {
+test('AI influencer cards preserve approved copy and graph with document resource effects', () => {
+  const withoutReasons = choices => Object.fromEntries(Object.entries(choices).map(([side, { effect_reason, ...choice }]) => [side, choice]));
   const cards = Object.fromEntries(canonicalDeck.cards.map((card) => [card.id, card]));
   const ids = [
     'INFLUENCER_01',
@@ -161,38 +163,38 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
       text: "major red flag vibes tbh. but if he has meme potential, let's run it. we can farm clips off him",
     },
   ]);
-  assert.deepEqual(cards.INFLUENCER_01.choices, {
-    left: { label: "Let's go", effects: {}, next: 'INFLUENCER_02' },
-    right: { label: 'Nah, cringe', effects: {}, next: 'INFLUENCER_OUTCOME_1' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_01.choices), {
+    left: { label: "Let's go", effects: influencerEffects.INFLUENCER_01[0], next: 'INFLUENCER_02' },
+    right: { label: 'Nah, cringe', effects: influencerEffects.INFLUENCER_01[1], next: 'INFLUENCER_OUTCOME_1' },
   });
 
   assert.equal(cards.INFLUENCER_02.text, "Hey 👋\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!\nUsually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 💯 honest with my audience, gotta test it myself first.");
-  assert.deepEqual(cards.INFLUENCER_02.choices, {
-    left: { label: 'Deal', effects: {}, next: 'INFLUENCER_03' },
-    right: { label: 'Maybe 10%', effects: {}, next: 'INFLUENCER_02A' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_02.choices), {
+    left: { label: 'Deal', effects: influencerEffects.INFLUENCER_02[0], next: 'INFLUENCER_03' },
+    right: { label: 'Maybe 10%', effects: influencerEffects.INFLUENCER_02[1], next: 'INFLUENCER_02A' },
   });
 
   assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉");
-  assert.deepEqual(cards.INFLUENCER_02A.choices, {
-    left: { label: 'Deal. Just deliver', effects: {}, next: 'INFLUENCER_03' },
-    right: { label: 'We need you in sales', effects: {}, next: 'INFLUENCER_03' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_02A.choices), {
+    left: { label: 'Deal. Just deliver', effects: influencerEffects.INFLUENCER_02A[0], next: 'INFLUENCER_03' },
+    right: { label: 'We need you in sales', effects: influencerEffects.INFLUENCER_02A[1], next: 'INFLUENCER_03' },
   });
 
   assert.equal(cards.INFLUENCER_03.text, 'wtf??\nlooks like your blogger is trying to crash us\n\nthousands of requests right now:\n<strong>make me $1B right now. make zero mistakes</strong>\n\nis he dumb or just playing dumb? 😂');
   assert.equal(cards.INFLUENCER_04.text, "Aaand it's down. Knew it 👏👏\n\nGuys, if you can't even handle my basic workflow, my traffic will literally destroy you.\nDon't wanna bury your launch, but I never lie to my community.\n\nGotta drop an honest video 😔");
-  assert.deepEqual(cards.INFLUENCER_04.choices, {
-    left: { label: 'Have fun', effects: {}, next: 'INFLUENCER_06' },
-    right: { label: 'Any other options?', effects: {}, next: 'INFLUENCER_05' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_04.choices), {
+    left: { label: 'Have fun', effects: influencerEffects.INFLUENCER_04[0], next: 'INFLUENCER_06' },
+    right: { label: 'Any other options?', effects: influencerEffects.INFLUENCER_04[1], next: 'INFLUENCER_05' },
   });
 
   assert.equal(cards.INFLUENCER_05.text, "Well, there is an option 🤔\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality 🤝");
-  assert.deepEqual(cards.INFLUENCER_05.choices, {
-    left: { label: 'Just save the launch', effects: {}, next: 'INFLUENCER_07' },
-    right: { label: "That's insane", effects: {}, next: 'INFLUENCER_06' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_05.choices), {
+    left: { label: 'Just save the launch', effects: influencerEffects.INFLUENCER_05[0], next: 'INFLUENCER_07' },
+    right: { label: "That's insane", effects: influencerEffects.INFLUENCER_05[1], next: 'INFLUENCER_06' },
   });
-  assert.deepEqual(cards.INFLUENCER_05.contextualChoices.INFLUENCER_06, {
-    left: { label: "My bad, let's do it", effects: {}, next: 'INFLUENCER_07' },
-    right: { label: 'Shove it', effects: {}, next: 'INFLUENCER_08' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_05.contextualChoices.INFLUENCER_06), {
+    left: { label: "My bad, let's do it", effects: influencerContext.INFLUENCER_05.INFLUENCER_06[0], next: 'INFLUENCER_07' },
+    right: { label: 'Shove it', effects: influencerContext.INFLUENCER_05.INFLUENCER_06[1], next: 'INFLUENCER_08' },
   });
 
   assert.equal(cards.INFLUENCER_06.text, 'Cool. Dropping it tonight 🤷‍♂️');
@@ -203,13 +205,13 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     height: 676,
   });
   assert.equal(Object.hasOwn(cards.INFLUENCER_06, 'placeholder'), false);
-  assert.deepEqual(cards.INFLUENCER_06.choices, {
-    left: { label: 'Alternatives?', effects: {}, next: 'INFLUENCER_05' },
-    right: { label: 'Cool. Forget the deal', effects: {}, next: 'INFLUENCER_08' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_06.choices), {
+    left: { label: 'Alternatives?', effects: influencerEffects.INFLUENCER_06[0], next: 'INFLUENCER_05' },
+    right: { label: 'Cool. Forget the deal', effects: influencerEffects.INFLUENCER_06[1], next: 'INFLUENCER_08' },
   });
-  assert.deepEqual(cards.INFLUENCER_06.contextualChoices.INFLUENCER_05, {
-    left: { label: 'Actually, 60% is ok', effects: {}, next: 'INFLUENCER_07' },
-    right: { label: 'Try me, buddy', effects: {}, next: 'INFLUENCER_08' },
+  assert.deepEqual(withoutReasons(cards.INFLUENCER_06.contextualChoices.INFLUENCER_05), {
+    left: { label: 'Actually, 60% is ok', effects: influencerContext.INFLUENCER_06.INFLUENCER_05[0], next: 'INFLUENCER_07' },
+    right: { label: 'Try me, buddy', effects: influencerContext.INFLUENCER_06.INFLUENCER_05[1], next: 'INFLUENCER_08' },
   });
 
   assert.equal(Object.hasOwn(cards.INFLUENCER_07, 'placeholder'), false);
@@ -253,11 +255,9 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
   assert.equal(cards.INFLUENCER_OUTCOME_6.text, cards.INFLUENCER_OUTCOME_4.messages.map(message => message.text).join('\n\n'));
 
   for (const id of ids) {
-    const choiceSets = [cards[id].choices, ...Object.values(cards[id].contextualChoices || {})];
-    for (const choices of choiceSets) {
-      assert.deepEqual(choices.left.effects, {}, `${id} left must not move resources`);
-      assert.deepEqual(choices.right.effects, {}, `${id} right must not move resources`);
-    }
+    const expected = influencerEffects[id] || [{}, {}];
+    ['left', 'right'].forEach((side, index) => assert.deepEqual(cards[id].choices[side].effects, expected[index], `${id}.${side}`));
+    if (id.startsWith('INFLUENCER_OUTCOME_')) assert.deepEqual(cards[id].outcomeEffects, influencerOutcomes[id.split('_').at(-1)]);
   }
 });
 

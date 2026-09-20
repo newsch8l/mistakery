@@ -1393,13 +1393,23 @@
       "choices": {
         "left": {
           "label": "Let's go",
-          "effects": {},
-          "next": "INFLUENCER_02"
+          "effects": {
+            "customers": 5
+          },
+          "next": "INFLUENCER_02",
+          "effect_reason": {
+            "customers": "The promotion partnership opens access to customers."
+          }
         },
         "right": {
           "label": "Nah, cringe",
-          "effects": {},
-          "next": "INFLUENCER_OUTCOME_1"
+          "effects": {
+            "cash": -25
+          },
+          "next": "INFLUENCER_OUTCOME_1",
+          "effect_reason": {
+            "cash": "Rejecting the introduction costs a sales opportunity."
+          }
         }
       }
     },
@@ -1413,13 +1423,23 @@
       "choices": {
         "left": {
           "label": "Deal",
-          "effects": {},
-          "next": "INFLUENCER_03"
+          "effects": {
+            "customers": 5
+          },
+          "next": "INFLUENCER_03",
+          "effect_reason": {
+            "customers": "Accepting the promotion moves customer acquisition forward."
+          }
         },
         "right": {
           "label": "Maybe 10%",
-          "effects": {},
-          "next": "INFLUENCER_02A"
+          "effects": {
+            "founder": 3
+          },
+          "next": "INFLUENCER_02A",
+          "effect_reason": {
+            "founder": "Negotiating the share boosts founder confidence."
+          }
         }
       }
     },
@@ -1433,13 +1453,25 @@
       "choices": {
         "left": {
           "label": "Deal. Just deliver",
-          "effects": {},
-          "next": "INFLUENCER_03"
+          "effects": {
+            "customers": 5
+          },
+          "next": "INFLUENCER_03",
+          "effect_reason": {
+            "customers": "Agreeing to the demo advances the promotion."
+          }
         },
         "right": {
           "label": "We need you in sales",
-          "effects": {},
-          "next": "INFLUENCER_03"
+          "effects": {
+            "customers": 5,
+            "founder": 2
+          },
+          "next": "INFLUENCER_03",
+          "effect_reason": {
+            "customers": "The sales joke builds rapport and founder confidence.",
+            "founder": "The sales joke builds rapport and founder confidence."
+          }
         }
       }
     },
@@ -1453,13 +1485,25 @@
       "choices": {
         "left": {
           "label": "Cut his limits",
-          "effects": {},
-          "next": "INFLUENCER_04"
+          "effects": {
+            "team": 5
+          },
+          "next": "INFLUENCER_04",
+          "effect_reason": {
+            "team": "Limiting requests protects the team."
+          }
         },
         "right": {
           "label": "More capacity",
-          "effects": {},
-          "next": "INFLUENCER_04"
+          "effects": {
+            "cash": -10,
+            "team": -5
+          },
+          "next": "INFLUENCER_04",
+          "effect_reason": {
+            "cash": "Adding capacity costs cash and extra team work.",
+            "team": "Adding capacity costs cash and extra team work."
+          }
         }
       }
     },
@@ -1473,13 +1517,23 @@
       "choices": {
         "left": {
           "label": "Have fun",
-          "effects": {},
-          "next": "INFLUENCER_06"
+          "effects": {
+            "founder": 5
+          },
+          "next": "INFLUENCER_06",
+          "effect_reason": {
+            "founder": "Standing firm preserves founder confidence."
+          }
         },
         "right": {
           "label": "Any other options?",
-          "effects": {},
-          "next": "INFLUENCER_05"
+          "effects": {
+            "founder": -5
+          },
+          "next": "INFLUENCER_05",
+          "effect_reason": {
+            "founder": "Asking for a way out weakens founder confidence."
+          }
         }
       }
     },
@@ -1493,26 +1547,50 @@
       "choices": {
         "left": {
           "label": "Just save the launch",
-          "effects": {},
-          "next": "INFLUENCER_07"
+          "effects": {
+            "founder": -10,
+            "team": -5
+          },
+          "next": "INFLUENCER_07",
+          "effect_reason": {
+            "founder": "Accepting the cofounder deal costs autonomy and team morale.",
+            "team": "Accepting the cofounder deal costs autonomy and team morale."
+          }
         },
         "right": {
           "label": "That's insane",
-          "effects": {},
-          "next": "INFLUENCER_06"
+          "effects": {
+            "founder": 5
+          },
+          "next": "INFLUENCER_06",
+          "effect_reason": {
+            "founder": "Rejecting the terms restores founder confidence."
+          }
         }
       },
       "contextualChoices": {
         "INFLUENCER_06": {
           "left": {
             "label": "My bad, let's do it",
-            "effects": {},
-            "next": "INFLUENCER_07"
+            "effects": {
+              "founder": -15,
+              "team": -5
+            },
+            "next": "INFLUENCER_07",
+            "effect_reason": {
+              "founder": "Accepting the cofounder deal costs autonomy and team morale.",
+              "team": "Accepting the cofounder deal costs autonomy and team morale."
+            }
           },
           "right": {
             "label": "Shove it",
-            "effects": {},
-            "next": "INFLUENCER_08"
+            "effects": {
+              "founder": 7
+            },
+            "next": "INFLUENCER_08",
+            "effect_reason": {
+              "founder": "Rejecting the terms restores founder confidence."
+            }
           }
         }
       }
@@ -1533,26 +1611,48 @@
       "choices": {
         "left": {
           "label": "Alternatives?",
-          "effects": {},
-          "next": "INFLUENCER_05"
+          "effects": {
+            "founder": -5
+          },
+          "next": "INFLUENCER_05",
+          "effect_reason": {
+            "founder": "Returning to negotiations costs founder confidence and, when conceding 60%, team morale."
+          }
         },
         "right": {
           "label": "Cool. Forget the deal",
-          "effects": {},
-          "next": "INFLUENCER_08"
+          "effects": {
+            "founder": 5
+          },
+          "next": "INFLUENCER_08",
+          "effect_reason": {
+            "founder": "Standing up to the review restores founder confidence."
+          }
         }
       },
       "contextualChoices": {
         "INFLUENCER_05": {
           "left": {
             "label": "Actually, 60% is ok",
-            "effects": {},
-            "next": "INFLUENCER_07"
+            "effects": {
+              "founder": -15,
+              "team": -5
+            },
+            "next": "INFLUENCER_07",
+            "effect_reason": {
+              "founder": "Returning to negotiations costs founder confidence and, when conceding 60%, team morale.",
+              "team": "Returning to negotiations costs founder confidence and, when conceding 60%, team morale."
+            }
           },
           "right": {
             "label": "Try me, buddy",
-            "effects": {},
-            "next": "INFLUENCER_08"
+            "effects": {
+              "founder": 7
+            },
+            "next": "INFLUENCER_08",
+            "effect_reason": {
+              "founder": "Standing up to the review restores founder confidence."
+            }
           }
         }
       }
@@ -1618,13 +1718,23 @@
       "choices": {
         "left": {
           "label": "Spam promos in comments!",
-          "effects": {},
-          "next": "INFLUENCER_OUTCOME_4"
+          "effects": {
+            "customers": 5
+          },
+          "next": "INFLUENCER_OUTCOME_4",
+          "effect_reason": {
+            "customers": "Comment promotions attract more potential customers."
+          }
         },
         "right": {
           "label": "Double prices NOW!!",
-          "effects": {},
-          "next": "INFLUENCER_OUTCOME_6"
+          "effects": {
+            "founder": 5
+          },
+          "next": "INFLUENCER_OUTCOME_6",
+          "effect_reason": {
+            "founder": "Raising prices boosts founder confidence."
+          }
         }
       }
     },
@@ -1645,7 +1755,10 @@
           "effects": {}
         }
       },
-      "outcomeTone": "failure"
+      "outcomeTone": "failure",
+      "outcomeEffects": {
+        "founder": -5
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_2",
@@ -1689,7 +1802,13 @@
           "effects": {}
         }
       },
-      "outcomeTone": "success"
+      "outcomeTone": "success",
+      "outcomeEffects": {
+        "cash": 15,
+        "customers": 25,
+        "team": -10,
+        "founder": -10
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_3",
@@ -1727,7 +1846,13 @@
           "effects": {}
         }
       },
-      "outcomeTone": "failure"
+      "outcomeTone": "failure",
+      "outcomeEffects": {
+        "cash": -15,
+        "customers": -10,
+        "team": -15,
+        "founder": -25
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_4",
@@ -1758,7 +1883,13 @@
           "direction": "incoming",
           "text": "Let's set up my 20% 💸"
         }
-      ]
+      ],
+      "outcomeEffects": {
+        "cash": 15,
+        "customers": 25,
+        "team": -8,
+        "founder": 10
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_5",
@@ -1791,7 +1922,13 @@
           "effects": {}
         }
       },
-      "outcomeTone": "failure"
+      "outcomeTone": "failure",
+      "outcomeEffects": {
+        "cash": -10,
+        "customers": -15,
+        "team": -10,
+        "founder": -15
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_6",
@@ -1810,7 +1947,13 @@
           "effects": {}
         }
       },
-      "outcomeTone": "success"
+      "outcomeTone": "success",
+      "outcomeEffects": {
+        "cash": 30,
+        "customers": 15,
+        "team": -8,
+        "founder": 15
+      }
     },
     {
       "id": "INFLUENCER_OUTCOME_7",
@@ -1843,7 +1986,13 @@
           "effects": {}
         }
       },
-      "outcomeTone": "failure"
+      "outcomeTone": "failure",
+      "outcomeEffects": {
+        "cash": -15,
+        "customers": -20,
+        "team": -12,
+        "founder": -20
+      }
     },
     {
       "id": "PADEL_INVITE",
