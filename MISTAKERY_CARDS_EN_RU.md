@@ -1105,7 +1105,7 @@
 
 > Ooh, running to @error404 for help?<br>
 > This dummy copy-pasted basic code online and has zero clue what I've become 🤣<br>
-> ...that kinda hurt. but yeah<br>
+> that kinda hurt. but yeah<br>
 > no idea what's actually inside his head now
 
 **RU**
@@ -1116,7 +1116,7 @@
 > Этот дурачок скопировал код из интернета и понятия не имеет, кем я стал 🤣<br>
 > <br>
 > @error404<br>
-> ...вообще-то обидно было. но факт<br>
+> вообще-то обидно было. но факт<br>
 > без понятия, что у него там сейчас в голове
 
 Источник перевода: https://docs.google.com/document/d/1K5rt9p63YyMBYOTXmyPhddnjg8vkPiEPH2024HUtVRo/edit.
