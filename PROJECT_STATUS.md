@@ -4,25 +4,24 @@
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
 - Implementation commit: `778eec17b4d1e5eb36bdbe808dd32dad39832cfc` (mobile-motion fixes); RU / ± inspector: `d4486d72dffd54e6d070b5c66b346235f48e2979`. Fixes atomically pushed to all three branches; Pages build succeeded at the fix commit.
-- Base: `77b01e6a9f952258eea5f7b7f4ca1508af6dd7b1`; all three remote branches matched before publication. Working tree was clean after fix publication; this handoff update records the successful public checks.
+- Base for current correction: `1ff0ce0e6f0cead6f606d2addff960215fb09fa6`. Full mobile motion is verified locally and awaiting publication; current changes are app/CSS/hash, mobile/outcome tests, motion plan and this handoff.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
 - User authorized commit/push/publication. Atomically push without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. GitHub Pages uses `lean-opening`, root `/`.
 
 ## Current objective
 
-RU / ± inspector is published and verified. Mobile animation fixes published and verified locally and publicly. Physical user phone/browser/reduced-motion setting still unknown. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+RU / ± inspector is published and verified. User rejected static mobile animations; full desktop motion is restored on phones, verified locally and awaiting publication. Physical user phone/browser/reduced-motion setting still unknown. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
 
-## Mobile animation fixes — latest stage
+## Full mobile motion — latest user requirement
 
-- `app.js`: only the catastrophic image effect waits for actual decode (maximum 2.5 s). Scene/status remain immediate. Render/navigation cancels pending work; stale, failed, timed-out, hidden-document or reduced-motion completion cannot start image motion.
-- Existing post-choice lock now protects actual outcome arrivals for 950 ms success / 670 ms failure, or 550 ms with reduced motion. Other choices remain 280 ms. Back/Restart immediately clear locks and never replay restored outcomes.
-- `style.css`: reduced-motion typing bubble/dots are static, at stable opacity .65. Normal dots retain their 1.1 s cycle, message pauses unchanged. Outcome motion remains disabled under the system accessibility preference, with existing color/status preserved.
-- Canonical cards, resources, routes, probabilities, English/Russian copy and shared engine unchanged. Asset content hashes regenerated in `index.html`.
-- Plan: `docs/plans/2026-09-20-mobile-motion-fixes.md`; regression: `tests/mobile-motion.browser.test.cjs` (supports `MISTAKERY_TEST_URL`). Earlier audit/evidence retained under `docs/audits/` as baseline findings, not current defects.
-- Test-first: all 6 new tests failed on the three expected bugs in both engines before implementation, then all 6 passed. Chromium/Pixel 7 and WebKit/iPhone 13: reduced/normal typing, raw repeated touch, resource/history preservation, Back/Restart, delayed successful decode, navigation cancellation, reduced-motion change, timeout and failed image.
-- Existing outcome/innovation-typing/legal-typing/continuation-focus/story-test-mode/passive-cash/test-card-details batch: 9/9 passed. Offline/personal-chat-runtime/live-agent unit batch: 22/22 passed. Syntax and whitespace checks passed. Independent review found no issues; WebKit screenshots inspected.
-- Public verification at `778eec17b4d1e5eb36bdbe808dd32dad39832cfc`: `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/mobile-motion.browser.test.cjs` — 6/6 passed in Chromium and WebKit (~36 s). Main URL returns 200, starts onboarding and hides test controls; public reduced-motion typing screenshot visually checked.
-- These are desktop-engine mobile emulations, not physical-device tests. Actual phone FPS/power/refresh-rate behavior remains unverified.
+- User explicitly wants full-quality animations on phone like desktop and rejected the static typing introduced by the previous fix. This supersedes the earlier system reduced-motion policy in the audit/fix plan.
+- Full existing desktop timelines now apply on mobile regardless of OS motion setting: 1.1 s staggered typing dots, message entrances, success/failure motion and decoded-image effect. `style.css` has no automatic motion suppression; `app.js` no longer skips images or shortens the input guard based on system preference.
+- Retained: bounded 2.5 s image decode, navigation/rerender cancellation, hidden-document guard, no motion on failed/timed-out images, Back without replay and immediate Restart. Actual outcome arrivals retain 950 ms success / 670 ms failure protection; ordinary choices remain 280 ms.
+- Canonical cards/resources/routes/copy/RNG and engine unchanged. `index.html` hashes rebuilt.
+- Plan: `docs/plans/2026-09-20-full-mobile-motion.md`. Existing audit/evidence and previous fix plan describe historical behavior, not current requirements.
+- Test-first: all 6 updated mobile checks failed under the old suppression policy, then passed. Mobile-vs-desktop typing styles match and sampled opacity actually changes. Both OS settings tested in Chromium/Pixel 7 and WebKit/iPhone 13, including full entrance protection, delayed image after preference change, cancellation/timeouts/errors and Back/Restart.
+- Fresh validation: mobile-motion + outcome-presentation batch 8/8 passed; innovation-typing/legal-typing/story-test-mode/test-card-details/passive-cash batch 6/6 passed; offline/personal-chat-runtime/live-agent unit batch 22/22 passed. Syntax/whitespace clean; independent reviewer found no issues.
+- Tests emulate mobile browsers on desktop; physical-device FPS/power/refresh-rate behavior remains unverified.
 
 ## Translation and resource inspector — current stage
 
@@ -82,7 +81,7 @@ RU / ± inspector is published and verified. Mobile animation fixes published an
 ## Outcome presentation and assets
 
 - Live Agent, Influencer and Padel use `outcomeTone`. Influencer successes 2/4/6, failures 1/3/5/7. Padel successes 2/4/5; all others fail. Padel keeps location/match pin via `outcomeBanner: false` and preserves untinted court photo.
-- SUCCESS/FAILURE replaces the pinned bar at the same 48px height for other outcomes. Mint success / red failure; catastrophic Live Agent outcome 2 has deeper red and short photo distortion. Success scale/glow and failure jolt/pulse run once per state object; WeakSet suppresses replay on rerender/Back. Reduced Motion disables entrance motion.
+- SUCCESS/FAILURE replaces the pinned bar at the same 48px height for other outcomes. Mint success / red failure; catastrophic Live Agent outcome 2 has deeper red and short photo distortion. Success scale/glow and failure jolt/pulse run once per state object; WeakSet suppresses replay on rerender/Back. Full desktop motion also runs on phones regardless of OS reduced-motion preference, as explicitly requested by the user.
 - All six Influencer image slots and all Live Agent image slots have supplied WebP assets. No placeholders remain. Canonical media dimensions are authoritative; outcome 3's finale image is 1200×567, outcome 4 analytics 1000×1000. Outcome 6 is text-only. Old hate-review asset remains on disk but unused.
 - Live Agent founder/manifesto/outcome photos are preloaded. Manifesto uses hashed URL and preserved aspect ratio.
 - Padel court/avatars use WebP (360,116 total bytes versus original ~7.9 MB); originals retained but unused. Preload once at Investor or direct Padel entry, low priority, no unrelated onboarding downloads. Framing/blur/color unchanged.
@@ -105,5 +104,5 @@ RU / ± inspector is published and verified. Mobile animation fixes published an
 
 ## Next steps
 
-1. Continue user-directed playtesting; confirm animation behavior on the user’s actual phone. Preserve system accessibility preferences and Back semantics.
+1. Continue user-directed playtesting; confirm animation behavior on the user’s actual phone. Preserve full mobile/desktop motion parity and Back semantics.
 2. Future publications: atomically push without force to all three branches, verify Pages commit/status and both public URLs.

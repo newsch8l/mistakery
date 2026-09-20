@@ -193,8 +193,7 @@
     const tone = engine.cardById(app.deck, app.state.currentCardId)?.outcomeTone;
     // Cover the entrance (900 ms success / 620 ms failure) and swallow a second tap.
     // A bounded timer also works when CSS motion is disabled or interrupted.
-    const delay = !tone ? 280 : window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ? 550 : tone === 'success' ? 950 : 670;
+    const delay = !tone ? 280 : tone === 'success' ? 950 : 670;
     choiceUnlockTimer = window.setTimeout(() => { app.locked = false; }, delay);
   }
 
@@ -764,7 +763,7 @@
   function stageOutcomeImageMotion() {
     const image = $('[data-chat] .message-image');
     const state = app.state;
-    if (!image || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!image) return;
     let cancelled = false;
     const timeout = window.setTimeout(cancel, 2500);
     function cancel() {
@@ -777,7 +776,7 @@
     // Navigation cancels this scope; a timeout/error simply omits this decoration.
     image.decode().then(() => {
       if (cancelled || app.state !== state || app.view !== 'playing' || !image.isConnected
-        || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        || document.hidden) return;
       window.clearTimeout(timeout);
       image.classList.add('is-outcome-image-ready');
     }).catch(cancel);

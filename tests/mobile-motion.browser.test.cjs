@@ -21,13 +21,20 @@ async function start(browser, device, reducedMotion = 'no-preference') {
   return page;
 }
 for (const [name, engine, device] of [['Chromium', chromium, 'Pixel 7'], ['WebKit', webkit, 'iPhone 13']]) {
-  test(`${name}: reduced typing is static and normal cadence remains intact`, async () => {
+  test(`${name}: phone typing keeps desktop cadence under either system motion setting`, async () => {
     const browser = await engine.launch();
     try {
       const page = await start(browser, device, 'reduce');
       await seed(page, 'LIVE_AGENT_05');
-      assert.deepEqual(await page.locator('.typing-bubble i').evaluateAll(ns => ns.map(n => getComputedStyle(n).animationName)), ['none', 'none', 'none']);
+      assert.deepEqual(await page.locator('.typing-bubble i').evaluateAll(ns => ns.map(n => getComputedStyle(n).animationName)), ['typingBlink', 'typingBlink', 'typingBlink']);
       assert.match(await page.locator('.typing-bubble').getAttribute('aria-label'), /is typing$/);
+      const mobileMotion = await page.locator('.typing-bubble i').evaluateAll(ns => ns.map(n => { const s = getComputedStyle(n); return [s.animationName, s.animationDuration, s.animationDelay, s.animationIterationCount]; }));
+      const changes = await page.locator('.typing-bubble i').first().evaluate(async n => { const values = []; for (let i = 0; i < 5; i++) { values.push(getComputedStyle(n).opacity); await new Promise(r => setTimeout(r, 80)); } return new Set(values).size; });
+      assert.ok(changes > 1, 'dots must visibly animate on phone');
+      const desktop = await start(browser, 'Desktop Chrome');
+      await seed(desktop, 'LIVE_AGENT_05');
+      assert.deepEqual(await desktop.locator('.typing-bubble i').evaluateAll(ns => ns.map(n => { const s = getComputedStyle(n); return [s.animationName, s.animationDuration, s.animationDelay, s.animationIterationCount]; })), mobileMotion);
+      await desktop.close();
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       assert.equal(await page.locator('.typing-bubble i').first().evaluate(n => getComputedStyle(n).animationDuration), '1.1s');
       await page.waitForFunction(() => window.MistakeryApp.cardDelivery.delivered);
@@ -48,6 +55,11 @@ for (const [name, engine, device] of [['Chromium', chromium, 'Pixel 7'], ['WebKi
           await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
           assert.equal(await page.evaluate(() => window.MistakeryApp.state.currentCardId), outcome);
           assert.deepEqual(await page.evaluate(() => window.MistakeryApp.state), before);
+          if (outcome === 'LIVE_AGENT_OUTCOME_1') {
+            await page.waitForTimeout(300);
+            await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+            assert.deepEqual(await page.evaluate(() => window.MistakeryApp.state), before, 'full success glow remains protected under either system setting');
+          }
           await page.waitForFunction(() => !window.MistakeryApp.locked, null, { timeout: 1500 });
           await page.locator('[data-choice="left"]').tap();
           await page.locator('[data-test-back]').tap();
@@ -101,7 +113,7 @@ for (const [name, engine, device] of [['Chromium', chromium, 'Pixel 7'], ['WebKi
         if (action === 'timeout') await page.waitForTimeout(2650);
         release();
         await page.waitForTimeout(550);
-        assert.equal(await page.evaluate(() => window.motionEvents.length), 1, action);
+        assert.equal(await page.evaluate(() => window.motionEvents.length), action === 'reduce' ? 2 : 1, action);
       }
       await page.unroute('https://motion.test/image.webp*');
       await page.route('https://motion.test/broken.webp', route => route.fulfill({ status: 404, body: '' }));
@@ -109,7 +121,7 @@ for (const [name, engine, device] of [['Chromium', chromium, 'Pixel 7'], ['WebKi
       await page.evaluate(() => { window.MistakeryApp.deck.images.placeholder_judgment_day.src = 'https://motion.test/broken.webp'; });
       await seed(page, 'LIVE_AGENT_OUTCOME_2');
       await page.waitForTimeout(600);
-      assert.equal(await page.evaluate(() => window.motionEvents.length), 1);
+      assert.equal(await page.evaluate(() => window.motionEvents.length), 2);
       await page.locator('[data-choice="left"]').tap();
       assert.equal(await page.evaluate(() => window.MistakeryApp.state.currentCardId), 'OPEN_INVESTOR');
     } finally { await browser.close(); }

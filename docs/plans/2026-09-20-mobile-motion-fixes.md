@@ -1,5 +1,7 @@
 # Mobile motion fixes
 
+Historical plan: its reduced-motion policy is superseded by the user’s explicit full-motion request in `2026-09-20-full-mobile-motion.md`. Decode/cancellation and repeat-touch fixes remain active.
+
 Implement the user-approved audit fixes, preserving game data, normal typing cadence and system reduced-motion preferences.
 
 1. Regression first: Chromium/Pixel 7 and WebKit/iPhone 13, normal/reduced motion; assert static reduced typing, normal 1.1 s cycle, actual raw double tap protection, delayed-image motion after readiness, cleanup on navigation/error/timeout, Back and Restart.

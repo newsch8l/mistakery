@@ -74,8 +74,10 @@ test('Influencer outcomes replace the pin with status; Padel outcomes keep locat
       for (const id of ['INFLUENCER_OUTCOME_2', 'PADEL_OUTCOME_2', 'PADEL_OUTCOME_3']) {
         await seed(page, id);
         assert.deepEqual(await page.locator('[data-scene]').evaluate(node => [getComputedStyle(node).animationName,
-          getComputedStyle(node, '::before').animationName, getComputedStyle(node, '::after').animationName]), ['none', 'none', 'none']);
-        assert.equal(await page.locator('.outcome-glow').evaluate(node => getComputedStyle(node).animationName), 'none');
+          getComputedStyle(node, '::before').animationName, getComputedStyle(node, '::after').animationName]), id.startsWith('PADEL_')
+            ? [id.endsWith('_2') ? 'outcomeSuccess' : 'outcomeJolt', 'outcomePulse', 'none']
+            : ['outcomeSuccess', 'none', 'outcomePulse']);
+        assert.equal(await page.locator('.outcome-glow').evaluate(node => getComputedStyle(node).animationName), id.endsWith('_2') ? 'outcomeSuccessGlow' : 'none');
       }
       await page.locator('[data-choice="left"]').click();
       assert.equal(await page.locator('[data-game]').getAttribute('data-outcome'), null);
@@ -142,8 +144,9 @@ test('outcome labels, color and one-shot motion preserve chat geometry, routes a
       assert.equal(await page.locator('[data-game]').evaluate(n => n.classList.contains('is-outcome-entering')), false);
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await seed(page, 'LIVE_AGENT_OUTCOME_2');
+      await page.waitForFunction(() => document.querySelector('.message-image')?.classList.contains('is-outcome-image-ready'));
       const reduced = await page.locator('[data-scene]').evaluate(n => ({ scene: getComputedStyle(n).animationName, pulse: getComputedStyle(n, '::after').animationName, image: getComputedStyle(n.querySelector('img')).animationName }));
-      assert.deepEqual(reduced, { scene: 'none', pulse: 'none', image: 'none' });
+      assert.deepEqual(reduced, { scene: 'outcomeJolt', pulse: 'outcomePulse', image: 'outcomeSignal' });
       assert.equal(await page.locator('[data-outcome-label]').innerText(), 'FAILURE');
       assert.deepEqual(errors, []);
       await page.close();
