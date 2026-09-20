@@ -515,7 +515,7 @@
 > Heard about your tool. I feel like we got a huge future together.<br>
 > Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!<br>
 > Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
-> Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.
+> Send over the demo. I keep it 💯 honest with my audience, gotta test it myself first.
 
 **RU — перевод не утверждён; сохранён точный EN**
 
@@ -523,7 +523,7 @@
 > Heard about your tool. I feel like we got a huge future together.<br>
 > Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!<br>
 > Usually I take 20%, but you guys are cool, we'll work out the terms.<br>
-> Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.
+> Send over the demo. I keep it 💯 honest with my audience, gotta test it myself first.
 
 - **Deal — Deal**: без отдельного эффекта; → `INFLUENCER_03`.
 - **Maybe 10% — Maybe 10%**: без отдельного эффекта; → `INFLUENCER_02A`.
@@ -535,16 +535,14 @@
 > Hahaha<br>
 > I like your style 😂<br>
 > Let's lock in 20% for now, but I'll hook you up.<br>
-> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉<br>
-> We good? Drop the demo.
+> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > Hahaha<br>
 > I like your style 😂<br>
 > Let's lock in 20% for now, but I'll hook you up.<br>
-> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉<br>
-> We good? Drop the demo.
+> I'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉
 
 - **Deal. Just deliver — Deal. Just deliver**: без отдельного эффекта; → `INFLUENCER_03`.
 - **We need you in sales — We need you in sales**: без отдельного эффекта; → `INFLUENCER_03`.
@@ -596,14 +594,14 @@
 > Well, there is an option 🤔<br>
 > I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
-> 60% revshare + Co-Founder status to oversee product quality.
+> 60% revshare + Co-Founder status to oversee product quality 🤝
 
 **RU — перевод не утверждён; сохранён точный EN**
 
 > Well, there is an option 🤔<br>
 > I don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over<br>
 > Since I'm risking my reputation for an unstable product though:<br>
-> 60% revshare + Co-Founder status to oversee product quality.
+> 60% revshare + Co-Founder status to oversee product quality 🤝
 
 - **Just save the launch — Just save the launch**: без отдельного эффекта; → `INFLUENCER_07`.
 - **That's insane — That's insane**: без отдельного эффекта; → `INFLUENCER_06`.

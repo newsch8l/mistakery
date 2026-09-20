@@ -415,7 +415,7 @@ test('Influencer paragraphs, screenshots, and remaining placeholders render as c
       [
         'Hey 👋Heard about your tool. I feel like we got a huge future together.',
         "Let me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!Usually I take 20%, but you guys are cool, we'll work out the terms.",
-        'Send over the demo. I keep it 💯% honest with my audience, gotta test it myself first.',
+        'Send over the demo. I keep it 💯 honest with my audience, gotta test it myself first.',
       ],
     );
 

@@ -165,13 +165,13 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Nah, cringe', effects: {}, next: 'INFLUENCER_OUTCOME_1' },
   });
 
-  assert.equal(cards.INFLUENCER_02.text, "Hey 👋\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!\nUsually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 💯% honest with my audience, gotta test it myself first.");
+  assert.equal(cards.INFLUENCER_02.text, "Hey 👋\nHeard about your tool. I feel like we got a huge future together.\n\nLet me drop a video with your link in the description. You get customers, I get a cut of the sales. Win-win!\nUsually I take 20%, but you guys are cool, we'll work out the terms.\n\nSend over the demo. I keep it 💯 honest with my audience, gotta test it myself first.");
   assert.deepEqual(cards.INFLUENCER_02.choices, {
     left: { label: 'Deal', effects: {}, next: 'INFLUENCER_03' },
     right: { label: 'Maybe 10%', effects: {}, next: 'INFLUENCER_02A' },
   });
 
-  assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\n\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉\n\nWe good? Drop the demo.");
+  assert.equal(cards.INFLUENCER_02A.text, "Hahaha\nI like your style 😂\nLet's lock in 20% for now, but I'll hook you up.\nI'll give you access to my private database of 50 killer B2B prompts. People pay $1k for this 😉");
   assert.deepEqual(cards.INFLUENCER_02A.choices, {
     left: { label: 'Deal. Just deliver', effects: {}, next: 'INFLUENCER_03' },
     right: { label: 'We need you in sales', effects: {}, next: 'INFLUENCER_03' },
@@ -184,7 +184,7 @@ test('AI influencer cards preserve the English source copy, graph, and empty res
     right: { label: 'Any other options?', effects: {}, next: 'INFLUENCER_05' },
   });
 
-  assert.equal(cards.INFLUENCER_05.text, "Well, there is an option 🤔\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality.");
+  assert.equal(cards.INFLUENCER_05.text, "Well, there is an option 🤔\n\nI don't usually do this, but I see potential in you guys. I can just focus on the core features and smooth things over\n\nSince I'm risking my reputation for an unstable product though:\n60% revshare + Co-Founder status to oversee product quality 🤝");
   assert.deepEqual(cards.INFLUENCER_05.choices, {
     left: { label: 'Just save the launch', effects: {}, next: 'INFLUENCER_07' },
     right: { label: "That's insane", effects: {}, next: 'INFLUENCER_06' },
