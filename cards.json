@@ -4,7 +4,7 @@
     "chapter": "Validation",
     "startCard": "OPEN_01",
     "maxTurns": 9999,
-    "baseCashBurn": -1,
+    "baseCashBurn": -0.5,
     "maxPressureCards": 4,
     "pressureAfterArcSteps": [],
     "scheduler": {

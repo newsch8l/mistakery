@@ -10,11 +10,18 @@
 
 ## Current objective
 
-Influencer resource implementation is complete and publicly verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+Default Cash burn of 0.5 per gameplay turn is implemented and locally verified. Publish it and verify both public entry points. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+
+## Default Cash burn — current stage
+
+- Canonical `meta.baseCashBurn` is −0.5; all branch overrides were removed from `app.js`. Existing engine applies the sum of base burn + choice + outcome once, then clamps 0–100. Shared `game.js` is unchanged.
+- Fractional values remain exact in state/history, resource bar width and accessible value. Hover still previews explicit choice/outcome effects; the equal default cost stays implicit.
+- `prototypeDeck()` disables crises/turn-cap across the entire active prototype, so opening/Investor remain playable at zero without needing a Live Agent completion flag.
+- Cross-branch regression: `tests/passive-cash.browser.test.cjs`. Shared independent expected turn calculator: `tests/turn-resources.fixture.cjs`. Plan: `docs/plans/2026-09-20-default-cash-burn.md`.
 
 ## Resource rules and completed work
 
-**No crises now.** Zero resources remain playable, with no sudden game ending. Do not add passive burn. Keep values clamped to 0–100. Outcome effects belong to the resolved choice history entry; rerenders and decorative replies must not reapply them. Test Back restores resources and contextual state without rerolling an outcome.
+**No crises now.** Zero resources remain playable, with no sudden game ending. **Latest user change:** every resolved gameplay turn now additionally costs 0.5 Cash in every branch. This supersedes the earlier no-passive-burn rule. Neutral/outcome replies also cost 0.5; onboarding/Saved Messages navigation and Back/Restart do not charge another turn. Keep values clamped to 0–100. Outcome effects belong to the resolved choice history entry; rerenders and decorative replies must not reapply outcome effects; each decorative reply only charges the new default 0.5 Cash. Test Back restores resources and contextual state without rerolling an outcome.
 
 ### Influencer
 
@@ -22,21 +29,21 @@ Influencer resource implementation is complete and publicly verified. Continue u
 - All nine decision cards, both contextual pairs on 05/06, and seven outcomes now have document effects in `cards.json`. Independent values: `tests/influencer-resources.fixture.cjs`; plan: `docs/plans/2026-09-20-influencer-resources.md`.
 - User explicitly clarified refusal TOTAL: Cash −25 / Founder −5. Choice 01.right charges Cash −25; outcome 1 adds only Founder −5. Never charge Cash a second time.
 - Outcome entry effects: 2 Cash +15 / Customers +25 / Team −10 / Founder −10; 3 Cash −15 / Customers −10 / Team −15 / Founder −25; 4 Cash +15 / Customers +25 / Team −8 / Founder +10; 5 Cash −10 / Customers −15 / Team −10 / Founder −15; 6 Cash +30 / Customers +15 / Team −8 / Founder +15; 7 Cash −15 / Customers −20 / Team −12 / Founder −20.
-- `resolveInfluencerChoice` uses the actually displayed contextual choice, combines its effect with the selected outcome, and calls the engine once. Crises, passive burn and turn-cap endings are disabled locally, independently of Live Agent completion flags.
-- Existing 40/60 probabilities unchanged: one draw on either reply at 07 (outcomes 2/3), left at 08 (4/5), right at 08 (6/7). Preview uses direct effects plus both candidate outcomes without RNG/state changes and reuses the existing 2px lift. Outcome replies return to Saved Messages and remain neutral.
+- `resolveInfluencerChoice` uses the actually displayed contextual choice, combines its effect with the selected outcome, and calls the engine once. Crises and turn-cap endings are disabled locally, independently of Live Agent completion flags. Default Cash burn is inherited from canonical deck metadata.
+- Existing 40/60 probabilities unchanged: one draw on either reply at 07 (outcomes 2/3), left at 08 (4/5), right at 08 (6/7). Preview uses direct effects plus both candidate outcomes without RNG/state changes and reuses the existing 2px lift. Outcome replies return to Saved Messages with only the default 0.5 Cash cost.
 - Copy, images, routes, presentation metadata, Padel/Live Agent data, shared engine and probability functions were mechanically compared against the previous HEAD and preserved. Independent code review found no issues.
 
-### Padel (unchanged in this stage)
+### Padel
 
 - Source: https://docs.google.com/document/d/14r75dbHVyI8nW3xlyYGnnk-E-PTyK6VqnYvnn2fE6Uk/edit . User's no-crisis instruction overrides its crisis wording.
 - Seven decision cards and eight outcomes implemented. Refusal charges Cash −25 once on the choice; outcome 0 has no extra effect. Both replies return to Saved Messages.
-- `resolvePadelChoice` combines choice/outcome effects once, suppresses crises/burn/turn-cap, preserves score and routes. Match point: one draw for throwing, two for fighting; early outcome 7 uses none. Preview includes early/random candidates.
+- `resolvePadelChoice` combines choice/outcome effects once, suppresses crises/turn-cap, inherits default Cash burn, and preserves score and routes. Match point: one draw for throwing, two for fighting; early outcome 7 uses none. Preview includes early/random candidates.
 - Exact effects: `tests/padel-resources.fixture.cjs`; coverage: `tests/padel-resources.browser.test.cjs`; plan: `docs/plans/2026-09-20-padel-resources.md`.
 
-### Live Agent and opening (unchanged in this stage)
+### Live Agent and opening
 
 - Ten story screens, five outcomes; English dialogue only. Entry: Pure genius → Sales, wake up → Boss/Dev check-ins in either order. Other routes preserve Investor. Investor offers Influencer / Padel.
-- Five hidden-score decisions: 02, 03, 04B, 05, 06. Outcomes return directly to Investor, including all-zero Judgment Day. One terminal draw and one outcome application. No passive burn; prototype loop avoids crises/turn-cap endings.
+- Five hidden-score decisions: 02, 03, 04B, 05, 06. Outcomes return directly to Investor, including all-zero Judgment Day. One terminal draw and one outcome application. Default Cash burn applies; the entire prototype, including opening/Investor, avoids crises/turn-cap endings.
 - `?story=live-agent` starts Card 1; Back restores state/score/scroll and Restart resets. Unknown query keeps onboarding.
 - 04 is the neutral photo interlude; 04B has the attitude choice. 07 is the neutral manifesto exchange; 07B has the contract decision. Exact accepted copy is in cards/catalog.
 - Scoped chat continuity ONLY: 01→02, 03→04→04B, 07→07B. Keep last two bubbles, actual outgoing reply, then current messages. No divider, no global extension. History derives from engine history and does not duplicate/reanimate.
@@ -53,7 +60,15 @@ Influencer resource implementation is complete and publicly verified. Continue u
 - Padel court/avatars use WebP (360,116 total bytes versus original ~7.9 MB); originals retained but unused. Preload once at Investor or direct Padel entry, low priority, no unrelated onboarding downloads. Framing/blur/color unchanged.
 - Canonical runtime data: `cards.json`; renderer: `app.js`; shared engine `game.js` unchanged. After app/CSS/engine/cards changes run `node scripts/build-offline-deck.cjs` for bundle and index content hashes. Run `node scripts/build-card-catalog.cjs` after card data/copy changes. Catalog now lists all Influencer outcome entry effects and contextual effects.
 
-## Fresh verification
+## Fresh default-burn verification
+
+- Base before this stage: `c521b65ab103ca10fd37f7ff7b1dd30b33117725`; all three remote branches matched before publication.
+- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs tests/engine.test.cjs`: 50/50 pass.
+- `node --test --test-concurrency=3 tests/passive-cash.browser.test.cjs tests/influencer-resources.browser.test.cjs tests/padel-resources.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs tests/live-agent.browser.test.cjs tests/resource-preview.browser.test.cjs tests/story-test-mode.browser.test.cjs tests/chat-continuity.browser.test.cjs tests/forwarded-messages.browser.test.cjs`: 28/28 pass (~148 seconds).
+- New regression verifies every gameplay resolver, explicit Cash costs plus default burn, neutral/outcome replies, one history entry, fractional resource display, read-only hover/render, Back refund, two neutral turns costing exactly 1 Cash, and zero boundaries at turn 10000 without crises/endings.
+- Independent review found no issues. Generated bundle/catalog/hash, syntax and whitespace checks pass. Canonical change is only `meta.baseCashBurn`; all explicit story effects and probabilities are preserved.
+
+## Previous Influencer verification (before default burn change)
 
 - `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`: 22/22 pass.
 - `node --test --test-name-pattern='every visible resource effect' tests/content.test.cjs`: 1/1 pass.

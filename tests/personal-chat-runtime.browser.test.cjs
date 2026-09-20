@@ -1,9 +1,10 @@
+const { afterTurn } = require('./turn-resources.fixture.cjs');
 const { decision: influencerEffect, outcomes: influencerOutcomes, sum: sumInfluencerEffects } = require('./influencer-resources.fixture.cjs');
 const { decisions: padelEffects, outcomes: padelOutcomes } = require('./padel-resources.fixture.cjs');
 function padelResourcesAfter(resources, id, side, outcome) {
   const effects = padelEffects[id][side === 'left' ? 0 : 1];
   return Object.fromEntries(Object.entries(resources).map(([key, value]) => [key,
-    Math.max(0, Math.min(100, value + (effects[key] || 0) + (padelOutcomes[outcome]?.[key] || 0))),
+    Math.max(0, Math.min(100, value - (key === 'cash' ? .5 : 0) + (effects[key] || 0) + (padelOutcomes[outcome]?.[key] || 0))),
   ]));
 }
 const test = require('node:test');
@@ -402,7 +403,7 @@ test('both replies on every Influencer outcome return through Saved Messages', a
         await page.waitForFunction(() => document.querySelector('[data-card-id]')?.textContent === 'SAVED_02_UPDATE');
         const state = await influencerRuntimeState(page);
         assert.equal(state.previousCardId, null, `Outcome ${outcome} ${side}`);
-        assert.deepEqual(state.resources, resources, `Outcome ${outcome} ${side}`);
+        assert.deepEqual(state.resources, afterTurn(resources), `Outcome ${outcome} ${side}`);
       }
     }
   } finally {
@@ -699,7 +700,7 @@ test('both replies on every outcome clear Padel state and restart through Saved 
         await page.waitForFunction(() => document.querySelector('[data-card-id]')?.textContent === 'SAVED_02_UPDATE');
         const state = await currentRuntimeState(page);
         assert.equal(state.ceoScore, null, `Outcome ${outcome} ${side}`);
-        assert.deepEqual(state.resources, resources, `Outcome ${outcome} ${side}`);
+        assert.deepEqual(state.resources, afterTurn(resources), `Outcome ${outcome} ${side}`);
       }
     }
 

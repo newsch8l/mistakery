@@ -1,3 +1,4 @@
+const { afterTurn } = require('./turn-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -144,7 +145,7 @@ test('approved team pair and three bot cards preserve context, chosen replies an
         score: window.MistakeryApp.liveAgentScore, scroll: document.querySelector('[data-chat]').scrollTop })), before);
       await choose(page);
       await assertPlayerReply(page, 'Go on…');
-      assert.deepEqual(await page.evaluate(() => ({ resources: window.MistakeryApp.state.resources, score: window.MistakeryApp.liveAgentScore })), { resources: before.state.resources, score: before.score });
+      assert.deepEqual(await page.evaluate(() => ({ resources: window.MistakeryApp.state.resources, score: window.MistakeryApp.liveAgentScore })), { resources: afterTurn(before.state.resources), score: before.score });
       await choose(page);
       assert.equal(await page.locator('[data-chat-history]').count(), 0, 'another DM must start clean');
       assert.equal(await page.locator('[data-player-reply]').count(), 0);

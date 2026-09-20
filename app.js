@@ -885,7 +885,7 @@
     const scopedDeck = {
       ...app.deck,
       crises: {},
-      meta: { ...app.deck.meta, baseCashBurn: 0, maxTurns: Number.MAX_SAFE_INTEGER },
+      meta: { ...app.deck.meta, maxTurns: Number.MAX_SAFE_INTEGER },
       cards: app.deck.cards.map(item => item.id === card.id ? resolvedCard : item),
     };
     return engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 });
@@ -911,7 +911,7 @@
     const scopedDeck = {
       ...app.deck,
       crises: {},
-      meta: { ...app.deck.meta, baseCashBurn: 0, maxTurns: Number.MAX_SAFE_INTEGER },
+      meta: { ...app.deck.meta, maxTurns: Number.MAX_SAFE_INTEGER },
       cards: app.deck.cards.map(item => item.id === card.id ? resolvedCard : item),
     };
     return engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 });
@@ -1019,9 +1019,7 @@
   }
 
   function prototypeDeck() {
-    const inLiveAgent = app.state.currentCardId.startsWith('LIVE_AGENT_');
-    if (!inLiveAgent && !app.state.flags.includes('live_agent_completed')) return app.deck;
-    // This iteration loops back to Investor, including after Judgment Day.
+    // All prototype branches stay playable at zero, including the opening.
     // Keep the displayed resources, but don't freeze the prototype at a boundary.
     return { ...app.deck, crises: {}, meta: { ...app.deck.meta, maxTurns: Number.MAX_SAFE_INTEGER } };
   }
@@ -1055,7 +1053,6 @@
     const deck = prototypeDeck();
     const scopedDeck = {
       ...deck,
-      meta: { ...deck.meta, baseCashBurn: 0 },
       cards: deck.cards.map(item => item.id === card.id ? resolvedCard : item),
     };
     app.state = engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 }).state;

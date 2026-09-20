@@ -1,3 +1,4 @@
+const { afterTurn } = require('./turn-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -55,18 +56,18 @@ test('live agent probabilities, resources, completion and mobile messenger', asy
           const outcome = draw < chance ? good : bad;
           assert.equal(state.currentCardId, `LIVE_AGENT_OUTCOME_${outcome}`);
           assert.equal(state.draws, 1);
-          assert.deepEqual(state.resources, {
+          assert.deepEqual(state.resources, afterTurn({
             1: { cash: 70, team: 70, customers: 75, founder: 40 },
             2: { cash: 0, team: 0, customers: 0, founder: 0 },
             3: { cash: 85, team: 40, customers: 65, founder: 60 },
             4: { cash: 20, team: 35, customers: 25, founder: 25 },
-          }[outcome]);
+          }[outcome]));
           await page.evaluate(() => window.MistakeryApp.render());
           assert.deepEqual((await snapshot(page)).resources, state.resources, 'render must not reapply effects');
           await click(page, supports % 2 ? 'left' : 'right');
           const finished = await snapshot(page);
           assert.equal(finished.currentCardId, 'OPEN_INVESTOR');
-          assert.deepEqual(finished.resources, state.resources, 'outcome reply is decorative');
+          assert.deepEqual(finished.resources, afterTurn(state.resources), 'outcome reply only charges the default turn burn');
           assert.ok(finished.flags.includes('live_agent_completed'));
           assert.ok(!finished.flags.includes('live_agent_pending'));
           assert.equal(finished.score, 0);
@@ -86,7 +87,7 @@ test('live agent probabilities, resources, completion and mobile messenger', asy
       await seed(page, 'LIVE_AGENT_01');
       await click(page, 'left');
       assert.equal((await snapshot(page)).score, 0);
-      assert.deepEqual((await snapshot(page)).resources, { cash: 50, team: 55, customers: 55, founder: 50 });
+      assert.deepEqual((await snapshot(page)).resources, { cash: 49.5, team: 55, customers: 55, founder: 50 });
       for (let n = 2; n <= 6; n++) {
         assert.equal((await snapshot(page)).currentCardId, `LIVE_AGENT_0${n}`);
         if (n === 4) {
@@ -94,7 +95,7 @@ test('live agent probabilities, resources, completion and mobile messenger', asy
           await click(page, side);
           const afterPhoto = await snapshot(page);
           assert.equal(afterPhoto.currentCardId, 'LIVE_AGENT_04B');
-          assert.deepEqual(afterPhoto.resources, beforePhoto.resources);
+          assert.deepEqual(afterPhoto.resources, afterTurn(beforePhoto.resources));
           assert.equal(afterPhoto.score, beforePhoto.score);
           assert.equal(afterPhoto.draws, beforePhoto.draws);
         }
@@ -108,14 +109,14 @@ test('live agent probabilities, resources, completion and mobile messenger', asy
         }[n][side];
         await click(page, side);
         const after = await snapshot(page);
-        for (const key of Object.keys(before)) assert.equal(after.resources[key], before[key] + (effects[key] || 0));
+        for (const key of Object.keys(before)) assert.equal(after.resources[key], afterTurn(before, effects)[key]);
         assert.equal(after.score, (n - 1) * (side === 'left' ? 1 : -1));
       }
       const beforeManifesto = await snapshot(page);
       await click(page, side);
       const afterManifesto = await snapshot(page);
       assert.equal(afterManifesto.currentCardId, 'LIVE_AGENT_07B');
-      assert.deepEqual(afterManifesto.resources, beforeManifesto.resources);
+      assert.deepEqual(afterManifesto.resources, afterTurn(beforeManifesto.resources));
       assert.equal(afterManifesto.score, beforeManifesto.score);
       assert.equal(afterManifesto.draws, beforeManifesto.draws);
       const beforeSign = afterManifesto.resources.customers;
@@ -128,11 +129,11 @@ test('live agent probabilities, resources, completion and mobile messenger', asy
       await click(page, 'right');
       const early = await snapshot(page);
       assert.equal(early.currentCardId, 'LIVE_AGENT_OUTCOME_0');
-      assert.deepEqual(early.resources, { cash: 30, team: 35, customers: 50, founder: 50 });
+      assert.deepEqual(early.resources, { cash: 29.5, team: 35, customers: 50, founder: 50 });
       assert.equal(early.draws, 0);
       await click(page, side);
       assert.equal((await snapshot(page)).currentCardId, 'OPEN_INVESTOR');
-      assert.deepEqual((await snapshot(page)).resources, early.resources);
+      assert.deepEqual((await snapshot(page)).resources, afterTurn(early.resources));
     }
 
     // Real entry, both Boss/Dev orders; no repeated story after completion.

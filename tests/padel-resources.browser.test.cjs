@@ -7,9 +7,7 @@ const { decisions, outcomes } = require('./padel-resources.fixture.cjs');
 const deck = require('../cards.json');
 const url = pathToFileURL(path.resolve(__dirname, '..', 'index.html')).href;
 const base = { cash: 50, team: 50, customers: 50, founder: 50 };
-function sum(resources, ...effects) {
-  return Object.fromEntries(Object.entries(resources).map(([key, value]) => [key, Math.max(0, Math.min(100, value + effects.reduce((n, e) => n + (e[key] || 0), 0)))]));
-}
+const { afterTurn: sum } = require('./turn-resources.fixture.cjs');
 async function seed(page, id, score = 0, resources = base, draws = [.99]) {
   await page.evaluate(({ id, score, resources, draws }) => {
     const a = window.MistakeryApp;
@@ -82,7 +80,7 @@ test('Padel decisions and each outcome apply once, preview resources, and preser
       assert.deepEqual((await state(page)).resources, entered.resources);
       await click(page, 'left');
       assert.equal((await state(page)).view, 'saved');
-      assert.deepEqual((await state(page)).resources, entered.resources);
+      assert.deepEqual((await state(page)).resources, sum(entered.resources));
       await page.locator('[data-test-back]').click();
       assert.deepEqual((await state(page)).resources, entered.resources, 'Back does not reapply outcome effects');
       await page.locator('[data-test-back]').click();
@@ -104,13 +102,13 @@ test('zero resource boundaries stay playable without crises or double refusal pe
       await click(page, 'right');
       const outcome = await state(page);
       assert.equal(outcome.currentCardId, 'PADEL_OUTCOME_0');
-      assert.equal(outcome.resources.cash, Math.max(0, cash - 25));
+      assert.equal(outcome.resources.cash, Math.max(0, cash - 25.5));
       assert.equal(outcome.activeCrisisId, null);
       assert.equal(outcome.gameOver, false);
       await click(page, 'right');
       const finished = await state(page);
       assert.equal(finished.view, 'saved');
-      assert.deepEqual(finished.resources, outcome.resources);
+      assert.deepEqual(finished.resources, sum(outcome.resources));
       assert.equal(finished.activeCrisisId, null);
       assert.equal(finished.gameOver, false);
     }

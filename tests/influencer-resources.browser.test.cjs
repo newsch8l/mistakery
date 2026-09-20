@@ -128,7 +128,7 @@ test('all random outcomes use exact 40/60 odds, combined deltas, neutral replies
             await click(page, reply);
             const finished = await state(page);
             assert.equal(finished.view, 'saved');
-            assert.deepEqual(finished.state.resources, expected);
+            assert.deepEqual(finished.state.resources, sum(expected));
             assert.equal(finished.draws, 1);
             assert.equal(finished.state.history.length, 2);
             await page.locator('[data-test-back]').click();
@@ -142,7 +142,7 @@ test('all random outcomes use exact 40/60 odds, combined deltas, neutral replies
   });
 });
 
-test('zero and upper bounds stay playable with no crisis, passive burn or turn-cap ending', async () => {
+test('zero and upper bounds stay playable with half-Cash burn without crisis or turn-cap ending', async () => {
   await withPage(async page => {
     for (const cash of [0, 10, 25, 40]) {
       for (const reply of sides) {
@@ -151,7 +151,7 @@ test('zero and upper bounds stay playable with no crisis, passive burn or turn-c
         await click(page, 'right');
         const entered = await state(page);
         assert.equal(entered.state.currentCardId, 'INFLUENCER_OUTCOME_1');
-        assert.deepEqual(entered.state.resources, { ...base, cash: Math.max(0, cash - 25), founder: 0 });
+        assert.deepEqual(entered.state.resources, { ...base, cash: Math.max(0, cash - 25.5), founder: 0 });
         assert.equal(entered.state.history.length, 1);
         assert.equal(entered.draws, 0);
         await page.evaluate(() => window.MistakeryApp.render());
@@ -160,7 +160,7 @@ test('zero and upper bounds stay playable with no crisis, passive burn or turn-c
         await click(page, reply);
         const finished = await state(page);
         assert.equal(finished.view, 'saved');
-        assert.deepEqual(finished.state.resources, entered.state.resources);
+        assert.deepEqual(finished.state.resources, sum(entered.state.resources));
         assert.equal(finished.state.activeCrisisId, null);
         assert.equal(finished.state.gameOver, false);
         assert.equal(finished.draws, 0);
@@ -180,7 +180,7 @@ test('zero and upper bounds stay playable with no crisis, passive burn or turn-c
         await click(page, 'right');
         const finished = await state(page);
         assert.equal(finished.view, 'saved');
-        assert.deepEqual(finished.state.resources, entered.state.resources);
+        assert.deepEqual(finished.state.resources, sum(entered.state.resources));
         assert.equal(finished.state.gameOver, false);
         assert.equal(finished.state.activeCrisisId, null);
       }

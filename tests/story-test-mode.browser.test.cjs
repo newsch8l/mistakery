@@ -1,3 +1,4 @@
+const { afterTurn } = require('./turn-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -52,7 +53,7 @@ test('direct story test supports exact undo, alternate answers, outcome undo and
     assert.equal(beforeManifesto.state.currentCardId, 'LIVE_AGENT_07');
     await choose(page, 'right');
     assert.equal((await state(page)).state.currentCardId, 'LIVE_AGENT_07B');
-    assert.deepEqual((await state(page)).state.resources, beforeManifesto.state.resources);
+    assert.deepEqual((await state(page)).state.resources, afterTurn(beforeManifesto.state.resources));
     await page.locator('[data-test-back]').click();
     assert.deepEqual(await state(page), beforeManifesto);
     assert.equal(await page.locator('.typing-bubble').count(), 0);

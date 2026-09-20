@@ -53,7 +53,7 @@ test('Live Agent previews outcome resources without drawing or applying an outco
     }
     await page.locator('[data-choice="right"]').click();
     const result = await page.evaluate(() => ({ id: window.MistakeryApp.state.currentCardId, resources: window.MistakeryApp.state.resources, draws: window.draws }));
-    assert.deepEqual(result, { id: 'LIVE_AGENT_OUTCOME_4', resources: { cash: 20, team: 35, customers: 25, founder: 25 }, draws: 1 });
+    assert.deepEqual(result, { id: 'LIVE_AGENT_OUTCOME_4', resources: { cash: 19.5, team: 35, customers: 25, founder: 25 }, draws: 1 });
     assert.equal(await page.locator('[data-resource].is-preview').count(), 0);
   } finally { await browser.close(); }
 });

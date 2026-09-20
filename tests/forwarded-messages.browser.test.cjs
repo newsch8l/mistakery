@@ -1,3 +1,4 @@
+const { afterTurn } = require('./turn-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -41,7 +42,7 @@ test('corporate success is a DM containing two forwarded bot messages and the cu
       await page.locator('[data-choice="left"]').click();
       assert.equal(await page.locator('[data-scene]').getAttribute('data-active-card'), 'OPEN_INVESTOR');
       assert.equal(await page.locator('.forwarded-label').count(), 0);
-      assert.deepEqual(await page.evaluate(() => window.MistakeryApp.state.resources), resources);
+      assert.deepEqual(await page.evaluate(() => window.MistakeryApp.state.resources), afterTurn(resources));
       await page.locator('[data-test-back]').click();
       assert.equal(await page.locator('[data-sender]').innerText(), '@head_of_innovations');
       assert.equal(await page.locator('.forwarded-label').count(), 2);

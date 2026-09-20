@@ -24,6 +24,5 @@ exports.outcomes = {
   6: { cash: 30, customers: 15, team: -8, founder: 15 },
   7: { cash: -15, customers: -20, team: -12, founder: -20 },
 };
-exports.sum = (resources, ...effects) => Object.fromEntries(Object.entries(resources).map(([key, value]) =>
-  [key, Math.max(0, Math.min(100, value + effects.reduce((n, e) => n + (e[key] || 0), 0)))]));
+exports.sum = require('./turn-resources.fixture.cjs').afterTurn;
 exports.decision = (id, side, previous) => (exports.contextual[id]?.[previous] || exports.decisions[id])[side === 'left' ? 0 : 1];
