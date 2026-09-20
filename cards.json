@@ -300,16 +300,16 @@
       "id": "OPEN_BOSS",
       "kind": "opening",
       "source": "@business1",
-      "text": "Just a friendly check-in.\nIt's been five months since you left to play businessman.\nHas your revolutionary AI actually found a customer yet?",
+      "text": "Hey 👋\nJust a friendly check-in.\nIt's been five months since you left to play businessman.\nHas your revolutionary AI actually found a customer yet?",
       "actor_action": "The ex-boss counts the months out loud and asks the one question the company cannot answer.",
-      "player_decision": "Ignore the message or answer with bravado.",
+      "player_decision": "Postpone the conversation or answer with bravado.",
       "storyletEntry": true,
       "oncePerRun": true,
       "weight": 3,
       "continuation": "storylet",
       "choices": {
         "left": {
-          "label": "Leave unread",
+          "label": "In meetings. Talk later",
           "effects": {
             "founder": -2
           },

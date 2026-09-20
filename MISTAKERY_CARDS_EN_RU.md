@@ -65,17 +65,19 @@
 
 **EN**
 
+> Hey 👋<br>
 > Just a friendly check-in.<br>
 > It's been five months since you left to play businessman.<br>
 > Has your revolutionary AI actually found a customer yet?
 
 **RU — перевод не утверждён; сохранён точный EN**
 
+> Hey 👋<br>
 > Just a friendly check-in.<br>
 > It's been five months since you left to play businessman.<br>
 > Has your revolutionary AI actually found a customer yet?
 
-- **Leave unread — Leave unread**: Founder -2; возврат к основной ветке.
+- **In meetings. Talk later — In meetings. Talk later**: Founder -2; возврат к основной ветке.
 - **We crushing it!! — We crushing it!!**: Founder +3; возврат к основной ветке.
 
 ## OPEN_DEV — Dev @error404
