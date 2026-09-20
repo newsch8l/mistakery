@@ -3,14 +3,14 @@
 ## Verified snapshot
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
-- Implementation commit: `778eec17b4d1e5eb36bdbe808dd32dad39832cfc` (mobile-motion fixes); RU / ± inspector: `d4486d72dffd54e6d070b5c66b346235f48e2979`. Fixes atomically pushed to all three branches; Pages build succeeded at the fix commit.
-- Base for current correction: `1ff0ce0e6f0cead6f606d2addff960215fb09fa6`. Full mobile motion is verified locally and awaiting publication; current changes are app/CSS/hash, mobile/outcome tests, motion plan and this handoff.
+- Implementation commit: `42e25af849e3ac11e706cd8bed94faad00ed31cc` (full mobile/desktop motion parity). Atomically pushed to all three branches; Pages build succeeded. Earlier image/input fixes: `778eec17b4d1e5eb36bdbe808dd32dad39832cfc`; inspector: `d4486d72dffd54e6d070b5c66b346235f48e2979`.
+- Base for current correction: `1ff0ce0e6f0cead6f606d2addff960215fb09fa6`. Working tree was clean after publication; this documentation update records the successful public checks.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
 - User authorized commit/push/publication. Atomically push without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. GitHub Pages uses `lean-opening`, root `/`.
 
 ## Current objective
 
-RU / ± inspector is published and verified. User rejected static mobile animations; full desktop motion is restored on phones, verified locally and awaiting publication. Physical user phone/browser/reduced-motion setting still unknown. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+RU / ± inspector is published and verified. User rejected static mobile animations; full desktop motion is restored on phones, published and verified locally/publicly. Physical user phone/browser/reduced-motion setting still unknown. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
 
 ## Full mobile motion — latest user requirement
 
@@ -21,6 +21,7 @@ RU / ± inspector is published and verified. User rejected static mobile animati
 - Plan: `docs/plans/2026-09-20-full-mobile-motion.md`. Existing audit/evidence and previous fix plan describe historical behavior, not current requirements.
 - Test-first: all 6 updated mobile checks failed under the old suppression policy, then passed. Mobile-vs-desktop typing styles match and sampled opacity actually changes. Both OS settings tested in Chromium/Pixel 7 and WebKit/iPhone 13, including full entrance protection, delayed image after preference change, cancellation/timeouts/errors and Back/Restart.
 - Fresh validation: mobile-motion + outcome-presentation batch 8/8 passed; innovation-typing/legal-typing/story-test-mode/test-card-details/passive-cash batch 6/6 passed; offline/personal-chat-runtime/live-agent unit batch 22/22 passed. Syntax/whitespace clean; independent reviewer found no issues.
+- Public build `42e25af849e3ac11e706cd8bed94faad00ed31cc`: `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/mobile-motion.browser.test.cjs` passed 6/6 (~38 s). Initial probe started during Pages build and encountered stale CSS plus transient network/TLS failures; after build completed, the full rerun passed. Always wait for built status before public regressions.
 - Tests emulate mobile browsers on desktop; physical-device FPS/power/refresh-rate behavior remains unverified.
 
 ## Translation and resource inspector — current stage
