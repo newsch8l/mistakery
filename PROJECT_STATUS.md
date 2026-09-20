@@ -3,14 +3,14 @@
 ## Verified snapshot
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
-- Implementation commit: `de3a4be0c0968085d3333ee0f212e313825b531a` (Influencer resources). Previous shared HEAD: `7cb7536169dd13e77e2874da60d8e1ea8f22a5e1`; Padel resources: `92743973a0c102267420529d5c961ebeaaa9e678`.
+- Implementation commit: `7e5cda4eab7312974b6d2991387989a2e4dd784d` (default Cash −0.5 each turn). Influencer resources: `de3a4be0c0968085d3333ee0f212e313825b531a`; Padel resources: `92743973a0c102267420529d5c961ebeaaa9e678`.
 - Implementation was committed and atomically pushed without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. Working tree was clean before this handoff update.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
-- User authorized commit/push/publication. GitHub Pages uses `lean-opening`, root `/`; implementation build completed successfully (`de3a4be0c0968085d3333ee0f212e313825b531a`). Both public URLs and the complete Influencer resource suite were verified in Chromium.
+- User authorized commit/push/publication. GitHub Pages uses `lean-opening`, root `/`; default-burn implementation build completed successfully (`7e5cda4eab7312974b6d2991387989a2e4dd784d`). Both public URLs and the cross-branch Cash-burn regression were verified in Chromium.
 
 ## Current objective
 
-Default Cash burn of 0.5 per gameplay turn is implemented and locally verified. Publish it and verify both public entry points. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+Default Cash burn of 0.5 per gameplay turn is complete and publicly verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
 
 ## Default Cash burn — current stage
 
@@ -67,6 +67,8 @@ Default Cash burn of 0.5 per gameplay turn is implemented and locally verified. 
 - `node --test --test-concurrency=3 tests/passive-cash.browser.test.cjs tests/influencer-resources.browser.test.cjs tests/padel-resources.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs tests/live-agent.browser.test.cjs tests/resource-preview.browser.test.cjs tests/story-test-mode.browser.test.cjs tests/chat-continuity.browser.test.cjs tests/forwarded-messages.browser.test.cjs`: 28/28 pass (~148 seconds).
 - New regression verifies every gameplay resolver, explicit Cash costs plus default burn, neutral/outcome replies, one history entry, fractional resource display, read-only hover/render, Back refund, two neutral turns costing exactly 1 Cash, and zero boundaries at turn 10000 without crises/endings.
 - Independent review found no issues. Generated bundle/catalog/hash, syntax and whitespace checks pass. Canonical change is only `meta.baseCashBurn`; all explicit story effects and probabilities are preserved.
+
+- Public build `7e5cda4eab7312974b6d2991387989a2e4dd784d` succeeded. `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/passive-cash.browser.test.cjs`: 1/1 pass across every resolver, fractional Cash, Back and zero boundaries. Both URLs return 200, load the exact canonical deck with −0.5 burn, and preserve their respective onboarding/Live Agent entry.
 
 ## Previous Influencer verification (before default burn change)
 
