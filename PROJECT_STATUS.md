@@ -3,14 +3,14 @@
 ## Verified snapshot
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
-- Base commit for this stage: `2c7927c51d958be2ad5e70054de6ee2ffd7222a7`; all three remote branches matched before publication. RU / ± implementation is verified locally and awaiting commit/publication.
-- Material working-tree changes: runtime/UI, translation metadata, generated bundle/catalog/hash, catalog builder, implementation plan and browser regression; this status file records the stage.
+- Implementation commit: `d4486d72dffd54e6d070b5c66b346235f48e2979` (RU / ± inspector). Atomically pushed to all three branches; Pages build succeeded at this commit.
+- Working tree was clean after implementation publication; this documentation update records the successful public checks.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
 - User authorized commit/push/publication. Atomically push without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. GitHub Pages uses `lean-opening`, root `/`.
 
 ## Current objective
 
-Publish the verified test-only RU / ± inspector and check the public build. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+RU / ± inspector is published and verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
 
 ## Translation and resource inspector — current stage
 
@@ -76,6 +76,8 @@ Publish the verified test-only RU / ± inspector and check the public build. Mai
 - Padel court/avatars use WebP (360,116 total bytes versus original ~7.9 MB); originals retained but unused. Preload once at Investor or direct Padel entry, low priority, no unrelated onboarding downloads. Framing/blur/color unchanged.
 - Canonical runtime data: `cards.json`; renderer: `app.js`; shared engine `game.js` unchanged. After app/CSS/engine/cards changes run `node scripts/build-offline-deck.cjs` for bundle and index content hashes. Run `node scripts/build-card-catalog.cjs` after card data/copy changes. Catalog now lists all Influencer outcome entry effects and contextual effects.
 
+- Public Pages build `d4486d72dffd54e6d070b5c66b346235f48e2979` succeeded. `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/test-card-details.browser.test.cjs`: 2/2 passed, including main/test visibility, every active card at both mobile sizes, resource effects and read-only behavior.
+
 ## Previous resource verification
 
 - Default burn implementation `7e5cda4eab7312974b6d2991387989a2e4dd784d`: 50 unit checks and 28 browser checks passed before publication; public cross-branch regression passed. Current inspector batch reruns the relevant burn/Influencer/Padel/runtime regressions.
@@ -91,5 +93,5 @@ Publish the verified test-only RU / ± inspector and check the public build. Mai
 
 ## Next steps
 
-1. Commit/publish the inspector, verify Pages commit and run the inspector regression against the public URL. Then continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
+1. Continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
 2. Future publications: atomically push without force to all three branches, verify Pages commit/status and both public URLs.
