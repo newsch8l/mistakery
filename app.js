@@ -78,6 +78,7 @@
   const presentedOutcomes = new WeakSet();
   let choiceUnlockTimer = null;
   let cardTypingTimer = null;
+  let cancelOutcomeImageMotion = () => {};
   let padelImagesPreloaded = false;
   const INITIAL_RESOURCES = Object.freeze({ cash: 25, team: 60, customers: 15, founder: 65 });
   const OPTIMISTIC_RESOURCES = Object.freeze({ cash: 100, team: 100, customers: 100, founder: 100 });
@@ -152,6 +153,7 @@
   let continuationResizeObserver;
 
   function setView(view, shellStage = 'real') {
+    cancelOutcomeImageMotion();
     if ($('[data-test-details]').open) $('[data-test-details]').close();
     window.clearTimeout(cardTypingTimer);
     continuationResizeObserver?.disconnect();
@@ -188,7 +190,12 @@
 
   function unlockAfterChoice() {
     window.clearTimeout(choiceUnlockTimer);
-    choiceUnlockTimer = window.setTimeout(() => { app.locked = false; }, 280);
+    const tone = engine.cardById(app.deck, app.state.currentCardId)?.outcomeTone;
+    // Cover the entrance (900 ms success / 620 ms failure) and swallow a second tap.
+    // A bounded timer also works when CSS motion is disabled or interrupted.
+    const delay = !tone ? 280 : window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 550 : tone === 'success' ? 950 : 670;
+    choiceUnlockTimer = window.setTimeout(() => { app.locked = false; }, delay);
   }
 
   function backInStoryTest() {
@@ -751,6 +758,29 @@
     // Flush the cleared class so consecutive outcomes also get one entrance.
     void phone.offsetWidth;
     phone.classList.add('is-outcome-entering');
+    if (card.outcomeTone === 'catastrophic') stageOutcomeImageMotion();
+  }
+
+  function stageOutcomeImageMotion() {
+    const image = $('[data-chat] .message-image');
+    const state = app.state;
+    if (!image || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let cancelled = false;
+    const timeout = window.setTimeout(cancel, 2500);
+    function cancel() {
+      cancelled = true;
+      window.clearTimeout(timeout);
+      image.classList.remove('is-outcome-image-ready');
+    }
+    cancelOutcomeImageMotion = cancel;
+    // Decode waits for actual pixels, including a cold/slow image request.
+    // Navigation cancels this scope; a timeout/error simply omits this decoration.
+    image.decode().then(() => {
+      if (cancelled || app.state !== state || app.view !== 'playing' || !image.isConnected
+        || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      window.clearTimeout(timeout);
+      image.classList.add('is-outcome-image-ready');
+    }).catch(cancel);
   }
 
   function keepDeliveryVisible(node) {

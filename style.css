@@ -699,7 +699,7 @@ button { font: inherit; }
 .phone[data-outcome="catastrophic"].is-outcome-entering .scene--card {
   animation: outcomeJolt .36s ease-out;
 }
-.phone[data-outcome="catastrophic"].is-outcome-entering .message-image {
+.phone[data-outcome="catastrophic"].is-outcome-entering .message-image.is-outcome-image-ready {
   animation: outcomeSignal .42s steps(1, end);
 }
 .irl-scene > .outcome-glow {
@@ -764,9 +764,11 @@ button { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .typing-bubble, .typing-bubble i { animation: none; }
+  .typing-bubble i { opacity: .65; transform: none; }
   .phone[data-outcome].is-outcome-entering .scene--card,
   .phone[data-outcome].is-outcome-entering .scene--card::before,
   .phone[data-outcome].is-outcome-entering .scene--card::after,
   .phone[data-outcome].is-outcome-entering .outcome-glow,
-  .phone[data-outcome].is-outcome-entering .message-image { animation: none; }
+  .phone[data-outcome].is-outcome-entering .message-image.is-outcome-image-ready { animation: none; }
 }

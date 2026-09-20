@@ -4,13 +4,24 @@
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
 - Implementation commit: `d4486d72dffd54e6d070b5c66b346235f48e2979` (RU / ± inspector). Atomically pushed to all three branches; Pages build succeeded at this commit.
-- Working tree was clean after implementation publication; this documentation update records the successful public checks.
+- Base: `77b01e6a9f952258eea5f7b7f4ca1508af6dd7b1`; all three remote branches matched before publication. Verified mobile-motion fixes are awaiting commit/publication. Working-tree changes: app/CSS/hash, focused browser tests, audit/evidence, plan and this handoff.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
 - User authorized commit/push/publication. Atomically push without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. GitHub Pages uses `lean-opening`, root `/`.
 
 ## Current objective
 
-RU / ± inspector is published and verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+RU / ± inspector is published and verified. Mobile animation fixes implemented and verified locally; publish and verify public build. Physical user phone/browser/reduced-motion setting still unknown. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+
+## Mobile animation fixes — latest stage
+
+- `app.js`: only the catastrophic image effect waits for actual decode (maximum 2.5 s). Scene/status remain immediate. Render/navigation cancels pending work; stale, failed, timed-out, hidden-document or reduced-motion completion cannot start image motion.
+- Existing post-choice lock now protects actual outcome arrivals for 950 ms success / 670 ms failure, or 550 ms with reduced motion. Other choices remain 280 ms. Back/Restart immediately clear locks and never replay restored outcomes.
+- `style.css`: reduced-motion typing bubble/dots are static, at stable opacity .65. Normal dots retain their 1.1 s cycle, message pauses unchanged. Outcome motion remains disabled under the system accessibility preference, with existing color/status preserved.
+- Canonical cards, resources, routes, probabilities, English/Russian copy and shared engine unchanged. Asset content hashes regenerated in `index.html`.
+- Plan: `docs/plans/2026-09-20-mobile-motion-fixes.md`; regression: `tests/mobile-motion.browser.test.cjs` (supports `MISTAKERY_TEST_URL`). Earlier audit/evidence retained under `docs/audits/` as baseline findings, not current defects.
+- Test-first: all 6 new tests failed on the three expected bugs in both engines before implementation, then all 6 passed. Chromium/Pixel 7 and WebKit/iPhone 13: reduced/normal typing, raw repeated touch, resource/history preservation, Back/Restart, delayed successful decode, navigation cancellation, reduced-motion change, timeout and failed image.
+- Existing outcome/innovation-typing/legal-typing/continuation-focus/story-test-mode/passive-cash/test-card-details batch: 9/9 passed. Offline/personal-chat-runtime/live-agent unit batch: 22/22 passed. Syntax and whitespace checks passed. Independent review found no issues; WebKit screenshots inspected.
+- These are desktop-engine mobile emulations, not physical-device tests. Actual phone FPS/power/refresh-rate behavior remains unverified.
 
 ## Translation and resource inspector — current stage
 
@@ -93,5 +104,5 @@ RU / ± inspector is published and verified. Continue user-directed playtesting.
 
 ## Next steps
 
-1. Continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
+1. Publish the verified fixes and run mobile-motion tests against Pages; then confirm behavior on the user’s actual phone. Preserve system accessibility preferences and Back semantics.
 2. Future publications: atomically push without force to all three branches, verify Pages commit/status and both public URLs.
