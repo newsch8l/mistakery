@@ -41,7 +41,7 @@ Influencer resource implementation is complete and publicly verified. Continue u
 - 04 is the neutral photo interlude; 04B has the attitude choice. 07 is the neutral manifesto exchange; 07B has the contract decision. Exact accepted copy is in cards/catalog.
 - Scoped chat continuity ONLY: 01→02, 03→04→04B, 07→07B. Keep last two bubbles, actual outgoing reply, then current messages. No divider, no global extension. History derives from engine history and does not duplicate/reanimate.
 - Fit entire media bubbles at original aspect ratio, with captions, no cropping or gray side bars. Disable media width transitions. ResizeObserver skips unchanged initial size so Back preserves scroll.
-- Typing pauses: 03, 04, 05, 06, 07; 07B has sequential pauses after its first two bubbles. Preserve delivery deadline on rerender; navigation cancels timers; Back restores completed delivery. Scroll only enough to reveal active typing/final message; older reply may scroll above viewport. Choices unlock after final delivery.
+- Typing pauses: 03, 05, 06, 07; 07B has sequential pauses after its first two bubbles. Preserve delivery deadline on rerender; navigation cancels timers; Back restores completed delivery. Scroll only enough to reveal active typing/final message; older reply may scroll above viewport. Choices unlock after final delivery.
 - Shared terminal-period rule omits final periods but preserves internal punctuation/ellipses. Message text 12.2px, inline mentions system-ui 550. Stable muted nickname colors; role labels gray. Outcome 3 uses two forwarded messages with source labels/inset rule and a corporate reply.
 
 ## Outcome presentation and assets
