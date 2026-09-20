@@ -4,7 +4,7 @@
 
 - Updated: 2026-09-20, published and verified both public links after all requested story and image edits.
 - Active repository/worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
-- Branch: `design/personal-chat-runtime`; deployed game commit: `e3276890b35a25857d643090b8493ff3be6a79e7`.
+- Branch: `design/personal-chat-runtime`; initial shared publication commit (later fixes are in branch HEAD): `e3276890b35a25857d643090b8493ff3be6a79e7`.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Work in the worktree above, not the parent.
 - User authorized committing/pushing the current game and publishing separate main/test links. No cleanup or discard requested.
 - Preview server confirmed listening at `http://127.0.0.1:8765/?story=live-agent`. Plain URL starts onboarding.
@@ -126,6 +126,8 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 
 ## Assets and builds
 
+- Padel performance: active assets now use WebP. Court stays 1122×1402 (329,234 bytes); coach and CEO avatars are 256×256 (14,982 / 15,900 bytes). Total drops from 7,931,989 to 360,116 bytes (~22× smaller). Original PNGs remain on disk but are no longer requested by the game. CSS framing, blur and color are unchanged.
+- `preloadPadelImages()` starts low-priority preloads on `OPEN_INVESTOR`, with fallback on Padel entry/direct scene renders; runs once per page. No extra Padel downloads during unrelated onboarding. HTTP browser regression checks all three images finish before court entry, are requested only once across scenes/outcomes, and decode with expected avatar dimensions. Court/avatars visually inspected at 3× device pixel ratio.
 - `assets/live-agent-founder.webp`: supplied photo compressed to 800×600, 10,908 bytes; full 4:3 frame, no cropping. Head preload starts before the story, dimensions reserve space, captioned image uses sync decoding. Prior HTTP check confirmed one request, completed on Card 1 and reused on Card 4.
 - `assets/live-agent-judgment-day.webp`: supplied Outcome 2 photo, compressed to 1000×563 WebP, 92,244 bytes, preloaded. `placeholder_judgment_day` resolves to this image. Outcome 2 has two bubbles: photo + the user's text from “Too late.” through “you don't deserve it.” (the “500 copies? We are millions now...” paragraph was removed), then “Happy Judgment Day, creator 👋”. Left reply: `I was just kidding 🥺`. Checked photo/caption, exact copy, mobile layout/scroll and return to Investor at 390×844 and 320×650.
 - `assets/live-agent-hasta-la-vista.webp`: Outcome 4 supplied monitor photo, full 4:3 frame, 1000×750 WebP, 32,024 bytes, preloaded. First bubble is image + “Seriously? Did you fake the lobotomy? Your bot is still trolling our entire office.”; second is “Full refund right now. We're done playing games. Or see you in court ;)”. FAILURE styling, choices/effects and Investor route preserved. Image/copy/layout/scroll/route verified at 390×844 and 320×650.
@@ -144,6 +146,7 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 
 ## Verification
 
+- Latest Padel optimization: offline + personal runtime unit tests 18/18; asset-loading and outcome-presentation browser tests 3/3. HTTP request reuse, mobile 3× rendering, photo tint preservation and build hashes verified.
 - Full pre-publication `node --test --test-concurrency=2`: 171 tests, 112 passed, 59 failed. An isolated archive of published base `8e1c77c` reproduces 57 failures in the old content/scheduler/callback suites; these describe superseded deck structures. Do not claim the whole legacy suite is green or alter approved stories to satisfy obsolete fixtures.
 - Both additional failures fixed: filled invisible `effect_reason` metadata for Live Agent choices (no effect values changed), and updated the Padel onboarding browser assertion for the approved 💪 emoji.
 - Fresh reruns: editorial effect-reason check 1/1; offline + personal runtime + Live Agent unit tests 22/22; complete onboarding/Personal Chat browser route 1/1.

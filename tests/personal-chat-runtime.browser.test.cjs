@@ -129,7 +129,7 @@ async function assertIrlPadelScene(page) {
   assert.equal(await page.locator('[data-scene]').evaluate((node) => node.classList.contains('irl-scene')), true);
   assert.equal(await page.locator('[data-sender]').textContent(), 'Padel coach');
   assert.equal(await page.locator('[data-status]').textContent(), '');
-  await assertIrlAvatar(page, 'assets/irl-padel-coach-avatar.png');
+  await assertIrlAvatar(page, 'assets/irl-padel-coach-avatar.webp');
   assert.equal(await page.locator('[data-pinned]').evaluate((node) => node.classList.contains('irl-location')), true);
   assert.equal(await page.locator('[data-pinned] .pin').textContent(), '📍');
   assert.equal(await page.locator('[data-pinned] small').textContent(), 'IRL · PADEL CLUB');
@@ -180,7 +180,7 @@ async function assertIrlPadelScene(page) {
   assert.ok(Math.abs(geometry.dialogCenterDelta) < 0.75, JSON.stringify(geometry));
   assert.ok(geometry.locationToDialog >= 0, JSON.stringify(geometry));
   assert.ok(geometry.dialogToChoices >= 0, JSON.stringify(geometry));
-  assert.match(geometry.backgroundImage, /irl-padel-court\.png/);
+  assert.match(geometry.backgroundImage, /irl-padel-court\.webp/);
   assert.match(geometry.backgroundImage, /rgba\(7, 20, 32, 0\.12\)[\s\S]*rgba\(7, 20, 32, 0\.22\) 48%[\s\S]*rgba\(7, 20, 32, 0\.38\)/);
   assert.equal(geometry.backgroundFilter, 'blur(1.8px) saturate(0.88)');
   assert.match(geometry.backgroundPosition, /50% 54%/);
@@ -1031,7 +1031,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_04',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'Score: 0–0',
       lines: ['We skip the side switching.', 'You won’t melt after a couple of sets in the sun, right?'],
       choices: ['Happy to take it', "Let's stick to rules"],
@@ -1041,7 +1041,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_05',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'Score: 4–4',
       lines: ['THAT BALL WAS OUT! Are you blind???', 'Don’t even try to cheat me. That’s my point'],
       choices: ['Definitely out, my bad', "No way, that's in"],
@@ -1051,7 +1051,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_06',
       sender: 'Padel coach',
-      avatarSrc: 'assets/irl-padel-coach-avatar.png',
+      avatarSrc: 'assets/irl-padel-coach-avatar.webp',
       score: 'Score: 5–5 · 40–40 · DECIDING POINT',
       lines: ['Match point, bro. Give him the win.', "The best shot right now is the one you don't take"],
       choices: ["I'll throw it, coach", 'Fighting till the end'],
@@ -1062,7 +1062,7 @@ test('approved onboarding and Saved Messages lead into the six-card opening', as
     await assertIrlCardContent(page, {
       id: 'PADEL_OUTCOME_3',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'YOU LOST THE MATCH',
       lines: ['Easiest win of my life.', 'It was almost cute watching you panic on match point.', 'Knew you were soft from the start. Get off my court'],
       choices: ['Just let you win!', 'So... about the deal?'],
@@ -1199,7 +1199,7 @@ test('compact viewport keeps the right opening branch inside the approved runtim
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_03B',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'Score: 0–0',
       lines: ['Who let a pop-up ad onto my court?', 'Go fetch the balls and grab my water before I replace your whole startup with one prompt'],
       choices: ['Getting your water', 'Business after the match'],
@@ -1209,7 +1209,7 @@ test('compact viewport keeps the right opening branch inside the approved runtim
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_04',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'Score: 0–0',
       lines: ['We skip the side switching.', 'You won’t melt after a couple of sets in the sun, right?'],
       choices: ['Happy to take it', "Let's stick to rules"],
@@ -1219,7 +1219,7 @@ test('compact viewport keeps the right opening branch inside the approved runtim
     await assertIrlCardContent(page, {
       id: 'IRL_PADEL_05',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'Score: 4–4',
       lines: ['THAT BALL WAS OUT! Are you blind???', 'Don’t even try to cheat me. That’s my point'],
       choices: ['Definitely out, my bad', "No way, that's in"],
@@ -1229,7 +1229,7 @@ test('compact viewport keeps the right opening branch inside the approved runtim
     await assertIrlCardContent(page, {
       id: 'PADEL_OUTCOME_7',
       sender: 'ClosedAI CEO',
-      avatarSrc: 'assets/irl-closedai-ceo-avatar.png',
+      avatarSrc: 'assets/irl-closedai-ceo-avatar.webp',
       score: 'MATCH ABORTED',
       lines: ['MATCH OVER! I am SO done with this.', 'Bitching and crying over every single point.', 'Know your place, nobody. You’re blacklisted everywhere'],
       choices: ["Who's crying now?", "I'll do anything, please!"],

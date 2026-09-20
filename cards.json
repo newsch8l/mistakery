@@ -154,7 +154,7 @@
     "@padel_pro": {
       "name": "@padel_pro",
       "irlName": "Padel coach",
-      "irlAvatar": "assets/irl-padel-coach-avatar.png",
+      "irlAvatar": "assets/irl-padel-coach-avatar.webp",
       "role": "Padel Coach"
     },
     "dream_team": {
@@ -169,7 +169,7 @@
     "@iclosedai": {
       "name": "@iclosedai",
       "irlName": "ClosedAI CEO",
-      "irlAvatar": "assets/irl-closedai-ceo-avatar.png",
+      "irlAvatar": "assets/irl-closedai-ceo-avatar.webp",
       "role": "ClosedAI CEO"
     },
     "@wmwerke": {

@@ -324,8 +324,8 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   assert.equal(canonicalDeck.sources.dream_team.role, '6 members · 3 online');
   assert.equal(canonicalDeck.sources['@padel_pro'].irlName, 'Padel coach');
   assert.equal(canonicalDeck.sources['@iclosedai'].irlName, 'ClosedAI CEO');
-  assert.equal(canonicalDeck.sources['@padel_pro'].irlAvatar, 'assets/irl-padel-coach-avatar.png');
-  assert.equal(canonicalDeck.sources['@iclosedai'].irlAvatar, 'assets/irl-closedai-ceo-avatar.png');
+  assert.equal(canonicalDeck.sources['@padel_pro'].irlAvatar, 'assets/irl-padel-coach-avatar.webp');
+  assert.equal(canonicalDeck.sources['@iclosedai'].irlAvatar, 'assets/irl-closedai-ceo-avatar.webp');
   assert.equal(fs.existsSync(path.join(root, canonicalDeck.sources['@padel_pro'].irlAvatar)), true);
   assert.equal(fs.existsSync(path.join(root, canonicalDeck.sources['@iclosedai'].irlAvatar)), true);
 
@@ -457,7 +457,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   canonicalDeck.cards.filter((card) => padelIds.has(card.id)).forEach((card) => {
     Object.values(card.choices).forEach((choice) => assert.deepEqual(choice.effects, {}));
   });
-  assert.equal(fs.existsSync(path.join(root, 'assets', 'irl-padel-court.png')), true);
+  assert.equal(fs.existsSync(path.join(root, 'assets', 'irl-padel-court.webp')), true);
 });
 
 test('onboarding and Saved Messages retain the approved copy and stages', () => {
@@ -524,8 +524,8 @@ test('CSS matches the approved phone, typography, Quiet Glass, and shadow spacin
   assert.doesNotMatch(css, /\.irl-location\s+\.pin\s*\{/);
   assert.match(css, /\.irl-scene\s*\{[^}]*background:\s*#d2dbe1;/s);
   assert.match(css, /\.irl-scene::before\s*\{[^}]*background:\s*#d2dbe1;/s);
-  assert.match(css, /url\(["']assets\/irl-padel-court\.png["']\)/);
-  assert.match(css, /\.irl-scene::after\s*\{[^}]*inset:\s*1px;[^}]*background:\s*linear-gradient\(180deg,\s*rgba\(7,\s*20,\s*32,\s*\.12\),\s*rgba\(7,\s*20,\s*32,\s*\.22\)\s*48%,\s*rgba\(7,\s*20,\s*32,\s*\.38\)\),\s*url\(["']assets\/irl-padel-court\.png["']\)\s*center\s*54%\s*\/\s*cover\s*no-repeat;[^}]*filter:\s*blur\(1\.8px\)\s*saturate\(\.88\);[^}]*clip-path:\s*inset\(0\s*round\s*25px\);/s);
+  assert.match(css, /url\(["']assets\/irl-padel-court\.webp["']\)/);
+  assert.match(css, /\.irl-scene::after\s*\{[^}]*inset:\s*1px;[^}]*background:\s*linear-gradient\(180deg,\s*rgba\(7,\s*20,\s*32,\s*\.12\),\s*rgba\(7,\s*20,\s*32,\s*\.22\)\s*48%,\s*rgba\(7,\s*20,\s*32,\s*\.38\)\),\s*url\(["']assets\/irl-padel-court\.webp["']\)\s*center\s*54%\s*\/\s*cover\s*no-repeat;[^}]*filter:\s*blur\(1\.8px\)\s*saturate\(\.88\);[^}]*clip-path:\s*inset\(0\s*round\s*25px\);/s);
   assert.doesNotMatch(css, /\.irl-scene::after\s*\{[^}]*(?:border-radius:\s*24px|box-shadow:)/s);
   assert.match(css, /\.irl-dialog p\s*\{[^}]*font-size:\s*var\(--message-font-size\);[^}]*font-weight:\s*400;[^}]*line-height:\s*1\.38;/s);
 });

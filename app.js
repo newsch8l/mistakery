@@ -78,6 +78,7 @@
   const presentedOutcomes = new WeakSet();
   let choiceUnlockTimer = null;
   let cardTypingTimer = null;
+  let padelImagesPreloaded = false;
   const INITIAL_RESOURCES = Object.freeze({ cash: 25, team: 60, customers: 15, founder: 65 });
   const OPTIMISTIC_RESOURCES = Object.freeze({ cash: 100, team: 100, customers: 100, founder: 100 });
   const INTRO_TYPING_MS = 620;
@@ -641,6 +642,24 @@
     return reply;
   }
 
+  function preloadPadelImages() {
+    if (padelImagesPreloaded) return;
+    padelImagesPreloaded = true;
+    for (const src of [
+      'assets/irl-padel-court.webp',
+      sourceFor('@padel_pro').irlAvatar,
+      sourceFor('@iclosedai').irlAvatar,
+    ]) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.type = 'image/webp';
+      link.fetchPriority = 'low';
+      link.href = src;
+      document.head.append(link);
+    }
+  }
+
   function renderIrlCard(card) {
     const source = sourceFor(card.source);
     const name = source.irlName || source.name;
@@ -656,6 +675,9 @@
     const card = engine.cardById(app.deck, app.state.currentCardId);
     if (!card || !ACTIVE_CARD_IDS.includes(card.id)) {
       throw new Error(`Disabled card cannot enter the Personal Chat runtime: ${app.state.currentCardId}`);
+    }
+    if (card.id === 'OPEN_INVESTOR' || card.id === 'DREAM_TEAM' || card.id.startsWith('PADEL_') || card.id.startsWith('IRL_PADEL_')) {
+      preloadPadelImages();
     }
     const complete = app.view === 'irl-complete';
     setView(complete ? 'irl-complete' : 'playing', 'real');

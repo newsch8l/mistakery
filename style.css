@@ -477,7 +477,7 @@ button { font: inherit; }
   inset: 1px;
   background:
     linear-gradient(180deg, rgba(7, 20, 32, .12), rgba(7, 20, 32, .22) 48%, rgba(7, 20, 32, .38)),
-    url("assets/irl-padel-court.png") center 54% / cover no-repeat;
+    url("assets/irl-padel-court.webp") center 54% / cover no-repeat;
   filter: blur(1.8px) saturate(.88);
   clip-path: inset(0 round 25px);
 }
