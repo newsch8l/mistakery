@@ -152,6 +152,7 @@
   let continuationResizeObserver;
 
   function setView(view, shellStage = 'real') {
+    if ($('[data-test-details]').open) $('[data-test-details]').close();
     window.clearTimeout(cardTypingTimer);
     continuationResizeObserver?.disconnect();
     app.view = view;
@@ -168,6 +169,7 @@
     $('[data-app]').classList.toggle('is-story-test', storyTestEnabled);
     $('[data-test-controls]').hidden = !storyTestEnabled;
     $('[data-test-back]').disabled = testHistory.length === 0;
+    $('[data-test-inspect]').disabled = !['playing', 'saved'].includes(view);
   }
 
   function recordTestStep() {
@@ -1094,11 +1096,93 @@
     else renderCard();
   }
 
+  function showTestDetails() {
+    if (!storyTestEnabled || !['playing', 'saved'].includes(app.view)) return;
+    const id = app.view === 'saved' ? NOTE_SCREENS[app.noteIndex].id : app.state.currentCardId;
+    const translation = app.deck.testTranslations[id];
+    const card = app.view === 'playing' ? engine.cardById(app.deck, id) : null;
+    const body = $('[data-details-body]');
+    body.replaceChildren();
+    $('[data-details-id]').textContent = id;
+    function add(parent, tag, text, className) {
+      const node = document.createElement(tag);
+      node.textContent = text;
+      if (className) node.className = className;
+      parent.append(node);
+      return node;
+    }
+    function effectsText(effects) {
+      return engine.RESOURCE_KEYS.filter(key => effects[key]).map(key => {
+        const amount = effects[key];
+        return `${app.deck.resources[key].label} ${amount > 0 ? '+' : '−'}${String(Math.abs(amount)).replace('.', ',')}`;
+      }).join(' · ') || 'Без изменений';
+    }
+    function totalEffects(choice, target) {
+      return Object.fromEntries(engine.RESOURCE_KEYS.map(key => {
+        const before = app.state.resources[key];
+        const after = target?.resetResources === 0 ? 0 : Math.max(0, Math.min(100,
+          before + (choice.effects[key] || 0) + (target?.outcomeEffects?.[key] || 0)
+          + (key === 'cash' ? app.deck.meta.baseCashBurn : 0)));
+        return [key, after - before];
+      }));
+    }
+    const translated = add(body, 'div', translation.text, 'test-details__translation');
+    translated.dataset.detailsTranslation = '';
+    const provenance = add(body, 'p', translation.source
+      ? (translation.adapted ? 'Перевод из документа, адаптирован к текущей карте. ' : 'Перевод по документу. ')
+      : 'Перевод текущего английского текста; в документах нет полного русского варианта.', 'test-details__note');
+    if (translation.source) {
+      const source = add(provenance, 'a', 'Источник');
+      source.href = translation.source;
+      source.target = '_blank';
+      source.rel = 'noopener noreferrer';
+    }
+    const labels = translation.contextual?.[app.influencerPreviousCardId] || translation;
+    if (!card) {
+      add(body, 'p', 'Навигация не меняет ресурсы.', 'test-details__note');
+      for (const [index, side] of ['left', 'right'].entries()) add(body, 'p', `${index + 1}. ${labels[side]}`);
+    } else {
+      add(body, 'p', `Каждый ответ: ${effectsText({ cash: app.deck.meta.baseCashBurn })}. Итог учитывает пределы 0–100. Просмотр не делает ход.`, 'test-details__note');
+      if (card.outcomeEffects) {
+        const entry = add(body, 'section', '', 'test-details__entry');
+        entry.dataset.detailsEntry = '';
+        add(entry, 'h3', 'Эффект при входе в этот исход');
+        add(entry, 'p', card.resetResources === 0 ? 'Все ресурсы → 0' : effectsText(card.outcomeEffects));
+        add(entry, 'p', 'В обычном прохождении уже учтён на предыдущем ходе. Ответ ниже не применяет его повторно.', 'test-details__note');
+      }
+      const choices = influencerChoicesFor(card);
+      for (const [index, side] of ['left', 'right'].entries()) {
+        const choice = choices[side];
+        const section = add(body, 'section', '', 'test-details__choice');
+        section.dataset.detailsChoice = side;
+        add(section, 'h3', `${index + 1}. ${labels[side]}`);
+        add(section, 'p', engine.getChoiceLabel(choice, app.state.resources.founder), 'test-details__note');
+        add(section, 'p', `Эффект выбора: ${effectsText(choice.effects)}`);
+        const targets = card.arc === 'influencer' ? influencerChoiceTargets(card, side)
+          : card.id === 'PADEL_INVITE' || card.id.startsWith('IRL_PADEL_') ? padelChoiceTargets(card, side)
+          : choice.outcomeRoll ? [choice.outcomeRoll.win, choice.outcomeRoll.lose] : [choice.next];
+        const outcomes = targets.map(targetId => engine.cardById(app.deck, targetId)).filter(target => target?.outcomeEffects);
+        if (!outcomes.length) add(section, 'p', `Изменение сейчас: ${effectsText(totalEffects(choice))}`);
+        for (const target of outcomes) {
+          const outcome = add(section, 'div', '', 'test-details__outcome');
+          outcome.dataset.detailsOutcome = target.id;
+          add(outcome, 'small', target.id);
+          add(outcome, 'p', `${outcomes.length > 1 ? 'Возможный исход' : 'Следующий исход'}: ${target.resetResources === 0 ? 'Все ресурсы → 0' : effectsText(target.outcomeEffects)}`);
+          add(outcome, 'p', `Изменение за весь ход: ${effectsText(totalEffects(choice, target))}`);
+        }
+      }
+    }
+    $('[data-test-details]').showModal();
+    body.scrollTop = 0;
+  }
+
   $('[data-pinned]').addEventListener('click', () => {
     if ($('[data-pinned]').classList.contains('irl-location')) return;
     $('[data-pin-sheet]').hidden = false;
   });
   $('[data-test-back]').addEventListener('click', backInStoryTest);
+  $('[data-test-inspect]').addEventListener('click', showTestDetails);
+  $('[data-details-close]').addEventListener('click', () => $('[data-test-details]').close());
   $('[data-test-restart]').addEventListener('click', startStoryTest);
   $('[data-pin-close]').addEventListener('click', () => { $('[data-pin-sheet]').hidden = true; });
   $('[data-pin-sheet]').addEventListener('click', (event) => {
@@ -1117,6 +1201,7 @@
   });
 
   document.addEventListener('keydown', (event) => {
+    if ($('[data-test-details]').open) return;
     if (event.key === 'Escape') $('[data-pin-sheet]').hidden = true;
     if (app.view !== 'playing') return;
     if (event.key === 'ArrowLeft') $('[data-choice="left"]')?.click();

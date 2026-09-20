@@ -3,14 +3,30 @@
 ## Verified snapshot
 
 - Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
-- Implementation commit: `7e5cda4eab7312974b6d2991387989a2e4dd784d` (default Cash −0.5 each turn). Influencer resources: `de3a4be0c0968085d3333ee0f212e313825b531a`; Padel resources: `92743973a0c102267420529d5c961ebeaaa9e678`.
-- Implementation was committed and atomically pushed without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. Working tree was clean before this handoff update.
+- Base commit for this stage: `2c7927c51d958be2ad5e70054de6ee2ffd7222a7`; all three remote branches matched before publication. RU / ± implementation is verified locally and awaiting commit/publication.
+- Material working-tree changes: runtime/UI, translation metadata, generated bundle/catalog/hash, catalog builder, implementation plan and browser regression; this status file records the stage.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
-- User authorized commit/push/publication. GitHub Pages uses `lean-opening`, root `/`; default-burn implementation build completed successfully (`7e5cda4eab7312974b6d2991387989a2e4dd784d`). Both public URLs and the cross-branch Cash-burn regression were verified in Chromium.
+- User authorized commit/push/publication. Atomically push without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. GitHub Pages uses `lean-opening`, root `/`.
 
 ## Current objective
 
-Default Cash burn of 0.5 per gameplay turn is complete and publicly verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+Publish the verified test-only RU / ± inspector and check the public build. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
+
+## Translation and resource inspector — current stage
+
+- Test toolbar has RU / ±. Its native modal shows the current card's Russian text, both translated replies and current English labels, direct choice effects, possible outcome effects and actual total change including default Cash −0.5 and clamping. An already reached outcome's entry effect is displayed separately and never applied again.
+- Available only in test mode, including Saved Messages. Opening/closing does not advance a turn, consume RNG or change resources/history. Native focus trapping, Escape and blocked gameplay arrows keep the background inactive. Mobile layout checked at 390×844 and 320×650.
+- `cards.json.testTranslations` contains all 52 active cards plus 2 Saved screens, contextual Influencer replies, source links and adaptation flags. This is the only canonical deck change; all existing English/game data match the base exactly.
+- Full source documents read: Live Agent https://docs.google.com/document/d/1K5rt9p63YyMBYOTXmyPhddnjg8vkPiEPH2024HUtVRo/edit , Influencer and Padel links below. Old document variants were aligned to current English. Opening/Saved/Live Agent outcome 0 translations were supplied from current English and explicitly marked as lacking a full Russian source.
+- `app.js` implements read-only inspection using current contextual choices and candidate helpers; `index.html`/`style.css` add scoped controls/modal. `scripts/build-card-catalog.cjs` uses the same metadata for `MISTAKERY_CARDS_EN_RU.md`; bundle and content hashes regenerated.
+- Plan: `docs/plans/2026-09-20-test-card-details.md`. Regression: `tests/test-card-details.browser.test.cjs`, supports `MISTAKERY_TEST_URL` for public verification.
+
+## Fresh inspector verification
+
+- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`: 22/22 passed. After final catalog regeneration, offline checks rerun: 10/10 passed.
+- `node --test --test-concurrency=3 tests/test-card-details.browser.test.cjs tests/story-test-mode.browser.test.cjs tests/passive-cash.browser.test.cjs tests/influencer-resources.browser.test.cjs tests/padel-resources.browser.test.cjs tests/resource-preview.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs`: 25/25 passed. Final targeted inspector rerun: 2/2 passed.
+- Covers every active card at both mobile sizes, missing/obsolete translation checks, contextual replies, direct/random/early outcomes, exact totals and clamping, reset-to-zero, Saved navigation, no RNG/history/resource changes, focus and Escape.
+- Independent reviewer found no significant issues. Mechanical deck comparison confirms unchanged gameplay data/English. Catalog translation coverage, syntax, generated assets and `git diff --check` passed. Mobile screenshots visually inspected.
 
 ## Default Cash burn — current stage
 
@@ -60,26 +76,10 @@ Default Cash burn of 0.5 per gameplay turn is complete and publicly verified. Co
 - Padel court/avatars use WebP (360,116 total bytes versus original ~7.9 MB); originals retained but unused. Preload once at Investor or direct Padel entry, low priority, no unrelated onboarding downloads. Framing/blur/color unchanged.
 - Canonical runtime data: `cards.json`; renderer: `app.js`; shared engine `game.js` unchanged. After app/CSS/engine/cards changes run `node scripts/build-offline-deck.cjs` for bundle and index content hashes. Run `node scripts/build-card-catalog.cjs` after card data/copy changes. Catalog now lists all Influencer outcome entry effects and contextual effects.
 
-## Fresh default-burn verification
+## Previous resource verification
 
-- Base before this stage: `c521b65ab103ca10fd37f7ff7b1dd30b33117725`; all three remote branches matched before publication.
-- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs tests/engine.test.cjs`: 50/50 pass.
-- `node --test --test-concurrency=3 tests/passive-cash.browser.test.cjs tests/influencer-resources.browser.test.cjs tests/padel-resources.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs tests/live-agent.browser.test.cjs tests/resource-preview.browser.test.cjs tests/story-test-mode.browser.test.cjs tests/chat-continuity.browser.test.cjs tests/forwarded-messages.browser.test.cjs`: 28/28 pass (~148 seconds).
-- New regression verifies every gameplay resolver, explicit Cash costs plus default burn, neutral/outcome replies, one history entry, fractional resource display, read-only hover/render, Back refund, two neutral turns costing exactly 1 Cash, and zero boundaries at turn 10000 without crises/endings.
-- Independent review found no issues. Generated bundle/catalog/hash, syntax and whitespace checks pass. Canonical change is only `meta.baseCashBurn`; all explicit story effects and probabilities are preserved.
-
-- Public build `7e5cda4eab7312974b6d2991387989a2e4dd784d` succeeded. `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/passive-cash.browser.test.cjs`: 1/1 pass across every resolver, fractional Cash, Back and zero boundaries. Both URLs return 200, load the exact canonical deck with −0.5 burn, and preserve their respective onboarding/Live Agent entry.
-
-## Previous Influencer verification (before default burn change)
-
-- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`: 22/22 pass.
-- `node --test --test-name-pattern='every visible resource effect' tests/content.test.cjs`: 1/1 pass.
-- `node --test --test-concurrency=2 tests/influencer-resources.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs tests/padel-resources.browser.test.cjs tests/live-agent.browser.test.cjs tests/resource-preview.browser.test.cjs tests/outcome-presentation.browser.test.cjs`: 25/25 pass (about 147 seconds).
-- New tests cover all decision/context effects, seven outcomes, refusal cash 0/10/25/40, zero/1/99/100 boundary cases, turn 100 without crisis/game-over, combined history deltas, neutral outcome replies, hover/focus/2px lift without RNG/state changes, exact .399999/.4 boundaries, rerender and Back. Checked at 390×844 and 320×650.
-- Regression batch covers Padel probabilities/resources, Live Agent probabilities/resources, main onboarding, Influencer contextual routes/images/layout, and all outcome presentation/animation behavior.
-- Canonical bundle/catalog/hash regenerated. Syntax checks and `git diff --check` passed. Pre-change resource tests failed for expected missing effects/previews and active cash crisis, then passed with the implementation.
-
-- Public verification: all 4 Influencer resource tests pass against `https://newsch8l.github.io/mistakery/`, including contexts, all outcomes, exact RNG boundaries, previews/Back and zero resources without crises. Both main/test links return 200 with the exact local canonical deck and runtime; main starts onboarding, test starts LIVE_AGENT_01. Actual Investor → Influencer transition verified; no page/HTTP errors. Refusal preview screenshot visually inspected.
+- Default burn implementation `7e5cda4eab7312974b6d2991387989a2e4dd784d`: 50 unit checks and 28 browser checks passed before publication; public cross-branch regression passed. Current inspector batch reruns the relevant burn/Influencer/Padel/runtime regressions.
+- Influencer implementation `de3a4be0c0968085d3333ee0f212e313825b531a`; Padel `92743973a0c102267420529d5c961ebeaaa9e678`. Full resource fixtures and regression tests remain authoritative for exact values.
 
 ## Known issues and failed approaches
 
@@ -91,5 +91,5 @@ Default Cash burn of 0.5 per gameplay turn is complete and publicly verified. Co
 
 ## Next steps
 
-1. Continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
+1. Commit/publish the inspector, verify Pages commit and run the inspector regression against the public URL. Then continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
 2. Future publications: atomically push without force to all three branches, verify Pages commit/status and both public URLs.

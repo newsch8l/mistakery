@@ -123,7 +123,7 @@ const sections = [
 const lines = [
   '# Mistakery — полный каталог карточек EN/RU',
   '',
-  'Числовые эффекты ниже предназначены только для редакторской проверки. В самой игре игрок видит текущие проценты и подсветку затрагиваемых ресурсов, но не видит `+N/−N`.',
+  'Числовые эффекты ниже предназначены для редакторской проверки. В обычной игре игрок видит текущие проценты и подсветку ресурсов. В тестовой версии кнопка RU / ± показывает перевод и точные эффекты текущей карты.',
   '',
   'Каждый игровой ход во всех ветках дополнительно списывает 0,5 Cash, включая нейтральные ответы на исходах. Это списание применяется вместе с эффектами выбора и исхода, один раз, с ограничением ресурсов 0–100. Навигация и перерисовка ничего не списывают; кризисы отключены.',
   '',
@@ -137,7 +137,8 @@ for (const [title, predicate] of sections) {
   for (const card of cards) {
     catalogued.add(card.id);
     const englishLines = cardVisibleLines(card);
-    const translation = ru[card.id] || {
+    const reference = deck.testTranslations?.[card.id];
+    const translation = (reference && { ...reference, text: reference.text.split('\n') }) || ru[card.id] || {
       text: englishLines,
       left: card.choices.left.label,
       right: card.choices.right.label,
@@ -148,6 +149,9 @@ for (const [title, predicate] of sections) {
       ? '**RU — перевод не утверждён; сохранён точный EN**'
       : '**RU**';
     lines.push(`## ${card.id} — ${source.role} ${source.name}`, '', '**EN**', '', quote(englishLines, translation.exactEnglishOnly), '', translationHeading, '', quote(translation.text, translation.exactEnglishOnly), '');
+    if (reference) lines.push(reference.source
+      ? `Источник перевода: ${reference.source}${reference.adapted ? ' (адаптирован к текущей английской карте)' : ''}.`
+      : 'Перевод текущего английского текста; полный русский вариант в исходных документах отсутствует.', '');
     for (const side of ['left', 'right']) {
       const choice = card.choices[side];
       lines.push(`- **${choice.label} — ${translation[side]}**: ${effects(choice)}; ${route(choice)}.`);
@@ -160,7 +164,8 @@ for (const [title, predicate] of sections) {
     for (const [previousCardId, contextualChoices] of Object.entries(card.contextualChoices || {})) {
       for (const side of ['left', 'right']) {
         const choice = contextualChoices[side];
-        lines.push(`- **${choice.label} — ${choice.label}** (контекст после \`${previousCardId}\`; RU-перевод не утверждён): ${effects(choice)}; ${route(choice)}.`);
+        const translatedLabel = reference?.contextual?.[previousCardId]?.[side];
+        lines.push(`- **${choice.label} — ${translatedLabel || choice.label}** (контекст после \`${previousCardId}\`${translatedLabel ? '' : '; RU-перевод не утверждён'}): ${effects(choice)}; ${route(choice)}.`);
       }
     }
     lines.push('');

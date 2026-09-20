@@ -6,20 +6,21 @@
     <meta name="theme-color" content="#bdd5e8">
     <title>Mistakery</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="style.css?v=998f8cc19a58">
+    <link rel="stylesheet" href="style.css?v=11e39326dd84">
     <link rel="preload" as="image" type="image/webp" href="assets/live-agent-founder.webp" fetchpriority="high">
     <link rel="preload" as="image" type="image/webp" href="assets/live-agent-manifesto.webp?v=91aac6e47bbd">
     <link rel="preload" as="image" type="image/webp" href="assets/live-agent-judgment-day.webp">
     <link rel="preload" as="image" type="image/webp" href="assets/live-agent-hasta-la-vista.webp">
-    <script src="cards.bundle.js?v=5f3685a1608f" defer></script>
+    <script src="cards.bundle.js?v=8ccb40c8b95c" defer></script>
     <script src="game.js?v=4587f9034eb5" defer></script>
-    <script src="app.js?v=bc08fbf7785d" defer></script>
+    <script src="app.js?v=2c54454b8dfd" defer></script>
   </head>
   <body>
     <main class="app" data-app>
       <h1>Mistakery</h1>
       <nav class="test-controls" data-test-controls aria-label="Story testing" hidden>
         <span>Test mode</span>
+        <button type="button" data-test-inspect aria-label="Перевод и ресурсы" aria-haspopup="dialog">RU / ±</button>
         <button type="button" data-test-back disabled>← Back</button>
         <button type="button" data-test-restart>Restart story</button>
       </nav>
@@ -83,5 +84,12 @@
         </section>
       </div>
     </main>
+    <dialog class="test-details" data-test-details aria-labelledby="details-title" lang="ru">
+      <header class="test-details__head">
+        <div><small data-details-id></small><h2 id="details-title">Перевод и ресурсы</h2></div>
+        <button type="button" data-details-close aria-label="Закрыть" autofocus>✕</button>
+      </header>
+      <div class="test-details__body" data-details-body></div>
+    </dialog>
   </body>
 </html>

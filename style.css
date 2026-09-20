@@ -80,6 +80,37 @@ button { font: inherit; }
 }
 .test-controls button:disabled { opacity: .4; cursor: default; }
 .test-controls button:focus-visible { outline: 2px solid #9fcfff; outline-offset: 2px; }
+.test-controls > span { flex-shrink: 0; font-size: 10px; }
+.test-controls button { padding-inline: 8px; white-space: nowrap; }
+.test-details {
+  width: min(540px, calc(100vw - 24px));
+  max-height: calc(100svh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid #c4d7e6;
+  border-radius: 22px;
+  background: #edf4f8;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .4);
+  overflow: hidden;
+}
+.test-details[open] { display: flex; flex-direction: column; }
+.test-details::backdrop { background: rgba(9, 17, 25, .72); backdrop-filter: blur(4px); }
+.test-details__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px 14px; border-bottom: 1px solid #cbdce7; }
+.test-details__head small { font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
+.test-details h2 { margin: 4px 0 0; font-size: 18px; letter-spacing: -.03em; }
+.test-details__head button { flex-shrink: 0; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #d8e6ef; color: var(--ink); cursor: pointer; }
+.test-details__body { overflow-y: auto; overscroll-behavior: contain; padding: 16px 20px 22px; font-size: 13px; line-height: 1.5; }
+.test-details__translation { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 12px; }
+.test-details__note { color: #536777; font-size: 11px; margin: 10px 0 16px; }
+.test-details a { color: #1263a7; }
+.test-details h3 { font-size: 13px; margin: 0 0 6px; }
+.test-details__choice, .test-details__entry { margin: 12px 0; padding: 14px; background: white; border: 1px solid #d2e0e9; border-radius: 14px; }
+.test-details__entry { background: #e0ecf3; }
+.test-details p { margin-block: 6px; }
+.test-details__outcome { padding-top: 9px; margin-top: 9px; border-top: 1px solid #e1e9ef; }
+.test-details__outcome small { display: block; color: var(--muted); font-size: 10px; }
+.test-details button:focus-visible, .test-details a:focus-visible { outline: 2px solid #1677d2; outline-offset: 3px; }
 
 .frame {
   width: 340px;
