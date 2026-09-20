@@ -21,6 +21,7 @@ Publication is complete; continue user-directed playtesting when requested. Norm
 - App-level prototype scoping disables passive burn in this story and crisis/turn-cap termination as needed for the agreed Investor loop. Do not restore these accidentally.
 - `?story=live-agent` starts Card 1 directly. Test-only Back restores state, score and scroll without rerolling an outcome; Restart resets. Unknown query keeps normal onboarding.
 - Group-chat sender labels include roles, e.g. `@error404 · Dev`, `@b2buddy · AI Agent`.
+- Live Agent resource preview now includes the immediate target outcome’s effects, or the union of both random outcome candidates, as well as direct button effects. Reset-to-zero outcomes preview all resources. Hover/focus never draws RNG or mutates state; neutral choices and decorative outcome replies stay unhighlighted. Existing 2px resource lift is reused. Regression: `tests/resource-preview.browser.test.cjs` passes for direct/random outcomes, keyboard focus, mouse leave, neutral cards, ordinary opening cards, and one real terminal draw.
 - Live Agent uses the shared terminal-period rule: omit the final period of a bubble, preserve periods BETWEEN sentences (including line breaks). Internal punctuation mistakenly removed earlier is restored. Ellipses, questions, exclamations and emoji remain. The Live Agent preservePunctuation override is removed. Canonical cards/catalog are authoritative for exact copy.
 - Nicknames have stable muted cool colors: bot blue, Sales teal-blue, Dev indigo, Marketer muted violet, corporate slate-blue; forwarded clone names use two related blues. Role labels stay gray.
 - All message text is 12.2px. Inline mentions: `system-ui`, weight 550, ink color. This appearance was accepted.
@@ -101,7 +102,8 @@ Context is derived from resolved engine history, without extra persistent state.
 
 ## Other recent copy edits
 
-- Influencer 02: Hey 👋; paragraph before “Usually I take 20%…” within the same bubble; 💯% honest. 02A: prompt database pitch ends with 😉. 03: the $1B prompt is bold; final question ends with 😂. 04 ends its first bubble with 👏👏. 05 opens “Well, there is an option 🤔”.
+- Opening bot displays `@b2buddy` / `AI Agent` (internal source ID remains `@b2buddy_bot`). Ex-boss opens “Hey 👋”; left reply is “In meetings. Talk later”.
+- Influencer 02: Hey 👋; paragraph before “Usually I take 20%…” within the same bubble; 💯 honest (no extra percent sign). 02A: Hahaha, style and prompt-database pitch share one bubble ending 😉; removed “We good? Drop the demo.”. 05 revshare proposal ends 🤝. 03: the $1B prompt is bold; final question ends with 😂. 04 ends its first bubble with 👏👏. 05 opens “Well, there is an option 🤔”.
 - Padel invitation ends with 💪; coach refusal outcome ends with 🤡.
 - Cards, generated deck/catalog and relevant copy fixtures are synced. Browser checked the Influencer paragraph and bold text.
 
@@ -146,6 +148,7 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 - Both additional failures fixed: filled invisible `effect_reason` metadata for Live Agent choices (no effect values changed), and updated the Padel onboarding browser assertion for the approved 💪 emoji.
 - Fresh reruns: editorial effect-reason check 1/1; offline + personal runtime + Live Agent unit tests 22/22; complete onboarding/Personal Chat browser route 1/1.
 - All other current browser tests passed in the full run: Live Agent routes/probabilities, test-mode Back/Restart, continuation fitting, chat history, both typing stages, forwarding, all 20 styled outcomes, Influencer/Padel paths and responsive layouts.
+- Latest preview fix: regression browser test 1/1, offline + Live Agent tests 14/14, syntax and whitespace checks passed.
 - Canonical deck/catalog rebuilt; content hashes synchronized; `git diff --check` passed. GitHub Pages reports the deployed game commit built successfully. Both public URLs return 200 and expose the exact canonical deck; normal URL starts onboarding, test URL starts LIVE_AGENT_01. Back/Restart work, all ten new image assets match local bytes, and no page errors or HTTP errors were observed.
 
 ## Known issues and failed approaches

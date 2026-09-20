@@ -494,9 +494,25 @@
     document.querySelectorAll('[data-resource].is-preview').forEach((node) => node.classList.remove('is-preview'));
   }
 
-  function previewChoice(choice) {
+  function previewChoice(card, choice) {
     clearPreview();
-    engine.getAffectedResources(choice).forEach((resource) => {
+    const affected = new Set(engine.getAffectedResources(choice));
+    if (card.arc === 'live_agent') {
+      // Outcomes apply their effects on entry. Preview all candidate resources
+      // without drawing an outcome or changing the current game state.
+      const targets = choice.outcomeRoll
+        ? [choice.outcomeRoll.win, choice.outcomeRoll.lose]
+        : [choice.next];
+      for (const id of targets) {
+        const target = engine.cardById(app.deck, id);
+        if (!target?.outcome) continue;
+        const resources = target.resetResources === 0
+          ? engine.RESOURCE_KEYS
+          : engine.getAffectedResources({ effects: target.outcomeEffects });
+        resources.forEach(resource => affected.add(resource));
+      }
+    }
+    affected.forEach((resource) => {
       document.querySelector(`[data-resource="${resource}"]`)?.classList.add('is-preview');
     });
   }
@@ -506,8 +522,8 @@
       const side = button.dataset.choice;
       const choice = choices[side];
       if (disabled) return;
-      button.addEventListener('mouseenter', () => previewChoice(choice));
-      button.addEventListener('focus', () => previewChoice(choice));
+      button.addEventListener('mouseenter', () => previewChoice(card, choice));
+      button.addEventListener('focus', () => previewChoice(card, choice));
       button.addEventListener('mouseleave', clearPreview);
       button.addEventListener('blur', clearPreview);
       button.addEventListener('click', () => choose(side));
