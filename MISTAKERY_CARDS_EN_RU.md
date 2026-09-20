@@ -6,7 +6,7 @@
 
 # 1. Стартовая последовательность
 
-## OPEN_01 — AI Assistant @b2buddy_bot
+## OPEN_01 — AI Agent @b2buddy
 
 **EN**
 
@@ -23,7 +23,7 @@
 - **WTF so many? — Проверить рынок**: Founder -2; → `OPEN_02a`.
 - **Pure genius — Довериться названию**: Founder +3; → `OPEN_02b`.
 
-## OPEN_02a — AI Assistant @b2buddy_bot
+## OPEN_02a — AI Agent @b2buddy
 
 **EN**
 
@@ -42,7 +42,7 @@
 - **Fuel the grind! — Fuel the grind!**: Team -3, Founder +2; возврат к основной ветке.
 - **We're good — We're good**: Founder -1; возврат к основной ветке.
 
-## OPEN_02b — AI Assistant @b2buddy_bot
+## OPEN_02b — AI Agent @b2buddy
 
 **EN**
 

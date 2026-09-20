@@ -104,8 +104,8 @@
   },
   "sources": {
     "@b2buddy_bot": {
-      "name": "@b2buddy_bot",
-      "role": "AI Assistant"
+      "name": "@b2buddy",
+      "role": "AI Agent"
     },
     "@hustler": {
       "name": "@hustler",
