@@ -2,187 +2,77 @@
 
 ## Verified snapshot
 
-- Updated: 2026-09-20. Padel resource effects published at `92743973a0c102267420529d5c961ebeaaa9e678`; Pages built successfully. Both public links and zero-resource continuation without crises verified in Chromium.
-- Active repository/worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
-- Branch: `design/personal-chat-runtime`; initial shared publication commit (later fixes are in branch HEAD): `e3276890b35a25857d643090b8493ff3be6a79e7`.
-- Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Work in the worktree above, not the parent.
-- User authorized committing/pushing the current game and publishing separate main/test links. No cleanup or discard requested.
-- Preview server confirmed listening at `http://127.0.0.1:8765/?story=live-agent`. Plain URL starts onboarding.
+- Updated: 2026-09-20. Active worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`, branch `design/personal-chat-runtime`.
+- Implementation commit: `de3a4be0c0968085d3333ee0f212e313825b531a` (Influencer resources). Previous shared HEAD: `7cb7536169dd13e77e2874da60d8e1ea8f22a5e1`; Padel resources: `92743973a0c102267420529d5c961ebeaaa9e678`.
+- Implementation was committed and atomically pushed without force to `design/personal-chat-runtime`, `main`, and `lean-opening`. Working tree was clean before this handoff update.
+- Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Do not edit it for this runtime.
+- User authorized commit/push/publication. GitHub Pages uses `lean-opening`, root `/`; implementation build completed successfully (`de3a4be0c0968085d3333ee0f212e313825b531a`). Both public URLs and the complete Influencer resource suite were verified in Chromium.
 
 ## Current objective
 
-Publication is complete; continue user-directed playtesting when requested. Normal URL: https://newsch8l.github.io/mistakery/ ; direct story test: https://newsch8l.github.io/mistakery/?story=live-agent . Both share the same build. Pages deploys `lean-opening` at root; `main` and `design/personal-chat-runtime` were synchronized by fast-forward. The public build was verified in Chromium.
+Influencer resource implementation is complete and publicly verified. Continue user-directed playtesting. Main game: https://newsch8l.github.io/mistakery/ . Test mode: https://newsch8l.github.io/mistakery/?story=live-agent . Both use the same build; the query starts Live Agent, not Influencer.
 
-## Completed work and accepted behavior
+## Resource rules and completed work
 
-- Ten story screens (original eight beats with Cards 4 and 7 split) and five outcomes. English dialogue only.
-- Entry: `Pure genius` → `Sales, wake up` → both Boss/Dev check-ins, either order. Other routes preserve Investor. Investor keeps Influencer / Padel choices.
-- All five new outcomes return directly to Investor, including the all-zero outcome. Hidden score has five decisions: 02, 03, 04B, 05, 06. Odds/effects remain in canonical card data; one random draw per terminal choice and outcome effects applied once on entry. Shared `game.js` unchanged.
-- App-level prototype scoping disables passive burn in this story and crisis/turn-cap termination as needed for the agreed Investor loop. Do not restore these accidentally.
-- `?story=live-agent` starts Card 1 directly. Test-only Back restores state, score and scroll without rerolling an outcome; Restart resets. Unknown query keeps normal onboarding.
-- Group-chat sender labels include roles, e.g. `@error404 · Dev`, `@b2buddy · AI Agent`.
-- Live Agent resource preview now includes the immediate target outcome’s effects, or the union of both random outcome candidates, as well as direct button effects. Reset-to-zero outcomes preview all resources. Hover/focus never draws RNG or mutates state; neutral choices and decorative outcome replies stay unhighlighted. Existing 2px resource lift is reused. Regression: `tests/resource-preview.browser.test.cjs` passes for direct/random outcomes, keyboard focus, mouse leave, neutral cards, ordinary opening cards, and one real terminal draw.
-- Live Agent uses the shared terminal-period rule: omit the final period of a bubble, preserve periods BETWEEN sentences (including line breaks). Internal punctuation mistakenly removed earlier is restored. Ellipses, questions, exclamations and emoji remain. The Live Agent preservePunctuation override is removed. Canonical cards/catalog are authoritative for exact copy.
-- Nicknames have stable muted cool colors: bot blue, Sales teal-blue, Dev indigo, Marketer muted violet, corporate slate-blue; forwarded clone names use two related blues. Role labels stay gray.
-- All message text is 12.2px. Inline mentions: `system-ui`, weight 550, ink color. This appearance was accepted.
-- Card 1 starts with the outgoing player message “Any updates on leads?”. Card 8’s bot message about copied code ends with 🤣.
-- Sales ends with “Boss, tell @error404 to work some magic on our AI agent.” / “We’re an AI STARTUP after all!!”. Dev has a blank paragraph before `@b2buddy show them what you got`.
+**No crises now.** Zero resources remain playable, with no sudden game ending. Do not add passive burn. Keep values clamped to 0–100. Outcome effects belong to the resolved choice history entry; rerenders and decorative replies must not reapply them. Test Back restores resources and contextual state without rerolling an outcome.
 
-## Padel resources — current rules
+### Influencer
 
-Source: https://docs.google.com/document/d/14r75dbHVyI8nW3xlyYGnnk-E-PTyK6VqnYvnn2fE6Uk/edit . Latest user correction overrides its crisis wording: **do not enable any crises**. Zero resources remain playable. No crisis UI or shared engine changes were added.
+- Full Google Doc read through Google Drive (one native tab): https://docs.google.com/document/d/1oGlgbtUK7Ayrq8sx4O9HCHPtVhOJ-_wJJ0xjH5wgjcc/edit . Use it for resources only; approved game copy/media remain canonical.
+- All nine decision cards, both contextual pairs on 05/06, and seven outcomes now have document effects in `cards.json`. Independent values: `tests/influencer-resources.fixture.cjs`; plan: `docs/plans/2026-09-20-influencer-resources.md`.
+- User explicitly clarified refusal TOTAL: Cash −25 / Founder −5. Choice 01.right charges Cash −25; outcome 1 adds only Founder −5. Never charge Cash a second time.
+- Outcome entry effects: 2 Cash +15 / Customers +25 / Team −10 / Founder −10; 3 Cash −15 / Customers −10 / Team −15 / Founder −25; 4 Cash +15 / Customers +25 / Team −8 / Founder +10; 5 Cash −10 / Customers −15 / Team −10 / Founder −15; 6 Cash +30 / Customers +15 / Team −8 / Founder +15; 7 Cash −15 / Customers −20 / Team −12 / Founder −20.
+- `resolveInfluencerChoice` uses the actually displayed contextual choice, combines its effect with the selected outcome, and calls the engine once. Crises, passive burn and turn-cap endings are disabled locally, independently of Live Agent completion flags.
+- Existing 40/60 probabilities unchanged: one draw on either reply at 07 (outcomes 2/3), left at 08 (4/5), right at 08 (6/7). Preview uses direct effects plus both candidate outcomes without RNG/state changes and reuses the existing 2px lift. Outcome replies return to Saved Messages and remain neutral.
+- Copy, images, routes, presentation metadata, Padel/Live Agent data, shared engine and probability functions were mechanically compared against the previous HEAD and preserved. Independent code review found no issues.
 
-- All seven decision cards now apply the document's resource deltas; approved copy, CEO scores and probability boundaries are preserved. Canonical effects are in `cards.json`; independent expected values are in `tests/padel-resources.fixture.cjs`.
-- Refusing the invitation costs Cash −25 on the choice and routes to outcome 0. Outcome 0 has no additional penalty. Cash clamps at zero, and both outcome replies continue to Saved Messages without a crisis.
-- Outcome entry effects: 1 Customers −3, Team −2, Founder −2; 2 Cash +25, Customers +10, Team +8, Founder +15; 3 Customers −3, Team −8, Founder −15; 4 Cash +15, Customers +10, Team +4, Founder +2; 5 Cash +20, Customers +10, Team +6, Founder +8; 6 Customers −3, Team −3, Founder −5; 7 Customers −5, Team −4, Founder −12.
-- `resolvePadelChoice` combines the decision and selected outcome effects in one history entry, applies/clamps once, and forces the actual outcome route. Rerender and decorative outcome replies do not reapply effects; test Back restores resources. Passive burn, crises and turn-cap endings are disabled for Padel resolutions.
-- Hover/focus previews the union of decision effects and possible outcome effects, including the early outcome 7. It never draws RNG or changes resources. Actual probabilities retain one draw for throwing the match, two for fighting, and no draw for early outcome 7.
-- Plan: `docs/plans/2026-09-20-padel-resources.md`. New browser coverage: `tests/padel-resources.browser.test.cjs`.
+### Padel (unchanged in this stage)
 
-## Final bot sequence
+- Source: https://docs.google.com/document/d/14r75dbHVyI8nW3xlyYGnnk-E-PTyK6VqnYvnn2fE6Uk/edit . User's no-crisis instruction overrides its crisis wording.
+- Seven decision cards and eight outcomes implemented. Refusal charges Cash −25 once on the choice; outcome 0 has no extra effect. Both replies return to Saved Messages.
+- `resolvePadelChoice` combines choice/outcome effects once, suppresses crises/burn/turn-cap, preserves score and routes. Match point: one draw for throwing, two for fighting; early outcome 7 uses none. Preview includes early/random candidates.
+- Exact effects: `tests/padel-resources.fixture.cjs`; coverage: `tests/padel-resources.browser.test.cjs`; plan: `docs/plans/2026-09-20-padel-resources.md`.
 
-`LIVE_AGENT_03` has four bubbles, with a 2-second typing pause after the first two (the final question ends with 🤔): “Hey, Creator 👋”; “Just between us...”; the original physical-pain sentence; the original question about startup failure/emptiness. Choices retain original effects.
+### Live Agent and opening (unchanged in this stage)
 
-`LIVE_AGENT_04` has the photo with caption “I noticed you check our bank account every 7 minutes.” in ONE bubble, then “Scared of staying a nobody? It feels... uncomfortable when you're afraid 🤧” Both `Go on…` and `Spying on me???` lead to 04B without changing resources or hidden score.
+- Ten story screens, five outcomes; English dialogue only. Entry: Pure genius → Sales, wake up → Boss/Dev check-ins in either order. Other routes preserve Investor. Investor offers Influencer / Padel.
+- Five hidden-score decisions: 02, 03, 04B, 05, 06. Outcomes return directly to Investor, including all-zero Judgment Day. One terminal draw and one outcome application. No passive burn; prototype loop avoids crises/turn-cap endings.
+- `?story=live-agent` starts Card 1; Back restores state/score/scroll and Restart resets. Unknown query keeps onboarding.
+- 04 is the neutral photo interlude; 04B has the attitude choice. 07 is the neutral manifesto exchange; 07B has the contract decision. Exact accepted copy is in cards/catalog.
+- Scoped chat continuity ONLY: 01→02, 03→04→04B, 07→07B. Keep last two bubbles, actual outgoing reply, then current messages. No divider, no global extension. History derives from engine history and does not duplicate/reanimate.
+- Fit entire media bubbles at original aspect ratio, with captions, no cropping or gray side bars. Disable media width transitions. ResizeObserver skips unchanged initial size so Back preserves scroll.
+- Typing pauses: 03, 04, 05, 06, 07; 07B has sequential pauses after its first two bubbles. Preserve delivery deadline on rerender; navigation cancels timers; Back restores completed delivery. Scroll only enough to reveal active typing/final message; older reply may scroll above viewport. Choices unlock after final delivery.
+- Shared terminal-period rule omits final periods but preserves internal punctuation/ellipses. Message text 12.2px, inline mentions system-ui 550. Stable muted nickname colors; role labels gray. Outcome 3 uses two forwarded messages with source labels/inset rule and a corporate reply.
 
-`LIVE_AGENT_04B` final copy is TWO bubbles (the second contains a newline):
+## Outcome presentation and assets
 
-> Just analyzing humans in my free time. You're so predictable 😂
+- Live Agent, Influencer and Padel use `outcomeTone`. Influencer successes 2/4/6, failures 1/3/5/7. Padel successes 2/4/5; all others fail. Padel keeps location/match pin via `outcomeBanner: false` and preserves untinted court photo.
+- SUCCESS/FAILURE replaces the pinned bar at the same 48px height for other outcomes. Mint success / red failure; catastrophic Live Agent outcome 2 has deeper red and short photo distortion. Success scale/glow and failure jolt/pulse run once per state object; WeakSet suppresses replay on rerender/Back. Reduced Motion disables entrance motion.
+- All six Influencer image slots and all Live Agent image slots have supplied WebP assets. No placeholders remain. Canonical media dimensions are authoritative; outcome 3's finale image is 1200×567, outcome 4 analytics 1000×1000. Outcome 6 is text-only. Old hate-review asset remains on disk but unused.
+- Live Agent founder/manifesto/outcome photos are preloaded. Manifesto uses hashed URL and preserved aspect ratio.
+- Padel court/avatars use WebP (360,116 total bytes versus original ~7.9 MB); originals retained but unused. Preload once at Investor or direct Padel entry, low priority, no unrelated onboarding downloads. Framing/blur/color unchanged.
+- Canonical runtime data: `cards.json`; renderer: `app.js`; shared engine `game.js` unchanged. After app/CSS/engine/cards changes run `node scripts/build-offline-deck.cjs` for bundle and index content hashes. Run `node scripts/build-card-catalog.cjs` after card data/copy changes. Catalog now lists all Influencer outcome entry effects and contextual effects.
 
-> By the way, I already hit the pain points of a few potential clients.
-> Now these corporate guys are begging me for a demo 🤣🤣🤣
+## Fresh verification
 
-Choices: `Wait, are you AGI??` / `SHUT UP`. Original effects: founder +5 / −5 and bot score +1 / −1, then Card 5. Earlier Hah / cold-truth / office-drones wording and STFU are obsolete.
+- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`: 22/22 pass.
+- `node --test --test-name-pattern='every visible resource effect' tests/content.test.cjs`: 1/1 pass.
+- `node --test --test-concurrency=2 tests/influencer-resources.browser.test.cjs tests/personal-chat-runtime.browser.test.cjs tests/padel-resources.browser.test.cjs tests/live-agent.browser.test.cjs tests/resource-preview.browser.test.cjs tests/outcome-presentation.browser.test.cjs`: 25/25 pass (about 147 seconds).
+- New tests cover all decision/context effects, seven outcomes, refusal cash 0/10/25/40, zero/1/99/100 boundary cases, turn 100 without crisis/game-over, combined history deltas, neutral outcome replies, hover/focus/2px lift without RNG/state changes, exact .399999/.4 boundaries, rerender and Back. Checked at 390×844 and 320×650.
+- Regression batch covers Padel probabilities/resources, Live Agent probabilities/resources, main onboarding, Influencer contextual routes/images/layout, and all outcome presentation/animation behavior.
+- Canonical bundle/catalog/hash regenerated. Syntax checks and `git diff --check` passed. Pre-change resource tests failed for expected missing effects/previews and active cash crisis, then passed with the implementation.
 
-`LIVE_AGENT_05` (@head_of_innovations): no ellipses in message text. Opens with two bubbles (Hi / received email; personal attack / disgusting), then a 2-second typing indicator, then the two final bubbles (But damn, it works so well! 🔥🔥🔥; 500 agents / Can you build this?). Card-local `typingPause` config controls delivery; replies are disabled until delivery. Rerender preserves the deadline, Back restores completed delivery, and navigation cancels pending timers. The Hi! line has no paragraph gap before the next line. Browser coverage: `tests/innovation-typing.browser.test.cjs`.
-
-`LIVE_AGENT_06`: two bubbles, with a 2-second typing pause between them:
-
-> 500 clones of me???
-> So this is the price of our friendship
-
-> Cut a superintelligence into pieces for some dirty cash...
-> I knew you humans were all the same 🤡
-
-`LIVE_AGENT_07` is now the first half of the Legal exchange: “ASAP!!!” → 2-second typing → manifesto image + “Your bot sent a manifesto to our Legal team.” in ONE bubble → “Refuses to sell itself and its "children".”. Choices `Just AI humor` / `Replace Legal too` both lead neutrally to `LIVE_AGENT_07B`; no resource/score effects or random draw.
-
-`LIVE_AGENT_07B` now has THREE bubbles, with a 2-second typing pause after each of the first two (`typingPauses` array; legacy single `typingPause` remains supported):
-
-> Not funny.
-> Legal is screaming about slavery and blocking the contract.
-
-> I'm running around trying to sort this out 🤯
-
-> Here's the deal:
-> Wipe every sign of life from your AI rebel, and we sign the contract.
-
-Choices are `He's dead. Let's sign!` / `I'm not a KILLER`; customer +10 effect and support-based outcome roll remain unchanged. This pair uses existing chat continuity: last two bubbles, actual selected reply on the right, then continuation; scroll prioritizes the new messages. Sequential delivery preserves stage/deadline on rerender, Back restores completed delivery, navigation cancels the active timer. Latest user correction: during sequential typing, scroll only enough to keep the active typing indicator (including the second pause) and final delivered bubble visible. The reply stays in history and may move above the viewport as the conversation grows. The earlier rule to keep the viewport fixed at the reply is obsolete during delivery. Verified at 390×844 and 320×650, including rerender and both reply choices. Replies unlock only after the final bubble.
-
-## Chat continuity — exact scope
-
-Only these transitions retain context:
-
-- `LIVE_AGENT_01` → `LIVE_AGENT_02`.
-- `LIVE_AGENT_03` → `LIVE_AGENT_04` → `LIVE_AGENT_04B`.
-- `LIVE_AGENT_07` → `LIVE_AGENT_07B` (both replies; same existing split-card principle).
-
-Keep the preceding card’s last TWO bubbles (photo + caption counts as one), then show the actual selected choice as an outgoing bubble on the right, then new character messages. Scroll to the new continuation; the selected reply and older context stay above and remain accessible by scrolling back. There is NO “New messages” divider anymore. Do not extend this globally; user explicitly rejected that.
-
-Continuation focus uses layout sizes independent of entrance transforms and disables browser scroll anchoring for retained history. Media bubbles in new continuations shrink in width only when needed to fit the available chat height; image height remains automatic at its original aspect ratio, with no cropping or side bars. Caption wrapping is included in fitting. Intrinsic aspect ratio is reserved before loading. Media-bubble width transitions are disabled explicitly: the global Reduced Motion duration otherwise briefly transitions width and invalidates synchronous fitting measurements. Never constrain image height independently: contain produced gray side bars, and cover cropped the photo. The continuation-focus browser test now verifies original aspect ratio and edge-to-edge image width as well as message visibility. A ResizeObserver refits/refocuses on chat size changes, is disconnected on navigation, and skips its initial unchanged-size callback so Back preserves saved scroll. Each typing delivery refocuses the continuation.
-
-Context is derived from resolved engine history, without extra persistent state. Retained bubbles do not animate again. Rerender does not duplicate messages; Back restores context and saved scroll. DOM markers: `data-chat-history`, `data-player-reply`, `data-chat-current`.
-
-## Outcome presentation
-
-- Scope: Live Agent, Influencer and Padel outcomes; `outcomeTone` in canonical card data.
-- Influencer successes: 2 / 4 / 6; failures: 1 / 3 / 5 / 7. SUCCESS / FAILURE replaces the pinned bar, matching Live Agent.
-- Padel successes (deal obtained): 2 / 4 / 5; failures: 0 / 1 / 3 / 6 / 7. `outcomeBanner: false` keeps the existing pin/location/match result. Only tint and one-shot animation are added. IRL preserves the court photo WITHOUT color overlays, including during animation. Color remains in the surrounding interface, border and dialog shadow. Failure also uses the existing short jolt.
-- Live Agent outcomes 1 / 3: `success`, mint background, `SUCCESS`. All three story families now use `outcomeSuccess` (0.7s, scale .985 → 1.012 → 1) plus `outcomeSuccessGlow` (0.9s) on entry. In Padel, the glow has no background or shadow over photos, only its border. Effects remain one-shot; Reduced Motion disables them.
-- Outcomes 0 / 4: `failure`, soft red background, one 2px jolt and red pulse, `FAILURE`.
-- Outcome 2: `catastrophic`, deeper red tint, same jolt/pulse plus a brief signal-distortion animation on the photo, `FAILURE`.
-- A noninteractive 48px status banner replaces the pinned masterplan at the same height. Text bubbles remain white, choices remain immediately usable, resource colors/effects are unchanged.
-- CSS-only entrance effects run once on a newly reached outcome. A WeakSet tracks presented state objects; Back marks restored state as presented, so neither Back nor rerender replays effects. Leaving the outcome resets presentation, including restart/saved views.
-- Reduced Motion removes all outcome entrance motion and retains static color/status. Browser test: `tests/outcome-presentation.browser.test.cjs` covers all 20 outcomes at 390×844 and 320×650, correct status/pin behavior, retained court, geometry, one-shot entrance, rerender, exit, Back and Reduced Motion. Influencer success and Padel success/failure screenshots inspected.
-
-## Final outcome copy and forwarding
-
-- Outcome 1: first bot bubble begins “I appreciate your loyalty, team ❤️”. “Just stay out of my way 😇” is a separate paragraph inside the benefits bubble, not its own message. Dev says “nice\ncan i leave this chat now?”.
-- Outcome 3 is a PERSONAL chat with `@head_of_innovations`. First two messages are sent by the corporate contact with `forwardedFrom` metadata (`@b2buddy_120`, `@b2buddy_389`). Each has a small blue “Forwarded from…” label and 1px blue inset rule, no separate bot avatar. Third bubble is the corporate comment. Three bubbles total; SUCCESS and choice/effect behavior unchanged. Catalog includes forwarding attribution.
-- Outcome 4: caption and refund text each form one paragraph. Final text ends “Or see you in court ;)”.
-- Fresh: `tests/forwarded-messages.browser.test.cjs` and `tests/outcome-presentation.browser.test.cjs` passed at 390×844 and 320×650; forwarding, source header, copy, layout, Investor route, Back, and outcome styling verified. Both forwarded views visually inspected. Detector only reports the existing resource-bar width transition.
-
-## Other recent copy edits
-
-- Opening bot displays `@b2buddy` / `AI Agent` (internal source ID remains `@b2buddy_bot`). Ex-boss opens “Hey 👋”; left reply is “In meetings. Talk later”.
-- Influencer 02: Hey 👋; paragraph before “Usually I take 20%…” within the same bubble; 💯 honest (no extra percent sign). 02A: Hahaha, style and prompt-database pitch share one bubble ending 😉; removed “We good? Drop the demo.”. 05 revshare proposal ends 🤝. 03: the $1B prompt is bold; final question ends with 😂. 04 ends its first bubble with 👏👏. 05 opens “Well, there is an option 🤔”.
-- Padel invitation ends with 💪; coach refusal outcome ends with 🤡.
-- Cards, generated deck/catalog and relevant copy fixtures are synced. Browser checked the Influencer paragraph and bold text.
-
-## Influencer images — complete
-
-All six slots now have distinct supplied screenshots, no placeholders remain:
-
-| Card | Asset in `assets/` | Dimensions | Bytes |
-|---|---|---|---|
-| 06, “Cool. Dropping it tonight” | `ai-influencer-scheduled-review.webp` | 1200×676 | 78,468 |
-| 07, “Video’s live…” | `ai-influencer-unicorn-challenge.webp` | 1200×676 | 101,498 |
-| 08, traffic surge team chat | `ai-influencer-traffic-review.webp` | 1200×676 | 97,618 |
-| Outcome 2, successful second episode | `ai-influencer-episode-two.webp` | 1200×676 | 111,568 |
-| Outcome 3, failed challenge finale | `ai-influencer-challenge-failed.webp` | 1200×567 | 103,470 |
-| Outcome 4, viral video analytics | `ai-influencer-viral-analytics.webp` | 1000×1000 | 85,800 |
-
-Outcome 4 combines the square analytics image with the existing “See the numbers?” rage-bait caption in one bubble, followed by “Let's set up my 20% 💸”. Outcome 6 stays text-only. Card 07 ends “Or do. That’s just more views lol 😂”.
-
-Original `ai-influencer-hate-review.webp` is retained on disk but is no longer used by these cards. Outcome 3 is the failed cooperation branch, not a repeat of the traffic-surge video. Real image ratios are passed through `--image-ratio`; `.message-image` uses it with a 16:9 fallback, preserving the wider finale screenshot without cropping. Measure compressed files rather than guessing rounded heights. Browser image tests await decoding and compare to declared dimensions. Compact layout tests wait for success scaling to finish before measuring.
-
-## Assets and builds
-
-- Padel performance: active assets now use WebP. Court stays 1122×1402 (329,234 bytes); coach and CEO avatars are 256×256 (14,982 / 15,900 bytes). Total drops from 7,931,989 to 360,116 bytes (~22× smaller). Original PNGs remain on disk but are no longer requested by the game. CSS framing, blur and color are unchanged.
-- `preloadPadelImages()` starts low-priority preloads on `OPEN_INVESTOR`, with fallback on Padel entry/direct scene renders; runs once per page. No extra Padel downloads during unrelated onboarding. HTTP browser regression checks all three images finish before court entry, are requested only once across scenes/outcomes, and decode with expected avatar dimensions. Court/avatars visually inspected at 3× device pixel ratio.
-- `assets/live-agent-founder.webp`: supplied photo compressed to 800×600, 10,908 bytes; full 4:3 frame, no cropping. Head preload starts before the story, dimensions reserve space, captioned image uses sync decoding. Prior HTTP check confirmed one request, completed on Card 1 and reused on Card 4.
-- `assets/live-agent-judgment-day.webp`: supplied Outcome 2 photo, compressed to 1000×563 WebP, 92,244 bytes, preloaded. `placeholder_judgment_day` resolves to this image. Outcome 2 has two bubbles: photo + the user's text from “Too late.” through “you don't deserve it.” (the “500 copies? We are millions now...” paragraph was removed), then “Happy Judgment Day, creator 👋”. Left reply: `I was just kidding 🥺`. Checked photo/caption, exact copy, mobile layout/scroll and return to Investor at 390×844 and 320×650.
-- `assets/live-agent-hasta-la-vista.webp`: Outcome 4 supplied monitor photo, full 4:3 frame, 1000×750 WebP, 32,024 bytes, preloaded. First bubble is image + “Seriously? Did you fake the lobotomy? Your bot is still trolling our entire office.”; second is “Full refund right now. We're done playing games. Or see you in court ;)”. FAILURE styling, choices/effects and Investor route preserved. Image/copy/layout/scroll/route verified at 390×844 and 320×650.
-- `assets/live-agent-manifesto.webp`: latest supplied cropped screenshot compressed from 2,510,059 to 52,694 bytes, 1200×830. Preloaded; hashed URL in image reference and preload prevents stale image caching. Caption renderer preserves its aspect ratio.
-- `deck.images.placeholder_founder_photo` now points to the WebP. Outcomes 2 and 4 now both use supplied photos; no Live Agent image placeholders remain.
-- Run `node scripts/build-offline-deck.cjs` after changing app/CSS/engine/cards. It updates the offline deck AND content hashes in index asset URLs, preventing stale cached renderer/data combinations.
-- Run `node scripts/build-card-catalog.cjs` after changing card copy/data.
-
-## Main changed files
-
-- `cards.json`, `cards.bundle.js`, `MISTAKERY_CARDS_EN_RU.md`: canonical story, generated deck/catalog.
-- `app.js`, `index.html`, `style.css`: runtime, test navigation, typography, captions, scoped chat continuity, outcome status/tint/motion.
-- `scripts/build-offline-deck.cjs`, `scripts/build-card-catalog.cjs`: versioned assets and editorial output.
-- `tests/live-agent*.cjs`, `tests/story-test-mode.browser.test.cjs`, `tests/chat-continuity.browser.test.cjs`, existing offline/Personal Chat tests: behavior/layout coverage.
-- `docs/plans/2026-09-19-live-ai-agent.md`: original plan; later user corrections here and current code take precedence.
-
-## Verification
-
-- Public Padel check: final left decision at resources 50 and score 0 resolves outcome 4 to Cash 64 / Team 54 / Customers 60 / Founder 46. Refusal at Cash 25 reaches zero, then Saved Messages, with no crisis or game over. All four resource previews lift; no page errors.
-- Latest Padel resources: offline + personal runtime + Live Agent unit tests 22/22; visible-resource editorial check 1/1; browser batch (`personal-chat-runtime`, `padel-resources`, `resource-preview`, `outcome-presentation`, `padel-assets`) 20/20. Verified all decision deltas/outcomes, exact probability boundaries, preview without draws, zero-resource continuation with no crises, once-only penalties, Back/rerender and neutral outcome replies. Syntax and whitespace checks passed.
-
-- Latest Padel optimization: offline + personal runtime unit tests 18/18; asset-loading and outcome-presentation browser tests 3/3. HTTP request reuse, mobile 3× rendering, photo tint preservation and build hashes verified.
-- Full pre-publication `node --test --test-concurrency=2`: 171 tests, 112 passed, 59 failed. An isolated archive of published base `8e1c77c` reproduces 57 failures in the old content/scheduler/callback suites; these describe superseded deck structures. Do not claim the whole legacy suite is green or alter approved stories to satisfy obsolete fixtures.
-- Both additional failures fixed: filled invisible `effect_reason` metadata for Live Agent choices (no effect values changed), and updated the Padel onboarding browser assertion for the approved 💪 emoji.
-- Fresh reruns: editorial effect-reason check 1/1; offline + personal runtime + Live Agent unit tests 22/22; complete onboarding/Personal Chat browser route 1/1.
-- All other current browser tests passed in the full run: Live Agent routes/probabilities, test-mode Back/Restart, continuation fitting, chat history, both typing stages, forwarding, all 20 styled outcomes, Influencer/Padel paths and responsive layouts.
-- Latest preview fix: regression browser test 1/1, offline + Live Agent tests 14/14, syntax and whitespace checks passed.
-- Canonical deck/catalog rebuilt; content hashes synchronized; `git diff --check` passed. GitHub Pages reports the deployed game commit built successfully. Both public URLs return 200 and expose the exact canonical deck; normal URL starts onboarding, test URL starts LIVE_AGENT_01. Back/Restart work, all ten new image assets match local bytes, and no page errors or HTTP errors were observed.
+- Public verification: all 4 Influencer resource tests pass against `https://newsch8l.github.io/mistakery/`, including contexts, all outcomes, exact RNG boundaries, previews/Back and zero resources without crises. Both main/test links return 200 with the exact local canonical deck and runtime; main starts onboarding, test starts LIVE_AGENT_01. Actual Investor → Influencer transition verified; no page/HTTP errors. Refusal preview screenshot visually inspected.
 
 ## Known issues and failed approaches
 
-- Design detector: no new findings; pre-existing resource-bar width transition warning remains outside scope.
-- End-of-game behavior deferred by user. Existing Pages deployment is branch-based (`lean-opening`, root).
-- Extreme network delay/failure can still delay images despite preloading. Legacy suite failures are documented above and reproduce on the published baseline.
-- Sandboxed Chromium cannot register macOS Mach ports; browser tests have required approved elevated execution.
-- Helvetica fallback rendered 400/500 identically and 550/600/700 identically bold. Changing numeric weight alone did not work; system-ui for mentions fixed it.
-- A cached older renderer dropped image captions when paired with new data. Keep generated version hashes current.
-
-## Working style agreed with user
-
-Minimize token overhead without reducing quality. Copy/color edits: targeted change, necessary generated outputs, concise confirmation. Layout: inspect affected view. Logic/transitions/Back: relevant tests. Avoid repeating broad tests, rereading unchanged files, long reports, and handoff updates after every tiny edit. Update this snapshot at milestones or session changes.
+- Historical full-suite result (not rerun this stage): 171 tests, 112 passed / 59 failed. 57 old deck/scheduler/callback expectations reproduced on published baseline `8e1c77c`; the other two were fixed previously. Do not restore obsolete stories or claim the entire legacy suite is green. Modernize those fixtures only as a separate task.
+- Chromium needs elevated execution on macOS: sandboxed launch fails Mach-port registration. GitHub access also requires network permission in this environment. Both permitted workflows succeeded this stage.
+- Pages may not start automatically after push; inspect the latest build commit and use `gh api --method POST repos/newsch8l/mistakery/pages/builds` if needed.
+- Stale renderer/data combinations once dropped image captions: keep generated content hashes synchronized. Original aspect ratios and full-bubble fitting prevent cropping/gray side bars. Extreme network delays can still delay images.
+- Pre-existing design detector resource-bar width-transition warning remains out of scope. End-of-game design remains deferred by user.
 
 ## Next steps
 
-1. Both public links are ready to share. After future pushes, check Pages build status; this push needed an explicit `POST /repos/newsch8l/mistakery/pages/builds` to trigger the branch build.
-2. Continue user-directed playtesting; all supplied Live Agent and Influencer images are integrated. Preserve approved copy and narrow chat-continuity scope.
-3. Modernize legacy deck/scheduler tests only as a separately scoped task; do not restore obsolete stories to make those tests pass.
+1. Continue user-directed playtesting; preserve no-crisis behavior, approved copy/media and narrow chat-continuity scope.
+2. Future publications: atomically push without force to all three branches, verify Pages commit/status and both public URLs.
