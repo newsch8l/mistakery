@@ -18,7 +18,7 @@ async function seed(page, id, score = 0, resources = base, draws = [.99]) {
     a.state.currentCardId = id;
     a.state.resources = resources;
     a.state.schedulerResources = { ...resources };
-    a.state.flags = ['live_agent_completed']; // Padel crises work even after the agent story.
+    a.state.flags = ['live_agent_completed']; // Padel remains playable without crises after the agent story.
     a.state.turn = 40; // The prototype loop does not expire in the middle of a match.
     a.padelCeoScore = score;
     a.view = 'playing';

@@ -2,7 +2,7 @@
 
 ## Verified snapshot
 
-- Updated: 2026-09-20. Padel resource effects implemented and locally verified; publication of this update follows. Previous public baseline: `1aca6ad4a83f6acfdeac2c77c2e5f4b02897b3ba`.
+- Updated: 2026-09-20. Padel resource effects published at `92743973a0c102267420529d5c961ebeaaa9e678`; Pages built successfully. Both public links and zero-resource continuation without crises verified in Chromium.
 - Active repository/worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
 - Branch: `design/personal-chat-runtime`; initial shared publication commit (later fixes are in branch HEAD): `e3276890b35a25857d643090b8493ff3be6a79e7`.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Work in the worktree above, not the parent.
@@ -157,6 +157,7 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 
 ## Verification
 
+- Public Padel check: final left decision at resources 50 and score 0 resolves outcome 4 to Cash 64 / Team 54 / Customers 60 / Founder 46. Refusal at Cash 25 reaches zero, then Saved Messages, with no crisis or game over. All four resource previews lift; no page errors.
 - Latest Padel resources: offline + personal runtime + Live Agent unit tests 22/22; visible-resource editorial check 1/1; browser batch (`personal-chat-runtime`, `padel-resources`, `resource-preview`, `outcome-presentation`, `padel-assets`) 20/20. Verified all decision deltas/outcomes, exact probability boundaries, preview without draws, zero-resource continuation with no crises, once-only penalties, Back/rerender and neutral outcome replies. Syntax and whitespace checks passed.
 
 - Latest Padel optimization: offline + personal runtime unit tests 18/18; asset-loading and outcome-presentation browser tests 3/3. HTTP request reuse, mobile 3× rendering, photo tint preservation and build hashes verified.
