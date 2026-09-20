@@ -2,7 +2,7 @@
 
 ## Verified snapshot
 
-- Updated: 2026-09-20, published and verified both public links after all requested story and image edits.
+- Updated: 2026-09-20. Padel resource effects implemented and locally verified; publication of this update follows. Previous public baseline: `1aca6ad4a83f6acfdeac2c77c2e5f4b02897b3ba`.
 - Active repository/worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
 - Branch: `design/personal-chat-runtime`; initial shared publication commit (later fixes are in branch HEAD): `e3276890b35a25857d643090b8493ff3be6a79e7`.
 - Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype. Work in the worktree above, not the parent.
@@ -27,6 +27,17 @@ Publication is complete; continue user-directed playtesting when requested. Norm
 - All message text is 12.2px. Inline mentions: `system-ui`, weight 550, ink color. This appearance was accepted.
 - Card 1 starts with the outgoing player message “Any updates on leads?”. Card 8’s bot message about copied code ends with 🤣.
 - Sales ends with “Boss, tell @error404 to work some magic on our AI agent.” / “We’re an AI STARTUP after all!!”. Dev has a blank paragraph before `@b2buddy show them what you got`.
+
+## Padel resources — current rules
+
+Source: https://docs.google.com/document/d/14r75dbHVyI8nW3xlyYGnnk-E-PTyK6VqnYvnn2fE6Uk/edit . Latest user correction overrides its crisis wording: **do not enable any crises**. Zero resources remain playable. No crisis UI or shared engine changes were added.
+
+- All seven decision cards now apply the document's resource deltas; approved copy, CEO scores and probability boundaries are preserved. Canonical effects are in `cards.json`; independent expected values are in `tests/padel-resources.fixture.cjs`.
+- Refusing the invitation costs Cash −25 on the choice and routes to outcome 0. Outcome 0 has no additional penalty. Cash clamps at zero, and both outcome replies continue to Saved Messages without a crisis.
+- Outcome entry effects: 1 Customers −3, Team −2, Founder −2; 2 Cash +25, Customers +10, Team +8, Founder +15; 3 Customers −3, Team −8, Founder −15; 4 Cash +15, Customers +10, Team +4, Founder +2; 5 Cash +20, Customers +10, Team +6, Founder +8; 6 Customers −3, Team −3, Founder −5; 7 Customers −5, Team −4, Founder −12.
+- `resolvePadelChoice` combines the decision and selected outcome effects in one history entry, applies/clamps once, and forces the actual outcome route. Rerender and decorative outcome replies do not reapply effects; test Back restores resources. Passive burn, crises and turn-cap endings are disabled for Padel resolutions.
+- Hover/focus previews the union of decision effects and possible outcome effects, including the early outcome 7. It never draws RNG or changes resources. Actual probabilities retain one draw for throwing the match, two for fighting, and no draw for early outcome 7.
+- Plan: `docs/plans/2026-09-20-padel-resources.md`. New browser coverage: `tests/padel-resources.browser.test.cjs`.
 
 ## Final bot sequence
 
@@ -145,6 +156,8 @@ Original `ai-influencer-hate-review.webp` is retained on disk but is no longer u
 - `docs/plans/2026-09-19-live-ai-agent.md`: original plan; later user corrections here and current code take precedence.
 
 ## Verification
+
+- Latest Padel resources: offline + personal runtime + Live Agent unit tests 22/22; visible-resource editorial check 1/1; browser batch (`personal-chat-runtime`, `padel-resources`, `resource-preview`, `outcome-presentation`, `padel-assets`) 20/20. Verified all decision deltas/outcomes, exact probability boundaries, preview without draws, zero-resource continuation with no crises, once-only penalties, Back/rerender and neutral outcome replies. Syntax and whitespace checks passed.
 
 - Latest Padel optimization: offline + personal runtime unit tests 18/18; asset-loading and outcome-presentation browser tests 3/3. HTTP request reuse, mobile 3× rendering, photo tint preservation and build hashes verified.
 - Full pre-publication `node --test --test-concurrency=2`: 171 tests, 112 passed, 59 failed. An isolated archive of published base `8e1c77c` reproduces 57 failures in the old content/scheduler/callback suites; these describe superseded deck structures. Do not claim the whole legacy suite is green or alter approved stories to satisfy obsolete fixtures.

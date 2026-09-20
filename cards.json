@@ -1856,13 +1856,25 @@
       "choices": {
         "left": {
           "label": "I'm in",
-          "effects": {},
-          "next": "DREAM_TEAM"
+          "effects": {
+            "cash": -1,
+            "customers": 3
+          },
+          "next": "DREAM_TEAM",
+          "effect_reason": {
+            "cash": "Attending the networking match costs time and money.",
+            "customers": "Accepting the match opens contact with a potential customer."
+          }
         },
         "right": {
           "label": "Feeling sick, pass",
-          "effects": {},
-          "next": "DREAM_TEAM"
+          "effects": {
+            "cash": -25
+          },
+          "next": "PADEL_OUTCOME_0",
+          "effect_reason": {
+            "cash": "Backing out of the arranged match carries a one-time cash penalty."
+          }
         }
       }
     },
@@ -1895,13 +1907,23 @@
       "choices": {
         "left": {
           "label": "I'll play nice 😇",
-          "effects": {},
-          "next": "IRL_PADEL_01"
+          "effects": {
+            "cash": -1
+          },
+          "next": "IRL_PADEL_01",
+          "effect_reason": {
+            "cash": "Preparing for the match consumes runway."
+          }
         },
         "right": {
           "label": "We’ll see",
-          "effects": {},
-          "next": "IRL_PADEL_01"
+          "effects": {
+            "cash": -1
+          },
+          "next": "IRL_PADEL_01",
+          "effect_reason": {
+            "cash": "Preparing for the match consumes runway."
+          }
         }
       }
     },
@@ -1919,15 +1941,29 @@
       "choices": {
         "left": {
           "label": "Mouth shut, game on",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": -1
+          },
           "ceoScore": 0,
-          "next": "IRL_PADEL_04"
+          "next": "IRL_PADEL_04",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Holding back the pitch dents the founder’s confidence."
+          }
         },
         "right": {
           "label": "Now or never, pitching",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": 3
+          },
           "ceoScore": 1,
-          "next": "IRL_PADEL_03B"
+          "next": "IRL_PADEL_03B",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Taking the chance to pitch gives the founder confidence."
+          }
         }
       }
     },
@@ -1945,15 +1981,29 @@
       "choices": {
         "left": {
           "label": "Getting your water",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": -3
+          },
           "ceoScore": -1,
-          "next": "IRL_PADEL_04"
+          "next": "IRL_PADEL_04",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Fetching water after the insult feels humiliating."
+          }
         },
         "right": {
           "label": "Business after the match",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": 1
+          },
           "ceoScore": 1,
-          "next": "IRL_PADEL_04"
+          "next": "IRL_PADEL_04",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Keeping the business conversation on the table preserves confidence."
+          }
         }
       }
     },
@@ -1971,15 +2021,29 @@
       "choices": {
         "left": {
           "label": "Happy to take it",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": -3
+          },
           "ceoScore": -1,
-          "next": "IRL_PADEL_05"
+          "next": "IRL_PADEL_05",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Accepting the unfair conditions costs the founder confidence."
+          }
         },
         "right": {
           "label": "Let's stick to rules",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": 5
+          },
           "ceoScore": 1,
-          "next": "IRL_PADEL_05"
+          "next": "IRL_PADEL_05",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Insisting on the rules restores self-respect."
+          }
         }
       }
     },
@@ -1997,15 +2061,29 @@
       "choices": {
         "left": {
           "label": "Definitely out, my bad",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": -4
+          },
           "ceoScore": -1,
-          "next": "IRL_PADEL_06"
+          "next": "IRL_PADEL_06",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Conceding the disputed point undermines confidence."
+          }
         },
         "right": {
           "label": "No way, that's in",
-          "effects": {},
+          "effects": {
+            "cash": -1,
+            "founder": 5
+          },
           "ceoScore": 1,
-          "next": "IRL_PADEL_06"
+          "next": "IRL_PADEL_06",
+          "effect_reason": {
+            "cash": "Time on the court consumes runway.",
+            "founder": "Standing by the call reinforces confidence."
+          }
         }
       }
     },
@@ -2023,11 +2101,25 @@
       "choices": {
         "left": {
           "label": "I'll throw it, coach",
-          "effects": {}
+          "effects": {
+            "cash": -1,
+            "founder": -6
+          },
+          "effect_reason": {
+            "cash": "Finishing the match consumes runway.",
+            "founder": "Throwing the match sacrifices self-respect."
+          }
         },
         "right": {
           "label": "Fighting till the end",
-          "effects": {}
+          "effects": {
+            "cash": -1,
+            "founder": 6
+          },
+          "effect_reason": {
+            "cash": "Finishing the match consumes runway.",
+            "founder": "Choosing to fight to the end strengthens confidence."
+          }
         }
       }
     },
@@ -2051,7 +2143,8 @@
         }
       },
       "outcomeTone": "failure",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {}
     },
     {
       "id": "PADEL_OUTCOME_1",
@@ -2075,7 +2168,12 @@
         }
       },
       "outcomeTone": "failure",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "customers": -3,
+        "team": -2,
+        "founder": -2
+      }
     },
     {
       "id": "PADEL_OUTCOME_2",
@@ -2099,7 +2197,13 @@
         }
       },
       "outcomeTone": "success",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "cash": 25,
+        "customers": 10,
+        "team": 8,
+        "founder": 15
+      }
     },
     {
       "id": "PADEL_OUTCOME_3",
@@ -2123,7 +2227,12 @@
         }
       },
       "outcomeTone": "failure",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "customers": -3,
+        "team": -8,
+        "founder": -15
+      }
     },
     {
       "id": "PADEL_OUTCOME_4",
@@ -2147,7 +2256,13 @@
         }
       },
       "outcomeTone": "success",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "cash": 15,
+        "customers": 10,
+        "team": 4,
+        "founder": 2
+      }
     },
     {
       "id": "PADEL_OUTCOME_5",
@@ -2171,7 +2286,13 @@
         }
       },
       "outcomeTone": "success",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "cash": 20,
+        "customers": 10,
+        "team": 6,
+        "founder": 8
+      }
     },
     {
       "id": "PADEL_OUTCOME_6",
@@ -2195,7 +2316,12 @@
         }
       },
       "outcomeTone": "failure",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "customers": -3,
+        "team": -3,
+        "founder": -5
+      }
     },
     {
       "id": "PADEL_OUTCOME_7",
@@ -2219,7 +2345,12 @@
         }
       },
       "outcomeTone": "failure",
-      "outcomeBanner": false
+      "outcomeBanner": false,
+      "outcomeEffects": {
+        "customers": -5,
+        "team": -4,
+        "founder": -12
+      }
     },
     {
       "id": "AGENT_01",

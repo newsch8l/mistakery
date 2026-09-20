@@ -495,18 +495,29 @@
     document.querySelectorAll('[data-resource].is-preview').forEach((node) => node.classList.remove('is-preview'));
   }
 
-  function previewChoice(card, choice) {
+  function padelChoiceTargets(card, side) {
+    if (card.id === 'IRL_PADEL_06') {
+      return (side === 'left' ? [3, 4] : [1, 2, 5, 6]).map(n => `PADEL_OUTCOME_${n}`);
+    }
+    if (card.id === 'IRL_PADEL_05' && app.padelCeoScore + card.choices[side].ceoScore === 4) {
+      return ['PADEL_OUTCOME_7'];
+    }
+    return [card.choices[side].next];
+  }
+
+  function previewChoice(card, choice, side) {
     clearPreview();
     const affected = new Set(engine.getAffectedResources(choice));
-    if (card.arc === 'live_agent') {
+    const padel = card.id === 'PADEL_INVITE' || card.id.startsWith('IRL_PADEL_');
+    if (card.arc === 'live_agent' || padel) {
       // Outcomes apply their effects on entry. Preview all candidate resources
       // without drawing an outcome or changing the current game state.
-      const targets = choice.outcomeRoll
+      const targets = padel ? padelChoiceTargets(card, side) : choice.outcomeRoll
         ? [choice.outcomeRoll.win, choice.outcomeRoll.lose]
         : [choice.next];
       for (const id of targets) {
         const target = engine.cardById(app.deck, id);
-        if (!target?.outcome) continue;
+        if (!target?.outcomeEffects) continue;
         const resources = target.resetResources === 0
           ? engine.RESOURCE_KEYS
           : engine.getAffectedResources({ effects: target.outcomeEffects });
@@ -523,8 +534,8 @@
       const side = button.dataset.choice;
       const choice = choices[side];
       if (disabled) return;
-      button.addEventListener('mouseenter', () => previewChoice(card, choice));
-      button.addEventListener('focus', () => previewChoice(card, choice));
+      button.addEventListener('mouseenter', () => previewChoice(card, choice, side));
+      button.addEventListener('focus', () => previewChoice(card, choice, side));
       button.addEventListener('mouseleave', clearPreview);
       button.addEventListener('blur', clearPreview);
       button.addEventListener('click', () => choose(side));
@@ -853,13 +864,29 @@
     unlockAfterChoice();
   }
 
-  function resolvePadelChoice(side) {
-    const deck = prototypeDeck();
-    const deckWithoutBurn = {
-      ...deck,
-      meta: { ...deck.meta, baseCashBurn: 0 },
+  function resolvePadelChoice(side, nextId) {
+    const card = engine.cardById(app.deck, app.state.currentCardId);
+    const choice = card.choices[side];
+    const next = nextId || choice.next || 'OPEN_INVESTOR';
+    const target = engine.cardById(app.deck, next);
+    const effects = { ...choice.effects };
+    if (next.startsWith('PADEL_OUTCOME_')) {
+      for (const [key, amount] of Object.entries(target.outcomeEffects || {})) {
+        effects[key] = (effects[key] || 0) + amount;
+      }
+    }
+    // Record choice and outcome together, once. Resource boundaries remain
+    // playable: crises are intentionally disabled in this prototype branch.
+    const resolvedCard = { ...card, continuation: 'forced', choices: {
+      ...card.choices, [side]: { ...choice, next, effects },
+    } };
+    const scopedDeck = {
+      ...app.deck,
+      crises: {},
+      meta: { ...app.deck.meta, baseCashBurn: 0, maxTurns: Number.MAX_SAFE_INTEGER },
+      cards: app.deck.cards.map(item => item.id === card.id ? resolvedCard : item),
     };
-    return engine.resolveChoice(deckWithoutBurn, app.state, side, { rng: () => 0 });
+    return engine.resolveChoice(scopedDeck, app.state, side, { rng: () => 0 });
   }
 
   function resolveInfluencerChoice(side) {
@@ -914,7 +941,6 @@
     app.state = result.state;
     if (side === 'right') {
       app.padelCeoScore = null;
-      app.state.currentCardId = 'PADEL_OUTCOME_0';
     }
     renderCard();
     unlockAfterChoice();
@@ -923,12 +949,10 @@
   function continueFromPadelScoreCard(card, side) {
     app.locked = true;
     clearPreview();
-    const result = resolvePadelChoice(side);
+    const next = padelChoiceTargets(card, side)[0];
+    const result = resolvePadelChoice(side, next);
     app.state = result.state;
     app.padelCeoScore += Number(card.choices[side].ceoScore || 0);
-    if (card.id === 'IRL_PADEL_05' && app.padelCeoScore === 4) {
-      app.state.currentCardId = 'PADEL_OUTCOME_7';
-    }
     renderCard();
     unlockAfterChoice();
   }
@@ -951,9 +975,8 @@
     app.locked = true;
     clearPreview();
     const outcomeId = selectPadelOutcome(side, app.padelCeoScore);
-    const result = resolvePadelChoice(side);
+    const result = resolvePadelChoice(side, outcomeId);
     app.state = result.state;
-    app.state.currentCardId = outcomeId;
     renderCard();
     unlockAfterChoice();
   }

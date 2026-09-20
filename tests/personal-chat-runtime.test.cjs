@@ -1,3 +1,4 @@
+const { decisions: padelEffects, outcomes: padelOutcomes } = require('./padel-resources.fixture.cjs');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
@@ -284,6 +285,7 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
     ],
   );
 
+  const choicesWithoutReasons = card => Object.fromEntries(Object.entries(card.choices).map(([side, { effect_reason, ...choice }]) => [side, choice]));
   const cards = Object.fromEntries(canonicalDeck.cards.map((card) => [card.id, card]));
   assert.equal(cards.OPEN_INVESTOR.choices.left.next, 'INFLUENCER_01');
   assert.equal(cards.OPEN_INVESTOR.choices.right.next, 'PADEL_01');
@@ -292,9 +294,9 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
 
   assert.equal(cards.PADEL_INVITE.source, '@padel_pro');
   assert.equal(cards.PADEL_INVITE.text, 'Yo champ, anyone in the club would die for this match, but I held the slot for you.\nTomorrow 7 AM vs ClosedAI CEO.\n\nThat’s your dream client, man. Remember who opened this door for you 💪');
-  assert.deepEqual(cards.PADEL_INVITE.choices, {
-    left: { label: "I'm in", effects: {}, next: 'DREAM_TEAM' },
-    right: { label: 'Feeling sick, pass', effects: {}, next: 'DREAM_TEAM' },
+  assert.deepEqual(choicesWithoutReasons(cards.PADEL_INVITE), {
+    left: { label: "I'm in", effects: padelEffects.PADEL_INVITE[0], next: 'DREAM_TEAM' },
+    right: { label: 'Feeling sick, pass', effects: padelEffects.PADEL_INVITE[1], next: 'PADEL_OUTCOME_0' },
   });
 
   assert.equal(cards.DREAM_TEAM.mode, 'team');
@@ -316,9 +318,9 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
       text: 'nah, smoke him. pure clout for us\nimagine the feed: no-name startup founder violates ClosedAI CEO in 4K 💀',
     },
   ]);
-  assert.deepEqual(cards.DREAM_TEAM.choices, {
-    left: { label: "I'll play nice 😇", effects: {}, next: 'IRL_PADEL_01' },
-    right: { label: 'We’ll see', effects: {}, next: 'IRL_PADEL_01' },
+  assert.deepEqual(choicesWithoutReasons(cards.DREAM_TEAM), {
+    left: { label: "I'll play nice 😇", effects: padelEffects.DREAM_TEAM[0], next: 'IRL_PADEL_01' },
+    right: { label: 'We’ll see', effects: padelEffects.DREAM_TEAM[1], next: 'IRL_PADEL_01' },
   });
   assert.equal(canonicalDeck.sources.dream_team.name, 'Dream Team');
   assert.equal(canonicalDeck.sources.dream_team.role, '6 members · 3 online');
@@ -334,9 +336,9 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   assert.equal(cards.IRL_PADEL_01.location, 'IRL · PADEL CLUB');
   assert.equal(cards.IRL_PADEL_01.score, 'Score: 0–0');
   assert.equal(cards.IRL_PADEL_01.text, "Bro, you do NOT pitch here.\nStart selling, and you're a nobody to him.\nEarn his respect on the court first.");
-  assert.deepEqual(cards.IRL_PADEL_01.choices, {
-    left: { label: 'Mouth shut, game on', effects: {}, ceoScore: 0, next: 'IRL_PADEL_04' },
-    right: { label: 'Now or never, pitching', effects: {}, ceoScore: 1, next: 'IRL_PADEL_03B' },
+  assert.deepEqual(choicesWithoutReasons(cards.IRL_PADEL_01), {
+    left: { label: 'Mouth shut, game on', effects: padelEffects.IRL_PADEL_01[0], ceoScore: 0, next: 'IRL_PADEL_04' },
+    right: { label: 'Now or never, pitching', effects: padelEffects.IRL_PADEL_01[1], ceoScore: 1, next: 'IRL_PADEL_03B' },
   });
 
   assert.equal(cards.IRL_PADEL_03B.mode, 'irl');
@@ -344,36 +346,36 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
   assert.equal(cards.IRL_PADEL_03B.location, 'IRL · PADEL CLUB');
   assert.equal(cards.IRL_PADEL_03B.score, 'Score: 0–0');
   assert.equal(cards.IRL_PADEL_03B.text, 'Who let a pop-up ad onto my court?\nGo fetch the balls and grab my water before I replace your whole startup with one prompt.');
-  assert.deepEqual(cards.IRL_PADEL_03B.choices, {
-    left: { label: 'Getting your water', effects: {}, ceoScore: -1, next: 'IRL_PADEL_04' },
-    right: { label: 'Business after the match', effects: {}, ceoScore: 1, next: 'IRL_PADEL_04' },
+  assert.deepEqual(choicesWithoutReasons(cards.IRL_PADEL_03B), {
+    left: { label: 'Getting your water', effects: padelEffects.IRL_PADEL_03B[0], ceoScore: -1, next: 'IRL_PADEL_04' },
+    right: { label: 'Business after the match', effects: padelEffects.IRL_PADEL_03B[1], ceoScore: 1, next: 'IRL_PADEL_04' },
   });
 
   assert.equal(cards.IRL_PADEL_04.mode, 'irl');
   assert.equal(cards.IRL_PADEL_04.source, '@iclosedai');
   assert.equal(cards.IRL_PADEL_04.score, 'Score: 0–0');
   assert.equal(cards.IRL_PADEL_04.text, 'We skip the side switching.\nYou won’t melt after a couple of sets in the sun, right?');
-  assert.deepEqual(cards.IRL_PADEL_04.choices, {
-    left: { label: 'Happy to take it', effects: {}, ceoScore: -1, next: 'IRL_PADEL_05' },
-    right: { label: "Let's stick to rules", effects: {}, ceoScore: 1, next: 'IRL_PADEL_05' },
+  assert.deepEqual(choicesWithoutReasons(cards.IRL_PADEL_04), {
+    left: { label: 'Happy to take it', effects: padelEffects.IRL_PADEL_04[0], ceoScore: -1, next: 'IRL_PADEL_05' },
+    right: { label: "Let's stick to rules", effects: padelEffects.IRL_PADEL_04[1], ceoScore: 1, next: 'IRL_PADEL_05' },
   });
 
   assert.equal(cards.IRL_PADEL_05.mode, 'irl');
   assert.equal(cards.IRL_PADEL_05.source, '@iclosedai');
   assert.equal(cards.IRL_PADEL_05.score, 'Score: 4–4');
   assert.equal(cards.IRL_PADEL_05.text, 'THAT BALL WAS OUT! Are you blind???\nDon’t even try to cheat me. That’s my point.');
-  assert.deepEqual(cards.IRL_PADEL_05.choices, {
-    left: { label: 'Definitely out, my bad', effects: {}, ceoScore: -1, next: 'IRL_PADEL_06' },
-    right: { label: "No way, that's in", effects: {}, ceoScore: 1, next: 'IRL_PADEL_06' },
+  assert.deepEqual(choicesWithoutReasons(cards.IRL_PADEL_05), {
+    left: { label: 'Definitely out, my bad', effects: padelEffects.IRL_PADEL_05[0], ceoScore: -1, next: 'IRL_PADEL_06' },
+    right: { label: "No way, that's in", effects: padelEffects.IRL_PADEL_05[1], ceoScore: 1, next: 'IRL_PADEL_06' },
   });
 
   assert.equal(cards.IRL_PADEL_06.mode, 'irl');
   assert.equal(cards.IRL_PADEL_06.source, '@padel_pro');
   assert.equal(cards.IRL_PADEL_06.score, 'Score: 5–5 · 40–40 · DECIDING POINT');
   assert.equal(cards.IRL_PADEL_06.text, "Match point, bro. Give him the win.\nThe best shot right now is the one you don't take.");
-  assert.deepEqual(cards.IRL_PADEL_06.choices, {
-    left: { label: "I'll throw it, coach", effects: {} },
-    right: { label: 'Fighting till the end', effects: {} },
+  assert.deepEqual(choicesWithoutReasons(cards.IRL_PADEL_06), {
+    left: { label: "I'll throw it, coach", effects: padelEffects.IRL_PADEL_06[0] },
+    right: { label: 'Fighting till the end', effects: padelEffects.IRL_PADEL_06[1] },
   });
 
   const outcomes = {
@@ -442,21 +444,13 @@ test('Padel Invite, Dream Team, five IRL cards, and eight outcomes are the canon
     assert.equal(card.score, expected.score);
     assert.equal(card.text, expected.text);
     assert.deepEqual([card.choices.left.label, card.choices.right.label], expected.labels);
+    assert.deepEqual(card.outcomeEffects, padelOutcomes[number]);
     assert.deepEqual(card.choices.left.effects, {});
     assert.deepEqual(card.choices.right.effects, {});
     assert.equal(card.choices.left.next, undefined);
     assert.equal(card.choices.right.next, undefined);
   });
 
-  const padelIds = new Set(activeCardIds().filter((id) => (
-    id === 'PADEL_INVITE'
-    || id === 'DREAM_TEAM'
-    || id.startsWith('IRL_PADEL_')
-    || id.startsWith('PADEL_OUTCOME_')
-  )));
-  canonicalDeck.cards.filter((card) => padelIds.has(card.id)).forEach((card) => {
-    Object.values(card.choices).forEach((choice) => assert.deepEqual(choice.effects, {}));
-  });
   assert.equal(fs.existsSync(path.join(root, 'assets', 'irl-padel-court.webp')), true);
 });
 

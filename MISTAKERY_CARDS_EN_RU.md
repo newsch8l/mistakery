@@ -1107,8 +1107,8 @@
 > Tomorrow 7 AM vs ClosedAI CEO.<br>
 > That’s your dream client, man. Remember who opened this door for you 💪
 
-- **I'm in — I'm in**: без отдельного эффекта; → `DREAM_TEAM`.
-- **Feeling sick, pass — Feeling sick, pass**: без отдельного эффекта; → `DREAM_TEAM`.
+- **I'm in — I'm in**: Cash -1, Customers +3; → `DREAM_TEAM`.
+- **Feeling sick, pass — Feeling sick, pass**: Cash -25; → `PADEL_OUTCOME_0`.
 
 ## DREAM_TEAM — 6 members · 3 online Dream Team
 
@@ -1130,8 +1130,8 @@
 > nah, smoke him. pure clout for us<br>
 > imagine the feed: no-name startup founder violates ClosedAI CEO in 4K 💀
 
-- **I'll play nice 😇 — I'll play nice 😇**: без отдельного эффекта; → `IRL_PADEL_01`.
-- **We’ll see — We’ll see**: без отдельного эффекта; → `IRL_PADEL_01`.
+- **I'll play nice 😇 — I'll play nice 😇**: Cash -1; → `IRL_PADEL_01`.
+- **We’ll see — We’ll see**: Cash -1; → `IRL_PADEL_01`.
 
 ## IRL_PADEL_01 — Padel Coach @padel_pro
 
@@ -1147,8 +1147,8 @@
 > Start selling, and you're a nobody to him.<br>
 > Earn his respect on the court first.
 
-- **Mouth shut, game on — Mouth shut, game on**: без отдельного эффекта; → `IRL_PADEL_04`.
-- **Now or never, pitching — Now or never, pitching**: без отдельного эффекта; → `IRL_PADEL_03B`.
+- **Mouth shut, game on — Mouth shut, game on**: Cash -1, Founder -1; → `IRL_PADEL_04`.
+- **Now or never, pitching — Now or never, pitching**: Cash -1, Founder +3; → `IRL_PADEL_03B`.
 
 ## IRL_PADEL_03B — ClosedAI CEO @iclosedai
 
@@ -1162,8 +1162,8 @@
 > Who let a pop-up ad onto my court?<br>
 > Go fetch the balls and grab my water before I replace your whole startup with one prompt.
 
-- **Getting your water — Getting your water**: без отдельного эффекта; → `IRL_PADEL_04`.
-- **Business after the match — Business after the match**: без отдельного эффекта; → `IRL_PADEL_04`.
+- **Getting your water — Getting your water**: Cash -1, Founder -3; → `IRL_PADEL_04`.
+- **Business after the match — Business after the match**: Cash -1, Founder +1; → `IRL_PADEL_04`.
 
 ## IRL_PADEL_04 — ClosedAI CEO @iclosedai
 
@@ -1177,8 +1177,8 @@
 > We skip the side switching.<br>
 > You won’t melt after a couple of sets in the sun, right?
 
-- **Happy to take it — Happy to take it**: без отдельного эффекта; → `IRL_PADEL_05`.
-- **Let's stick to rules — Let's stick to rules**: без отдельного эффекта; → `IRL_PADEL_05`.
+- **Happy to take it — Happy to take it**: Cash -1, Founder -3; → `IRL_PADEL_05`.
+- **Let's stick to rules — Let's stick to rules**: Cash -1, Founder +5; → `IRL_PADEL_05`.
 
 ## IRL_PADEL_05 — ClosedAI CEO @iclosedai
 
@@ -1192,8 +1192,8 @@
 > THAT BALL WAS OUT! Are you blind???<br>
 > Don’t even try to cheat me. That’s my point.
 
-- **Definitely out, my bad — Definitely out, my bad**: без отдельного эффекта; → `IRL_PADEL_06`.
-- **No way, that's in — No way, that's in**: без отдельного эффекта; → `IRL_PADEL_06`.
+- **Definitely out, my bad — Definitely out, my bad**: Cash -1, Founder -4; → `IRL_PADEL_06`.
+- **No way, that's in — No way, that's in**: Cash -1, Founder +5; → `IRL_PADEL_06`.
 
 ## IRL_PADEL_06 — Padel Coach @padel_pro
 
@@ -1207,8 +1207,8 @@
 > Match point, bro. Give him the win.<br>
 > The best shot right now is the one you don't take.
 
-- **I'll throw it, coach — I'll throw it, coach**: без отдельного эффекта; возврат к основной ветке.
-- **Fighting till the end — Fighting till the end**: без отдельного эффекта; возврат к основной ветке.
+- **I'll throw it, coach — I'll throw it, coach**: Cash -1, Founder -6; возврат к основной ветке.
+- **Fighting till the end — Fighting till the end**: Cash -1, Founder +6; возврат к основной ветке.
 
 ## PADEL_OUTCOME_0 — Padel Coach @padel_pro
 
@@ -1227,6 +1227,8 @@
 - **I have a fever! — I have a fever!**: без отдельного эффекта; возврат к основной ветке.
 - **😔😔😔 — 😔😔😔**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: без отдельного эффекта. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## PADEL_OUTCOME_1 — ClosedAI CEO @iclosedai
 
 **EN**
@@ -1243,6 +1245,8 @@
 
 - **Please wait, sir! — Please wait, sir!**: без отдельного эффекта; возврат к основной ветке.
 - **Learn to lose — Learn to lose**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Customers -3, Team -2, Founder -2. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## PADEL_OUTCOME_2 — ClosedAI CEO @iclosedai
 
@@ -1261,6 +1265,8 @@
 - **Play hard, work harder — Play hard, work harder**: без отдельного эффекта; возврат к основной ветке.
 - **Prepare to stare — Prepare to stare**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Cash +25, Customers +10, Team +8, Founder +15. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## PADEL_OUTCOME_3 — ClosedAI CEO @iclosedai
 
 **EN**
@@ -1277,6 +1283,8 @@
 
 - **Just let you win! — Just let you win!**: без отдельного эффекта; возврат к основной ветке.
 - **So... about the deal? — So... about the deal?**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Customers -3, Team -8, Founder -15. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## PADEL_OUTCOME_4 — ClosedAI CEO @iclosedai
 
@@ -1295,6 +1303,8 @@
 - **Right away, boss! — Right away, boss!**: без отдельного эффекта; возврат к основной ветке.
 - **We're the future — We're the future**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Cash +15, Customers +10, Team +4, Founder +2. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## PADEL_OUTCOME_5 — ClosedAI CEO @iclosedai
 
 **EN**
@@ -1311,6 +1321,8 @@
 
 - **Accepted — Accepted**: без отдельного эффекта; возврат к основной ветке.
 - **Rematch tomorrow — Rematch tomorrow**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Cash +20, Customers +10, Team +6, Founder +8. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 
 ## PADEL_OUTCOME_6 — ClosedAI CEO @iclosedai
 
@@ -1329,6 +1341,8 @@
 - **Remember my name — Remember my name**: без отдельного эффекта; возврат к основной ветке.
 - **Fine without you — Fine without you**: без отдельного эффекта; возврат к основной ветке.
 
+Эффект при входе в исход, ровно один раз: Customers -3, Team -3, Founder -5. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
+
 ## PADEL_OUTCOME_7 — ClosedAI CEO @iclosedai
 
 **EN**
@@ -1345,4 +1359,6 @@
 
 - **Who's crying now? — Who's crying now?**: без отдельного эффекта; возврат к основной ветке.
 - **I'll do anything, please! — I'll do anything, please!**: без отдельного эффекта; возврат к основной ветке.
+
+Эффект при входе в исход, ровно один раз: Customers -5, Team -4, Founder -12. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.
 

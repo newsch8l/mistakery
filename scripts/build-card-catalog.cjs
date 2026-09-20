@@ -154,6 +154,8 @@ for (const [title, predicate] of sections) {
     }
     if (card.outcome) {
       lines.push('', `Эффект при входе в исход, ровно один раз: ${card.resetResources === 0 ? 'Cash = Team = Customers = Founder = 0' : effects({ effects: card.outcomeEffects })}. Оба ответа декоративные и возвращают к Investor.`);
+    } else if (card.id.startsWith('PADEL_OUTCOME_')) {
+      lines.push('', `Эффект при входе в исход, ровно один раз: ${effects({ effects: card.outcomeEffects })}. Оба ответа декоративные и возвращают в Saved Messages. Кризисы отключены.`);
     }
     for (const [previousCardId, contextualChoices] of Object.entries(card.contextualChoices || {})) {
       for (const side of ['left', 'right']) {

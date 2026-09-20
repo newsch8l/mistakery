@@ -1,3 +1,10 @@
+const { decisions: padelEffects, outcomes: padelOutcomes } = require('./padel-resources.fixture.cjs');
+function padelResourcesAfter(resources, id, side, outcome) {
+  const effects = padelEffects[id][side === 'left' ? 0 : 1];
+  return Object.fromEntries(Object.entries(resources).map(([key, value]) => [key,
+    Math.max(0, Math.min(100, value + (effects[key] || 0) + (padelOutcomes[outcome]?.[key] || 0))),
+  ]));
+}
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -614,7 +621,7 @@ test('Feeling sick opens chat Outcome 0 without activating an IRL scene', async 
       ['Man... for real?', 'I risked my own reputation to give you a golden ticket and you backed out.', 'You just clowned both of us 🤡'],
     );
     assert.deepEqual(await page.locator('[data-choices] button').allTextContents(), ['I have a fever!', '😔😔😔']);
-    assert.deepEqual((await currentRuntimeState(page)).resources, resources);
+    assert.deepEqual((await currentRuntimeState(page)).resources, padelResourcesAfter(resources, 'PADEL_INVITE', 'right', 0));
     assert.equal(await page.locator('[data-ceo-score]').count(), 0);
     assert.doesNotMatch(await page.locator('body').textContent(), /CEO[- ]score/i);
   } finally {
@@ -661,7 +668,7 @@ test('Card 6 outcome probabilities and final match statuses use the exact score-
       const state = await currentRuntimeState(page);
       assert.equal(state.ceoScore, scenario.score, JSON.stringify(scenario));
       assert.equal(state.randomCalls, scenario.calls, JSON.stringify(scenario));
-      assert.deepEqual(state.resources, resources, JSON.stringify(scenario));
+      assert.deepEqual(state.resources, padelResourcesAfter(resources, 'IRL_PADEL_06', scenario.side, scenario.outcome), JSON.stringify(scenario));
       assert.equal(await page.locator('[data-scene]').getAttribute('data-mode'), 'irl');
       assert.equal(
         await page.locator('[data-pinned-title]').textContent(),
