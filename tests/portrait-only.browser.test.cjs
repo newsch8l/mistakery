@@ -31,7 +31,7 @@ for (const [name, engine, device] of [['Chromium', chromium, 'Pixel 7'], ['WebKi
     const browser = await engine.launch();
     try {
       const page = await browser.newPage({ ...devices[device], viewport: { width: 390, height: 844 } });
-      await page.addInitScript(() => { window.testAngle = 0; Object.defineProperty(screen.orientation, 'angle', { get: () => window.testAngle }); });
+      await page.addInitScript(() => { window.testAngle = 0; Object.defineProperty(Object.getPrototypeOf(screen.orientation), 'angle', { get: () => window.testAngle }); });
       const errors = []; page.on('pageerror', e => errors.push(e.message));
       await page.goto(`${base}?story=live-agent`);
       await page.waitForFunction(() => window.MistakeryApp?.view === 'playing');
