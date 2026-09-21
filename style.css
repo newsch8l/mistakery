@@ -1,5 +1,11 @@
 :root {
   color-scheme: light;
+  --game-width: 100svw;
+  --game-height: 100svh;
+  --game-safe-top: env(safe-area-inset-top);
+  --game-safe-right: env(safe-area-inset-right);
+  --game-safe-bottom: env(safe-area-inset-bottom);
+  --game-safe-left: env(safe-area-inset-left);
   --ink: #17212b;
   --muted: #637384;
   --blue: #1677d2;
@@ -30,11 +36,11 @@ button { font: inherit; }
 [hidden] { display: none !important; }
 
 .app {
-  width: 100%;
-  height: 100svh;
+  width: var(--game-width);
+  height: var(--game-height);
   display: grid;
   place-items: center;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: var(--game-safe-top) var(--game-safe-right) var(--game-safe-bottom) var(--game-safe-left);
 }
 
 .app > h1,
@@ -56,7 +62,7 @@ button { font: inherit; }
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  padding: max(8px, var(--game-safe-top)) max(8px, var(--game-safe-right)) max(8px, var(--game-safe-bottom)) max(8px, var(--game-safe-left));
 }
 .is-story-test .frame { flex: 0 1 700px; min-height: 0; max-width: 100%; max-height: 100%; }
 .test-controls {
@@ -83,8 +89,8 @@ button { font: inherit; }
 .test-controls > span { flex-shrink: 0; font-size: 10px; }
 .test-controls button { padding-inline: 8px; white-space: nowrap; }
 .test-details {
-  width: min(540px, calc(100vw - 24px));
-  max-height: calc(100svh - 32px);
+  width: min(540px, calc(var(--game-width) - 24px));
+  max-height: calc(var(--game-height) - 32px);
   margin: auto;
   padding: 0;
   border: 1px solid #c4d7e6;
@@ -115,8 +121,8 @@ button { font: inherit; }
 .frame {
   width: 340px;
   height: 700px;
-  max-width: 100vw;
-  max-height: 100svh;
+  max-width: var(--game-width);
+  max-height: var(--game-height);
   overflow: hidden;
   border-radius: 36px;
   background: var(--phone-wash);
@@ -746,18 +752,48 @@ button { font: inherit; }
 @keyframes typingBlink { 0%, 60%, 100% { opacity: .32; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-1px); } }
 .message.is-pop, .self-message.is-pop, .team-row.is-pop { animation: messagePop .3s cubic-bezier(.2,.9,.3,1.1) both; }
 
-@media (max-width: 340px) {
+/* Breakpoints follow the portrait stage, including a rotated phone viewport. */
+@media (max-width: 340px) and (orientation: portrait),
+       (max-width: 340px) and (pointer: fine),
+       (max-height: 340px) and (pointer: coarse) and (orientation: landscape) {
   .frame { border-radius: 0; }
   .scene--card { margin-inline: 6px; }
   .resources { gap: 7px; padding-inline: 12px; }
   .resource-label { font-size: 7px; }
 }
 
-@media (max-height: 700px) {
+@media (max-height: 700px) and (orientation: portrait),
+       (max-height: 700px) and (pointer: fine),
+       (max-width: 700px) and (pointer: coarse) and (orientation: landscape) {
   .frame { border-radius: 0; }
   .top { padding-top: 10px; padding-bottom: 7px; }
   .resources { padding-bottom: 8px; }
   .contact { margin-top: 8px; padding-block: 8px; }
   .phone[data-view="saved"] .message { max-width: 100%; padding-block: 9px 8px; }
   .choice { min-height: 52px; }
+}
+
+/* Counter-rotate the whole stage; layout, scrolling and touch targets stay portrait. */
+@media (pointer: coarse) and (orientation: landscape) {
+  :root {
+    --game-width: 100svh;
+    --game-height: 100svw;
+    --game-safe-top: env(safe-area-inset-right);
+    --game-safe-right: env(safe-area-inset-bottom);
+    --game-safe-bottom: env(safe-area-inset-left);
+    --game-safe-left: env(safe-area-inset-top);
+  }
+  :root[data-portrait-direction="reverse"] {
+    --game-safe-top: env(safe-area-inset-left);
+    --game-safe-right: env(safe-area-inset-top);
+    --game-safe-bottom: env(safe-area-inset-right);
+    --game-safe-left: env(safe-area-inset-bottom);
+  }
+  .app, .test-details {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(var(--portrait-rotation, 90deg));
+  }
+  .test-details { margin: 0; }
 }

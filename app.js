@@ -74,6 +74,18 @@
 
   const $ = (selector) => document.querySelector(selector);
   const storyTestEnabled = new URLSearchParams(window.location.search).get('story') === 'live-agent';
+  const landscapeTouch = window.matchMedia('(pointer: coarse) and (orientation: landscape)');
+  function updatePortraitDirection() {
+    const angle = screen.orientation?.angle ?? window.orientation ?? 90;
+    // ScreenOrientation measures counter-clockwise; CSS angles turn clockwise.
+    const reverse = ((angle % 360) + 360) % 360 === 90;
+    document.documentElement.style.setProperty('--portrait-rotation', reverse ? '-90deg' : '90deg');
+    document.documentElement.dataset.portraitDirection = reverse ? 'reverse' : 'forward';
+  }
+  updatePortraitDirection();
+  window.addEventListener('orientationchange', updatePortraitDirection);
+  screen.orientation?.addEventListener('change', updatePortraitDirection);
+  landscapeTouch.addEventListener('change', updatePortraitDirection);
   const testHistory = [];
   const presentedOutcomes = new WeakSet();
   let choiceUnlockTimer = null;
@@ -785,7 +797,14 @@
   function keepDeliveryVisible(node) {
     if (!node) return;
     const chat = $('[data-chat]');
-    const overflow = node.getBoundingClientRect().bottom - chat.getBoundingClientRect().bottom + 12;
+    const nodeBounds = node.getBoundingClientRect();
+    const chatBounds = chat.getBoundingClientRect();
+    // Scroll along the stage's local vertical axis after its portrait rotation.
+    const overflow = (landscapeTouch.matches
+      ? document.documentElement.dataset.portraitDirection === 'reverse'
+        ? nodeBounds.right - chatBounds.right
+        : chatBounds.left - nodeBounds.left
+      : nodeBounds.bottom - chatBounds.bottom) + 12;
     if (overflow > 0) chat.scrollTop += overflow;
   }
 
