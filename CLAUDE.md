@@ -8,12 +8,12 @@ Browser card game about a startup chasing its first paying customer. Open `index
 - `docs/core/STATE_BIBLE.md` outranks everything else on world facts, funnel stage and what exists yet. If copy contradicts it, the copy is wrong. Character motive and voice come from `docs/core/CHARACTER_BIBLE.md`, itself derived from the author's PDF in `docs/source/` — that PDF must survive any rewrite.
 - `ME` is run quality, not a fourth resource. Internal work never raises Customers; Cash rises only through payment, funding or explicit savings.
 - Card copy reaches `cards.json` only after the author approves it line by line. Drafts and auditions stay out of production files.
-- Root `MISTAKERY_*.md` files are dated checkpoints. Any status they state is history, not current state — the newest file in `docs/plans/` wins.
-- Tests are `node --test` from the repo root. The deck analyzers (`audit-deck.cjs`, `audit-callback-slots.cjs`) are non-mutating and safe to run before judging anything.
+- `PROJECT_STATUS.md` is the current continuation snapshot. Root audition documents and `docs/archive/` preserve approved copy and project history; they are not current status reports.
+- The focused runtime checks are `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`. Older tests cover superseded deck and scheduler behavior, so a blanket `node --test tests/*.test.cjs` is not a release gate. The deck analyzers (`audit-deck.cjs`, `audit-callback-slots.cjs`) are non-mutating.
 
 ## Current work
 
-`docs/plans/` holds the plans; the newest date is the live one. As of 24 July 2026 that is `docs/plans/2026-07-22-month-plan-itch-prototype.md` — the month plan toward an itch demo on 2 September 2026. Start a session there.
+Start with `PROJECT_STATUS.md`, then read only the plan relevant to the requested change. The current playable routes are the opening, Live AI Agent, AI Influencer, and Padel. GitHub Pages serves `lean-opening` from the repository root. Do not use the July itch demo plan as the current roadmap.
 
 ## Skills
 

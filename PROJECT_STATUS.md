@@ -2,61 +2,58 @@
 
 ## Verified snapshot
 
-- Updated: 2026-09-21. Worktree: `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`; branch `design/personal-chat-runtime`.
-- Implementation: `abef9da2e6b259bdb6244e52cb6e216ca2b08b3f` (fixed portrait phone interface). Pushed atomically to `design/personal-chat-runtime`, `main`, `lean-opening`. Pages build succeeded for this commit; public portrait regression passed 2/2.
-- Final follow-up contains this documentation update and a test-only WebKit orientation mock correction; runtime remains at the implementation commit. Parent `/Users/Newschxxl/Documents/mistakery` is an older prototype; do not edit it for this runtime.
-- User authorized existing GitHub Pages commit/push/publication. Pages source: `lean-opening`, `/`. Main: https://newsch8l.github.io/mistakery/ . Test: https://newsch8l.github.io/mistakery/?story=live-agent . Same build; query starts Live Agent.
+- Updated: 2026-09-23 19:36 MSK.
+- Branch: `design/personal-chat-runtime` in `/Users/Newschxxl/Documents/mistakery/.worktrees/personal-chat-runtime`.
+- Base commit: `054e42b4751ea6ee10615aeef0fca84e8071e969`. `git ls-remote` confirmed that `main`, `lean-opening`, and `design/personal-chat-runtime` pointed to this commit before the documentation cleanup.
+- Working tree: initially clean. This cleanup changes only `README.md`, `CLAUDE.md`, and this status file. The parent visual workspace is not a Git repository; the separate desktop checkout has pre-existing untracked files and was not changed.
 
 ## Current objective
 
-Keep the phone game visually in portrait through device rotation, with no messages, overlays, blocked gameplay, reloads or progress loss. User explicitly rejected a landscape guard. No itch.io build, package or upload: the game is not ready. Continue only user-directed work after this correction.
+Keep the published repository's entry documents accurate and remove only files demonstrated to be disposable. Preserve active gameplay, approved copy, project history, and source assets.
 
 ## Completed work
 
-- Touch-first landscape viewports use swapped logical stage dimensions and counter-rotation. Native RU / ± dialog follows the same rotation. Safe areas and compact layout breakpoints follow the portrait stage; sequential message scrolling follows its local vertical axis. Desktop mouse-first layout stays normal. No fullscreen request or dependency on native orientation lock.
-- Direction is based on `screen.orientation.angle`, falling back to `window.orientation`, with both change events. Per W3C, device angle is counter-clockwise, while CSS rotation is clockwise: API 90 → CSS −90; API 270 → CSS +90. The initial same-sign implementation was caught and corrected before publication.
-- Full mobile animations match desktop regardless of OS motion preference, as explicitly required. User confirmed “щас норм”. Preserve typing cadence, entrances and outcome effects. Bounded image decode, stale-work cancellation, Back without replay and immediate Restart remain.
-- `33ce262c9de8149bcf67e3ed35001facb87d221e` removed the leading ellipsis from the developer reply beginning “that kinda hurt. but yeah” and its Russian reference.
-- Test-only RU / ± inspector covers 52 active cards and 2 Saved screens: translation, contextual replies, choice/outcome effects, actual totals including passive Cash burn and clamping. Opening/closing is read-only; native dialog traps focus and prevents background arrow choices.
-- Every gameplay turn costs Cash −0.5 in every branch. No crises or turn cap: zero resources remain playable. Onboarding/Saved navigation, Back and Restart do not charge turns. Resource outcomes apply once to the resolving turn; decorative outcome replies only charge the new −0.5 turn cost.
-- Influencer refusal total before passive burn: Cash −25 / Founder −5, once. Padel refusal Cash −25 once, no extra outcome penalty. Preserve all existing route probabilities, scores, approved copy and media.
+- Replaced the obsolete July itch demo handoff in `CLAUDE.md` with the current status entry point and active route map.
+- Corrected README navigation and documented deck regeneration and the focused runtime check.
+- Audited large tracked files and references. The three high-resolution Padel/CEO PNG originals are not loaded by the game, but accompany its smaller WebP assets. Root audition documents are read by project skills and tests. Historical plans and checkpoints are deliberately retained. No tracked file was proved disposable, so none was deleted.
 
 ## Key technical decisions
 
-- `cards.json` is canonical. Regenerate bundle and `index.html` content hashes with `node scripts/build-offline-deck.cjs` after runtime/deck edits. Regenerate bilingual catalog with `node scripts/build-card-catalog.cjs` after copy/translation changes.
-- Shared engine `game.js` unchanged. Active prototype has 52 cards; deck retains older inactive content. Do not restore obsolete branches to satisfy old tests.
-- Test Back restores complete resources, scores, contextual choices, RNG outcome and scroll. Scoped continuity only: 01→02, 03→04→04B, 07→07B. Media must fit as a complete bubble with original aspect ratio; preserve captions.
-- Live Agent outcome, Influencer and Padel effect fixtures remain authoritative: `tests/turn-resources.fixture.cjs`, `tests/influencer-resources.fixture.cjs`, `tests/padel-resources.fixture.cjs`. Outcome entry effects must never be charged on rerender or twice.
-- Translation source links/adaptation notes live in `cards.json.testTranslations` and `MISTAKERY_CARDS_EN_RU.md`. Preserve approved English rather than restoring old document copy.
+- `cards.json` remains canonical; generated `cards.bundle.js` and `MISTAKERY_CARDS_EN_RU.md` must be rebuilt after relevant changes.
+- GitHub Pages serves `lean-opening` from `/`. `main`, `lean-opening`, and `design/personal-chat-runtime` were aligned before this cleanup.
+- Current gameplay includes the opening, Live AI Agent, AI Influencer, and Padel. Keep the portrait phone interface and full mobile motion; no itch.io package or upload is planned.
+- Every gameplay turn costs Cash −0.5; zero resources do not end a run. The RU / ± card inspector is read-only. Back restores prior turn state. Reload resets progress because there is no persistent save.
+- The full historical test suite is not a release gate: it includes expectations for superseded routes and scheduler behavior. Browser tests also require an environment that can launch Chromium.
 
 ## Main changed files
 
-- `app.js`: orientation direction and rotation-aware delivery scrolling.
-- `style.css`: logical stage dimensions, safe areas, portrait breakpoints and counter-rotation, including inspector.
-- `index.html`: regenerated runtime hashes.
-- `tests/portrait-only.browser.test.cjs`: both mobile engines/directions, geometry/progress/dialog/touch/Back, 320×650 typing and photo fitting, normal entry and desktop.
-- `docs/plans/2026-09-21-portrait-only.md`: accepted scope and direction reference.
+- `README.md`: current entry point, regeneration commands, focused check.
+- `CLAUDE.md`: removed stale roadmap and incorrect source-of-truth/test guidance.
+- `PROJECT_STATUS.md`: concise verified continuation snapshot.
 
 ## Verification
 
-- New portrait tests failed on baseline (landscape compressed frame 700→330px), then passed 2/2 on Chromium/Pixel 7 and WebKit/iPhone 13. Final rerun after direction correction passed 2/2. Screenshot inspected.
-- `node --test --test-concurrency=3 tests/mobile-motion.browser.test.cjs tests/story-test-mode.browser.test.cjs tests/test-card-details.browser.test.cjs tests/innovation-typing.browser.test.cjs tests/legal-typing.browser.test.cjs tests/continuation-focus.browser.test.cjs`: 12/12 passed.
-- `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs`: 22/22 passed. Offline 10/10 rerun after final hashes.
-- `node --check app.js` and `git diff --check` passed. Independent final review found no remaining significant issues after correcting direction.
-- Public `MISTAKERY_TEST_URL=https://newsch8l.github.io/mistakery/ node --test tests/portrait-only.browser.test.cjs`: 2/2 passed after Pages reported `built`. The first WebKit run exposed an instance-level sensor mock being lost on HTTPS; moving the angle getter to the ScreenOrientation prototype fixed the test, with no runtime change.
-- All mobile checks use desktop browser engine emulation. Real-device rotation/browser chrome and FPS remain unverified; do not claim physical phone testing.
+| Command or check | Result |
+|---|---|
+| `git ls-remote origin HEAD refs/heads/main refs/heads/lean-opening refs/heads/design/personal-chat-runtime` | All three branches and HEAD at `054e42b4751ea6ee10615aeef0fca84e8071e969` before edits. |
+| `node --test tests/offline.test.cjs tests/personal-chat-runtime.test.cjs tests/live-agent.test.cjs` | 22 passed, 0 failed. |
+| `node --check app.js` | Passed; runtime was not changed. |
+| `git diff --check` | Passed after all three documentation files were updated. |
+| `node --test tests/*.test.cjs` | Failed on obsolete expectations and sandboxed Chromium launch. This is not the current release gate. |
 
-## Known issues and failed approaches
+## Known issues and unverified assumptions
 
-- Do not reintroduce rotation messages, overlays or inert gameplay. User explicitly rejected them; the abandoned guard was never published.
-- Do not reintroduce automatic mobile motion suppression. User explicitly wants full animations; the static typing fallback was rejected.
-- Native browser rotation lock cannot be relied on across normal mobile tabs. Current behavior fixes game content visually; browser chrome/OS orientation remain under browser control.
-- No persistent save: reload resets the prototype. General itch packaging, old unused assets and broader technical debt are deferred.
-- Historical legacy suite: 171 checks, 112 passed / 59 failed; not rerun this stage. 57 obsolete deck/scheduler/callback expectations reproduced on prior published baseline, other two fixed previously. Do not claim the entire legacy suite passes.
-- Pages can need an explicit build request. Never run public regressions until `pages/builds/latest` reports `built` for the intended commit; premature probes previously hit stale CSS/network errors.
-- Chromium and GitHub workflows require elevated execution on this macOS setup; sandboxed Chromium failed Mach-port registration. Approved elevated runs work.
+- The broad historical suite remains red and needs a separate migration or archival decision. It was not removed under this conservative cleanup.
+- Physical phone rotation, browser chrome, and frame rate remain unverified; earlier browser coverage used desktop engine emulation.
+- No gameplay, assets, or dependencies changed in this cleanup.
+
+## Failed approaches — do not repeat
+
+- Do not use the July itch demo plan or the newest date in `docs/plans/` as an automatic current roadmap.
+- Do not delete the original PNGs or audition documents solely because the runtime does not load them; they retain source and approval value.
+- Do not use a blanket `node --test tests/*.test.cjs` result as evidence that the current game is broken without separating obsolete assertions from actual runtime failures.
 
 ## Next steps
 
-1. Continue user-directed phone playtesting. Preserve full motion, resource rules and read-only inspector. No itch.io work unless the user changes that instruction.
-2. Future publication: atomic non-force push to all three branches; verify Pages status and public URLs.
+1. Continue user-directed work from this snapshot and the specific relevant plan.
+2. If the historical suite is addressed later, classify each failing test against current behavior before updating or removing it.
